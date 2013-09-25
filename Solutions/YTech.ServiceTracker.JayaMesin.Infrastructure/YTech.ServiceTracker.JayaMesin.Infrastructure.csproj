@@ -108,6 +108,11 @@
     <Compile Include="NHibernateMaps\Conventions\PrimaryKeyConvention.cs" />
     <Compile Include="NHibernateMaps\Conventions\TableNameConvention.cs" />
     <Compile Include="NHibernateMaps\AutoPersistenceModelGenerator.cs" />
+    <Compile Include="NHibernateMaps\MCustomerMap.cs" />
+    <Compile Include="NHibernateMaps\TWOMap.cs" />
+    <Compile Include="Repository\MCustomerRepository.cs" />
+    <Compile Include="Repository\TWORepository.cs" />
+    <Compile Include="Repository\TWOStatusRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\YTech.ServiceTracker.JayaMesin.Domain\YTech.ServiceTracker.JayaMesin.Domain.csproj">

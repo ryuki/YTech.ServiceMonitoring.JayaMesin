@@ -1,4 +1,4 @@
-﻿param($installPath, $toolsPath, $package, $project)
+param($installPath, $toolsPath, $package, $project)
 
 $extId = "JScriptIntelliSenseParaExtension.Microsoft.039ee76c-3c7f-4281-ad23-f6528ab18623"
 $extManager = [Microsoft.VisualStudio.Shell.Package]::GetGlobalService([Microsoft.VisualStudio.ExtensionManager.SVsExtensionManager])

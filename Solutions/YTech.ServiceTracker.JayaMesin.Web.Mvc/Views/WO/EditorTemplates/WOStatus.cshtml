@@ -1,0 +1,8 @@
+﻿@model string
+           
+@(
+ Html.Kendo().DropDownListFor(m => m)   
+        .DataValueField("ID")
+        .DataTextField("Name")     
+        .BindTo((System.Collections.IEnumerable)ViewData["wo_status"])
+)

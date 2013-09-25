@@ -1,0 +1,8 @@
+﻿@model YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.CustomerViewModel
+
+@(Html.Kendo().DropDownListFor(m => m)
+        .OptionLabel("Pilih konsumen")
+        .DataValueField("CustomerID")
+        .DataTextField("CustomerName")
+        .BindTo((System.Collections.IEnumerable)ViewData["customers"])
+)

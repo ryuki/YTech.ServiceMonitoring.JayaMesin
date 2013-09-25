@@ -1,4 +1,4 @@
-﻿param($installPath, $toolsPath, $package, $project)
+param($installPath, $toolsPath, $package, $project)
 
 #Forcibly delete the -vsdoc file
 #$projectFolder = Split-Path -Parent $project.FileName
