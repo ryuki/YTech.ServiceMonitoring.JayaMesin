@@ -1,0 +1,14 @@
+﻿@model RoleViewModel
+
+@(Html.Kendo().DropDownListFor(m => m)
+        .OptionLabel("-Pilih Role-")
+        .DataValueField("RoleId")
+        .DataTextField("RoleName")
+         .HtmlAttributes(new { @style="width:150px;" })
+         .DataSource(source => {
+              source.Read(read =>
+              {
+                  read.Action("GetRoles", "Account");                  
+              });              
+          })
+)

@@ -8,13 +8,13 @@
     .Name("Grid")
     .Columns(columns =>
     {
-        columns.Bound(p => p.CustomerName).Width(100);
-        columns.Bound(p => p.CustomerPhone).Width(100);
-        columns.Bound(p => p.CustomerAddress).Width(100); 
-        columns.Command(command => { command.Edit(); command.Destroy(); }).Width(160);
+        columns.Bound(p => p.CustomerName).Width("auto");
+        columns.Bound(p => p.CustomerPhone).Width("auto");
+        columns.Bound(p => p.CustomerAddress).Width("auto"); 
+        columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
     })
-    .ToolBar(toolbar => { toolbar.Create(); })
-    .Editable(editable => editable.Mode(GridEditMode.PopUp))
+    .ToolBar(toolbar => { toolbar.Create().Text("Tambah Konsumen Baru"); })
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
     .Pageable()
     .Sortable()
     .Scrollable()
@@ -24,22 +24,51 @@
     .Groupable()
     .Resizable(resize => resize.Columns(true))
     .Reorderable(reorder => reorder.Columns(true))
-    .HtmlAttributes(new { style = "height:430px;" })
+    .HtmlAttributes(new { style = "height:500px;" })
     .DataSource(dataSource => dataSource
         .Ajax()
         .PageSize(20)
-        .Events(events => events.Error("error_handler"))
+        .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
         .Model(model => model.Id(p => p.CustomerID))
         .Create(create => create.Action("Customers_Create", "Customer"))
         .Read(read => read.Action("Customers_Read", "Customer"))
         .Update(update => update.Action("Customers_Update", "Customer"))
         .Destroy(destroy => destroy.Action("Customers_Destroy", "Customer"))
-
     )
-)
-
+    .Events(e => e.DataBound("onDataBound"))
+    )
 
 <script type="text/javascript">
+    function onRequestEnd(e) {
+        //RequestEnd handler code
+        //bug : error when update after insert new data, no id catched
+        //bug fix : refresh after insert new data, 
+        if (e.type === "create") {
+            var grid = $("#Grid").data("kendoGrid");
+            grid.dataSource.read();
+        }
+    }
+
+    function onDataBound(e) {
+        //edit data when double click
+        $('#Grid tbody tr').dblclick(function () {
+            var grid = $('#Grid').data().kendoGrid;
+            grid.editRow(this);
+        })
+    }
+    jQuery(document).ready(function () {
+        //auto click add new customer when iframe = 1
+        if (getURLParameter("isModal") === "True") {
+            //$("a.k-grid-add").trigger("click");
+            setTimeout('$("a.k-grid-add").trigger("click");', 3000);
+        }
+    })
+
+    function getURLParameter(name) {
+        return decodeURI(
+            (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1]
+        );
+    }
 
     //show server errors if any
     function error_handler(e) {

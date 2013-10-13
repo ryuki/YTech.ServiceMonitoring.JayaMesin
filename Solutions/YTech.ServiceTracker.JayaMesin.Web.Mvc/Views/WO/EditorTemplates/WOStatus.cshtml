@@ -1,8 +1,11 @@
 ﻿@model string
            
 @(
- Html.Kendo().DropDownListFor(m => m)   
-        .DataValueField("ID")
-        .DataTextField("Name")     
+ Html.Kendo().DropDownListFor(m => m) 
+        .OptionLabel("-Pilih Status-")
+        .DataValueField("Value")
+        .DataTextField("Text")    
         .BindTo((System.Collections.IEnumerable)ViewData["wo_status"])
+         .HtmlAttributes(new { @style="width:150px;" })
+        .Events(e => e.Change("onWOLastStatusChange"))
 )

@@ -1,0 +1,101 @@
+﻿@{
+    ViewBag.Title = "Daftar User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@(Html.Kendo()
+.Grid<YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.RegisterModel>()
+    .Name("Grid")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.UserName).Width("auto");
+        columns.Bound(p => p.Email).Width("auto");
+        columns.Bound(p => p.RoleName).Width("auto"); 
+        columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
+    })
+    .ToolBar(toolbar => { toolbar.Create().Text("Tambah User Baru"); })
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("_User").Window(win => win.Width(450)))
+    .Pageable()
+    .Sortable()
+    .Scrollable()
+    .ColumnMenu()
+    .Selectable()
+    .Filterable()
+    .Groupable()
+    .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorder => reorder.Columns(true))
+    .HtmlAttributes(new { style = "height:500px;" })
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
+        .Model(x =>
+        {
+            x.Id(p => p.UserName);
+            //x.Field(p => p.Password).Editable(false);
+            //x.Field(p => p.ConfirmPassword).Editable(false);
+        })
+        .Create(create => create.Action("Account_Create", "Account"))
+        .Read(read => read.Action("Account_Read", "Account"))
+        .Update(update => update.Action("Account_Update", "Account"))
+        .Destroy(destroy => destroy.Action("Account_Destroy", "Account"))
+    )
+    .Events(e => e.DataBound("onDataBound"))
+    )
+
+<script type="text/javascript">
+    function onRequestEnd(e) {
+        //RequestEnd handler code
+        //bug : error when update after insert new data, no id catched
+        //bug fix : refresh after insert new data, 
+        if (e.type === "create" || e.type === "update" || e.type === "destroy") {
+            var grid = $("#Grid").data("kendoGrid");
+            grid.dataSource.read();
+        }
+    }
+
+    function onDataBound(e) {
+        //edit data when double click
+        $('#Grid tbody tr').dblclick(function () {
+            var grid = $('#Grid').data().kendoGrid;
+            grid.editRow(this);
+        })
+    }
+
+    //show server errors if any
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+
+            var grid = $('#Grid').data('kendoGrid');
+            //var gridElement = grid.editable.element;
+
+            //var validationMessageTemplate = kendo.template(
+            //    "<div id='#=field#_validationMessage' " +
+            //        "class='k-widget k-tooltip k-tooltip-validation " +
+            //            "k-invalid-msg field-validation-error' " +
+            //        "style='margin: 0.5em;' data-for='#=field#' " +
+            //        "data-val-msg-for='#=field#' role='alert'>" +
+            //        "<span class='k-icon k-warning'></span>" +
+            //        "#=message#" +
+            //        "<div class='k-callout k-callout-n'></div>" +
+            //    "</div>");
+
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                    //gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]")
+                    //.replaceWith(validationMessageTemplate({ field: key, message: value.errors[0] }));
+                    //gridElement.find("input[name=" + key + "]").focus();
+                }
+            });
+            alert(message);
+
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();   // cancel grid rebind
+            });
+        }
+    }
+</script>

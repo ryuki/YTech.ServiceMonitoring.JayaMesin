@@ -7,5 +7,6 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts.Tasks
 {
     public interface ITWOStatusTasks
     {
+        IEnumerable<TWOStatus> GetWOStatus(string woId);
     }
 }

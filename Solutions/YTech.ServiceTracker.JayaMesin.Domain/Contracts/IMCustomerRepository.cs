@@ -10,6 +10,7 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts
 {
     public interface IMCustomerRepository : INHibernateRepositoryWithTypedId<MCustomer, string>
     {
-        //MCustomer Save(MCustomer cust);
+        MCustomer GetLastCreatedCustomer();
+        IEnumerable<MCustomer> GetListNotDeleted();
     }
 }

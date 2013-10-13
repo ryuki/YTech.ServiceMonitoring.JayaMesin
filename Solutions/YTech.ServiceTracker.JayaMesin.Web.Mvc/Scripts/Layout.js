@@ -17,15 +17,19 @@ Layout.resize = function () {
     if (height != Layout._height) {
         Layout._height = height;
         var headSplitter = $("#headSplitter");
-        headSplitter.height(height - 10);
+        headSplitter.height(height - 18);
         headSplitter.resize();
 
         var mainSplitter = $("#mainSplitter");
-        mainSplitter.height(height - 95);
+        mainSplitter.height(height - 68);
         mainSplitter.resize();
 
         var contentSplitter = $("#contentSplitter");
-        contentSplitter.height(height - 120);
+        contentSplitter.height(height - 68);
         contentSplitter.resize();
+
+        var grid = $("#Grid");
+        grid.height(height - 100);
+        grid.resize();
     }
 }

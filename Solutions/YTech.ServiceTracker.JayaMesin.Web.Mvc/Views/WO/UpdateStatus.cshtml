@@ -1,0 +1,280 @@
+﻿@{
+    ViewBag.Title = "Update Work Order";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@(Html.Kendo().Grid<YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.WOViewModel>()
+    .Name("Grid")
+    .Columns(columns =>
+    {
+        columns.Template(e => { }).ClientTemplate("<img class='img-new' src='" + Url.Content("~/Content/img/new_header.png") + "' alt='#: data.HaveBeenRead #' /> <img class='img-urgent' src='" + Url.Content("~/Content/img/error3.gif") + "' style='width:16px;height:16px;' alt='#: data.WOPriority #' />").Width(30).Title(" ");
+        columns.Bound(p => p.WONo).Width("auto");
+        columns.Bound(p => p.CustomerName).Width("auto");
+        columns.Bound(p => p.WODate).Format("{0:dd-MMM-yy}").Width("auto");
+        columns.Bound(p => p.WOItemType).Width("auto");
+        columns.Bound(p => p.WOItemSN).Width("auto");
+        columns.Bound(p => p.WOStartDate).Format("{0:dd-MMM-yy}").Width("auto");
+        columns.Bound(p => p.WOLastStatus).Width("auto");
+        columns.Bound(p => p.WOEstFinishDate).Format("{0:dd-MMM-yy HH:mm}").Width("auto");
+        columns.Bound(p => p.WOTakenDate).Format("{0:dd-MMM-yy}").Width("auto");
+        columns.Bound(p => p.WOInvoiceNo).Width("auto");
+        columns.Command(command => { command.Edit().Text(" ").HtmlAttributes(new { style = "min-width:20px;" }); }).Width("50px");
+    })
+    .ToolBar(toolbar =>
+    {
+        toolbar.Template(@<text>
+<div class="k-toolbar k-grid-toolbar k-grid-top">
+
+    <label class="status-label" for="status">Filter status WO :</label>
+    @(Html.Kendo().DropDownList()
+                            .Name("status")
+                            .OptionLabel("All")
+                            .DataTextField("Text")
+                            .DataValueField("Value")
+                            .AutoBind(false)
+                            .Events(e => e.Change("searchWO"))
+                            .HtmlAttributes(new { style = "min-width:150px;" })
+                            .BindTo((System.Collections.IEnumerable)ViewData["wo_status"])
+                        )
+
+    <label class="search-label" for="search">Pencarian :</label>
+    @(Html.TextBox("search", "", new { @class = "k-textbox" }))
+    @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "searchWO(false);", new { @class = "k-button" }))
+    @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchWO(true);", new { @class = "k-button" }))
+    @Html.Partial("ColourLegend")
+</div>
+</text>);
+    })
+            .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("UpdateWO").Window(win => win.Width(650)))
+            .Pageable()
+            .Sortable()
+            .Scrollable()
+            .ColumnMenu()
+            .Selectable()
+            .Filterable()
+            .Groupable()
+            .Resizable(resize => resize.Columns(true))
+            .Reorderable(reorder => reorder.Columns(true))
+            .HtmlAttributes(new { style = "height:500px;" })
+            .ClientDetailTemplateId("woStatusTemplate")
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(20)
+                .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
+                .Model(model => model.Id(p => p.WOID))
+                .Read(read => read.Action("WO_Read", "WO"))
+                .Update(update => update.Action("WO_UpdateStatus", "WO"))
+
+                )
+            .Events(e => e.DataBound("onDataBound").Edit("onEdit").Cancel("onCancel"))
+            )
+@(Html.Hidden("SelectedUid"))
+
+<script id="woStatusTemplate" type="text/kendo-tmpl">
+    @(Html.Kendo().Grid<YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.WOStatusViewModel>()
+            .Name("grid_#=WOID#")
+            .Columns(columns =>
+            {
+                columns.Bound(o => o.WOStatusDate).Format("{0:dd-MMM-yy HH:mm}").Width("auto");
+                columns.Bound(o => o.WOStatus).Width("auto");
+                columns.Bound(o => o.WOStatusUser).Width("auto");
+                columns.Bound(o => o.WOStatusBrokenDesc);
+                columns.Bound(o => o.WOStatusStartDate).Format("{0:dd-MMM-yy}").Width("auto");
+                columns.Bound(o => o.WOStatusFinishDate).Format("{0:dd-MMM-yy HH:mm}").Width("auto");
+            })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .Read(read => read.Action("WOStatus_Read", "WO", new { woID = "#=WOID#" }))
+            )
+            .Sortable()
+            .ToClientTemplate()
+    )
+</script>
+
+<script type="text/javascript">
+    //refresh data grid every 2 minutes
+    window.setInterval(function () {
+        var grid = $('#Grid').data().kendoGrid;
+        grid.dataSource.read();
+    }, 300000);
+
+    function searchWO(reset) {
+        //reset search textbox if reset button clicked
+        //alert(reset);
+        if (reset) {
+            //alert("reset");
+            $("#search").val("");
+        }
+
+        grid = $("#Grid").data("kendoGrid");
+        //search by woNO
+        var textSearch = $("#search").val();
+        //alert(textSearch);
+        //search by status
+        var status = $("#status").val();
+        //alert(status);
+
+        if (textSearch || status) {
+            //alert("search");
+            var andFilter = { logic: "and", filters: [] };
+            var orFilter = { logic: "or", filters: [] };
+            andFilter.filters.push({ field: "WOLastStatus", operator: "contains", value: status });
+            orFilter.filters.push({ field: "WONo", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "CustomerName", operator: "contains", value: textSearch });
+            andFilter.filters.push(orFilter);
+            grid.dataSource.query({ filter: andFilter });
+        } else {
+            grid.dataSource.filter({});
+        }
+    }
+
+    function onRequestEnd(e) {
+        //RequestEnd handler code
+        //bug : error when update after insert or update new data, no id catched
+        //bug fix : refresh after insert new data, 
+        //alert(e.type);
+        if (e.type === "create" || e.type === "update" || e.type === "destroy") {
+            var grid = $("#Grid").data("kendoGrid");
+            grid.dataSource.read();
+        }
+    }
+
+    function onEdit(e) {
+        //alert("onedit");
+        // get wo id
+        var woId = e.container.find("input[name=WOID]").val();
+        //alert(woId);
+        //get uid of selected row
+        var dataItem = $("#Grid").data("kendoGrid").dataSource.get(woId);
+        var uid = $("#Grid").find("tr[data-uid='" + dataItem.uid + "']").attr("data-uid");
+        //alert("selected data uid = " + uid);
+        //set uid of temporary hidden input
+        $("#SelectedUid").val(uid);
+
+        //log when open wo
+        var getLogWOUrl = '@(Url.Action("LogWO_Open", "WO", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))' + '&woId=' + woId;
+            $.ajax({
+                type: 'POST',
+                url: getLogWOUrl,
+                error: function (response) {
+                    alert("error: " + response);
+                }, success: function (response) {
+                    if (!response.Success)
+                        alert("Error : " + response.Message);
+                }
+            });
+    }
+
+    function onCancel(e) {
+        //reload grid when cancel clicked
+        var grid = $("#Grid").data("kendoGrid");
+        grid.dataSource.read();
+    }
+
+    function onDataBound(e) {
+        //edit data when double click
+        var grid = $('#Grid').data().kendoGrid;
+        $('#Grid tbody tr').dblclick(function () {
+            grid.editRow(this);
+        })
+        //hide image new if have been read
+        $("img.img-new[alt=true]").hide();
+        //hide image urgent if priority is normal
+        $("img.img-urgent[alt=Normal]").hide();
+
+        //set bg color based on last status
+        SetBgColor();
+    }
+
+    function SetBgColor() {
+        //set bg color based on last status
+        var grid = $('#Grid').data().kendoGrid;
+        var data = grid.dataSource.data();
+        $.each(data, function (i, row) {
+            var lastStatus = row.WOLastStatus;
+            var color = "white";
+            if (lastStatus == "Baru_Masuk") {
+                color = "#D5D5CA";
+            }
+            else if (lastStatus == "Sedang_Dikerjakan") {
+                color = "#EBEB99";
+            }
+            else if (lastStatus == "Menunggu_Persetujuan") {
+                color = "#9494FF";
+            }
+            else if (lastStatus == "Menunggu_Part") {
+                color = "#FF66A3";
+            }
+            else if (lastStatus == "Selesai") {
+                color = "#70DB70";
+            }
+            else if (lastStatus == "Batal") {
+                color = "#FF0000";
+            }
+            else if (lastStatus == "Closed") {
+                color = "#66C2FF";
+            }
+            //Change the background color of lastStatus
+            $('tr[data-uid="' + row.uid + '"]').css("background-color", color);
+        });
+    }
+
+    function onWOLastStatusChange() {
+        //set finish date to now when status is selesai
+        var lastStatus = $('#WOLastStatus').val();
+        //alert(lastStatus);
+        if (lastStatus == "Selesai") {
+            var getServerDate = new Date();
+            //alert(getServerDate);
+            var datepicker = $("#WOEstFinishDate").data("kendoDateTimePicker");
+            datepicker.value(getServerDate);
+
+            //get uid from temporary hidden input
+            var uid = $("#SelectedUid").val();
+
+            //flag datasource to dirty
+            var dataSource = $("#Grid").data("kendoGrid").dataSource;
+            var item = dataSource.getByUid(uid);
+            //alert("before update is dirty = " + item.dirty);
+            item.WOEstFinishDate = getServerDate;
+            item.dirty = true;
+        }
+    }
+
+    //show server errors if any
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+
+            var grid = $('#Grid').data('kendoGrid');
+            //var gridElement = grid.editable.element;
+
+            //var validationMessageTemplate = kendo.template(
+            //    "<div id='#=field#_validationMessage' " +
+            //        "class='k-widget k-tooltip k-tooltip-validation " +
+            //            "k-invalid-msg field-validation-error' " +
+            //        "style='margin: 0.5em;' data-for='#=field#' " +
+            //        "data-val-msg-for='#=field#' role='alert'>" +
+            //        "<span class='k-icon k-warning'></span>" +
+            //        "#=message#" +
+            //        "<div class='k-callout k-callout-n'></div>" +
+            //    "</div>");
+
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                    //gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]")
+                    //.replaceWith(validationMessageTemplate({ field: key, message: value.errors[0] }));
+                    //gridElement.find("input[name=" + key + "]").focus();
+                }
+            });
+            alert(message);
+
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();   // cancel grid rebind
+            });
+        }
+    }
+</script>

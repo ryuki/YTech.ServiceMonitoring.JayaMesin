@@ -1,0 +1,51 @@
+﻿@model YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.RegisterModel
+
+<table style="width: 330px;vertical-align:top;">
+    <tr>
+        <td style="width: 90%;vertical-align:top;">
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.UserName)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.UserName)
+                @Html.ValidationMessageFor(model => model.UserName)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Email)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Email)
+                @Html.ValidationMessageFor(model => model.Email)
+            </div>
+
+           @* <div class="editor-label">
+                @Html.LabelFor(model => model.Password)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Password)
+                @Html.ValidationMessageFor(model => model.Password)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.ConfirmPassword)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.ConfirmPassword)
+                @Html.ValidationMessageFor(model => model.ConfirmPassword)
+            </div>*@
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Role)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Role)
+                @Html.ValidationMessageFor(model => model.Role)
+            </div>
+
+        </td>
+    </tr>
+</table>
+
+

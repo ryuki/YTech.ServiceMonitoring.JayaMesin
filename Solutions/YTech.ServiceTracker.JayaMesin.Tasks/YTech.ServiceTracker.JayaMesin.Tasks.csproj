@@ -87,6 +87,8 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="MCustomerTasks.cs" />
+    <Compile Include="TReferenceTasks.cs" />
+    <Compile Include="TWOLogTasks.cs" />
     <Compile Include="TWOStatusTasks.cs" />
     <Compile Include="TWOTasks.cs" />
   </ItemGroup>
@@ -94,6 +96,10 @@
     <ProjectReference Include="..\YTech.ServiceTracker.JayaMesin.Domain\YTech.ServiceTracker.JayaMesin.Domain.csproj">
       <Project>{8DEF56CD-601E-443C-9DCE-C4EC54C0B6A6}</Project>
       <Name>YTech.ServiceTracker.JayaMesin.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\YTech.ServiceTracker.JayaMesin.Enums\YTech.ServiceTracker.JayaMesin.Enums.csproj">
+      <Project>{221ea9cd-4b30-41cc-9a7c-36ee39191819}</Project>
+      <Name>YTech.ServiceTracker.JayaMesin.Enums</Name>
     </ProjectReference>
     <ProjectReference Include="..\YTech.ServiceTracker.JayaMesin.Infrastructure\YTech.ServiceTracker.JayaMesin.Infrastructure.csproj">
       <Project>{9544D94B-9B6E-4B61-8A09-88382205BF86}</Project>

@@ -1,2 +1,7 @@
 ﻿@model string
-@(Html.TextAreaFor(o => o, new { cols="23", rows="3",@class = "k-textbox" }))
+@(Html.TextAreaFor(o => o, new { cols="150",@style="width:300px", rows="5",@class = "k-textbox" }))
+
+@*@(Html.Kendo().EditorFor(m => m)
+.Tools(tools => tools.Clear())
+      .HtmlAttributes(new { @style="width:300px;height:80px;" })
+)*@

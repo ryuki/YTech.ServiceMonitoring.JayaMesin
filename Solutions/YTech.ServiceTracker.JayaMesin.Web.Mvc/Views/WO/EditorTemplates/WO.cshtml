@@ -1,198 +1,185 @@
 ﻿@model YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.WOViewModel
 @Html.HiddenFor(model => model.WOID)
+@Html.HiddenFor(model => model.HiddenCustomerId)
 
-<style type="text/css">
-    .table {
-        margin: 0 auto;
-        text-align: left;
-        width: 630px;
-    }
-
-        .table .thead {
-            background: black;
-            color: white;
-            text-align: left;
-        }
-
-        .table .tr {
-            clear: left;
-            margin: 0;
-            padding: 0;
-        }
-
-        .table .thead .tr .th {
-            float: left;
-            font-weight: bold;
-            padding: 0;
-        }
-
-        .table .tbody > div:nth-child(even) {
-            background: #DDD;
-            color: #000;
-        }
-
-        .table .tbody > div > div {
-            color: #000000;
-            float: left;
-            font-weight: normal;
-            padding: 0;
-            text-align: left;
-        }
-
-        .table div.first_name {
-            width: 50%;
-        }
-
-        .table div.full_row {
-            width: 100%;
-        }
-</style>
-
-@*<table>
+<table style="width: 630px;vertical-align:top;">
     <tr>
-        <td style="vertical-align: top;margin:30px;">*@
-
-<div class="table">
-
-    <div class="tbody">
-        <div>
-            <div class="first_name">
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WONo)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WONo)
-                    @Html.ValidationMessageFor(model => model.WONo)
-                </div>
-               
-                 <div class="editor-label">
-                    @Html.LabelFor(model => model.Customer)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.Customer)
-                    @Html.ValidationMessageFor(model => model.Customer)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WODate)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WODate)
-                    @Html.ValidationMessageFor(model => model.WODate)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOItemType)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOItemType)
-                    @Html.ValidationMessageFor(model => model.WOItemType)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOItemSN)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOItemSN)
-                    @Html.ValidationMessageFor(model => model.WOItemSN)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOIsGuarantee)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOIsGuarantee)
-                    @Html.ValidationMessageFor(model => model.WOIsGuarantee)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOEquipments)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOEquipments)
-                    @Html.ValidationMessageFor(model => model.WOEquipments)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOScStore)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOScStore)
-                    @Html.ValidationMessageFor(model => model.WOScStore)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOPriority)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOPriority)
-                    @Html.ValidationMessageFor(model => model.WOPriority)
-                </div>
-
+        <td style="width: 50%;vertical-align:top;">
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WONo)
             </div>
-            <div class="first_name">
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOLastStatus)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOLastStatus)
-                    @Html.ValidationMessageFor(model => model.WOLastStatus)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOEstFinishDate)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOEstFinishDate)
-                    @Html.ValidationMessageFor(model => model.WOEstFinishDate)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOTotal)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOTotal)
-                    @Html.ValidationMessageFor(model => model.WOTotal)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WODp)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WODp)
-                    @Html.ValidationMessageFor(model => model.WODp)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOTakenDate)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOTakenDate)
-                    @Html.ValidationMessageFor(model => model.WOTakenDate)
-                </div>
-
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOInvoiceNo)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOInvoiceNo)
-                    @Html.ValidationMessageFor(model => model.WOInvoiceNo)
-                </div>
-               
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.WONo, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.WONo)
             </div>
-            <div class="full_row">
-                
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.WOBrokenDesc)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.WOBrokenDesc)
-                    @Html.ValidationMessageFor(model => model.WOBrokenDesc)
-                </div>
 
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Customer)
             </div>
-        </div>
-    </div>
-</div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Customer)
+                @Html.ValidationMessageFor(model => model.Customer)
+                @Html.Button("","<span class=\"k-icon k-add\"><\\/span>",HtmlButtonType.Button,"OpenNewCustomer();")
+                @*<span><a class="k-button" href="/ServiceTracker/WO/WO_Read?Grid-mode=insert"><span class="k-icon k-add"></span></a></span>*@
+            </div>
 
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WODate)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WODate)
+                @Html.ValidationMessageFor(model => model.WODate)
+            </div>
 
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOItemType)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOItemType)
+                @Html.ValidationMessageFor(model => model.WOItemType)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOItemSN)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOItemSN)
+                @Html.ValidationMessageFor(model => model.WOItemSN)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOIsGuarantee)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOIsGuarantee)
+                @Html.ValidationMessageFor(model => model.WOIsGuarantee)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOScStore)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOScStore)
+                @Html.ValidationMessageFor(model => model.WOScStore)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOPriority)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOPriority)
+                @Html.ValidationMessageFor(model => model.WOPriority)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOStartDate)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOStartDate)
+                @Html.ValidationMessageFor(model => model.WOStartDate)
+            </div>
+        </td>
+        <td style="width: 50%;vertical-align:top;">
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOLastStatus)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOLastStatus)
+                @Html.ValidationMessageFor(model => model.WOLastStatus)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOEstFinishDate)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOEstFinishDate)
+                @Html.ValidationMessageFor(model => model.WOEstFinishDate)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOTotal)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOTotal)
+                @Html.ValidationMessageFor(model => model.WOTotal)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WODp)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WODp)
+                @Html.ValidationMessageFor(model => model.WODp)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOSisa)
+            </div>
+            <div class="editor-field">
+                 @Html.TextBoxFor(model => model.WOSisa, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.WOSisa)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOTakenDate)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOTakenDate)
+                @Html.ValidationMessageFor(model => model.WOTakenDate)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOInvoiceNo)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOInvoiceNo)
+                @Html.ValidationMessageFor(model => model.WOInvoiceNo)
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="vertical-align:top;">
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOEquipments)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOEquipments)
+                @Html.ValidationMessageFor(model => model.WOEquipments)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOComplain)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOComplain)
+                @Html.ValidationMessageFor(model => model.WOComplain)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOBrokenDesc)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOBrokenDesc)
+                @Html.ValidationMessageFor(model => model.WOBrokenDesc)
+            </div>
+        </td>
+    </tr>
+</table>
+
+@(Html.Kendo().Window()
+    .Name("NewCustomerWindow")
+    .Title("Daftar Konsumen")
+    .Content("Loading Daftar Konsumen ...")
+    .LoadContentFrom("Index", "Customer",new {
+        isModal = true
+    })
+    .Events(ev => ev.Close("onCustClose"))
+    .Iframe(true)
+    .Draggable()
+    .Resizable()
+    .Width(600)
+    .Height(400)
+    .Modal(true)
+    .Visible(false)    
+)

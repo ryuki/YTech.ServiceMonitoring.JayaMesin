@@ -1,8 +1,17 @@
 ﻿@model YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.CustomerViewModel
 
 @(Html.Kendo().DropDownListFor(m => m)
-        .OptionLabel("Pilih konsumen")
+        .OptionLabel("-Pilih Konsumen-")
         .DataValueField("CustomerID")
         .DataTextField("CustomerName")
-        .BindTo((System.Collections.IEnumerable)ViewData["customers"])
+        //.BindTo((System.Collections.IEnumerable)ViewData["customers"])
+         .HtmlAttributes(new { @style="width:150px;" })
+         .AutoBind(false)
+         .Events(e => e.Change("onCustomerChange"))
+         .DataSource(source => {
+              source.Read(read =>
+              {
+                  read.Action("PopulateCustomers", "WO");                  
+              });              
+          })
 )

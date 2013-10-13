@@ -37,6 +37,7 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
             mapping.Map(x => x.WOTakenDate, "WO_TAKEN_DATE");
             mapping.Map(x => x.WOBrokenDesc, "WO_BROKEN_DESC");
             mapping.Map(x => x.WODesc, "WO_DESC");
+            mapping.Map(x => x.WOComplain, "WO_COMPLAIN");
 
             mapping.Map(x => x.DataStatus, "DATA_STATUS");
             mapping.Map(x => x.CreatedBy, "CREATED_BY");

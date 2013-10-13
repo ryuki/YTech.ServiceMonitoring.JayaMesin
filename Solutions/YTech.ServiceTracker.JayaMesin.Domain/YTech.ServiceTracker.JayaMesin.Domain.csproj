@@ -85,14 +85,20 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Contracts\IMCustomerRepository.cs" />
+    <Compile Include="Contracts\ITReferenceRepository.cs" />
+    <Compile Include="Contracts\ITWOLogRepository.cs" />
     <Compile Include="Contracts\ITWORepository.cs" />
     <Compile Include="Contracts\ITWOStatusRepository.cs" />
     <Compile Include="Contracts\Tasks\IMCustomerTasks.cs" />
+    <Compile Include="Contracts\Tasks\ITReferenceTasks.cs" />
+    <Compile Include="Contracts\Tasks\ITWOLogTasks.cs" />
     <Compile Include="Contracts\Tasks\ITWOStatusTasks.cs" />
     <Compile Include="Contracts\Tasks\ITWOTasks.cs" />
     <Compile Include="MCustomer.cs" />
     <Compile Include="MyEntity1.cs" />
+    <Compile Include="TReference.cs" />
     <Compile Include="TWO.cs" />
+    <Compile Include="TWOLog.cs" />
     <Compile Include="TWOStatus.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +120,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Contracts\Queries\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YTech.ServiceTracker.JayaMesin.Enums\YTech.ServiceTracker.JayaMesin.Enums.csproj">
+      <Project>{221ea9cd-4b30-41cc-9a7c-36ee39191819}</Project>
+      <Name>YTech.ServiceTracker.JayaMesin.Enums</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

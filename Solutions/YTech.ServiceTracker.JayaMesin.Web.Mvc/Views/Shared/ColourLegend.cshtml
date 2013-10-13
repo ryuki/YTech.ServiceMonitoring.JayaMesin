@@ -1,0 +1,67 @@
+﻿<span id="showLegend" class="k-button">Legenda Warna</span>
+
+@(Html.Kendo().Window()
+    .Name("legend")
+    .Title("Legenda Warna")
+     .Content(@<text>
+    <table>
+        <tr>
+            <td style="background-color: #D5D5CA; width: 50px;">&nbsp;</td>
+            <td>Baru_Masuk</td>
+        </tr>
+        <tr>
+            <td style="background-color: #EBEB99">&nbsp;</td>
+            <td>Sedang_Dikerjakan</td>
+        </tr>
+        <tr>
+            <td style="background-color: #9494FF">&nbsp;</td>
+            <td>Menunggu_Persetujuan</td>
+        </tr>
+        <tr>
+            <td style="background-color: #FF66A3">&nbsp;</td>
+            <td>Menunggu_Part</td>
+        </tr>
+        <tr>
+            <td style="background-color: #70DB70">&nbsp;</td>
+            <td>Selesai</td>
+        </tr>
+        <tr>
+            <td style="background-color: #FF0000">&nbsp;</td>
+            <td>Batal</td>
+        </tr>
+        <tr>
+            <td style="background-color: #66C2FF">&nbsp;</td>
+            <td>Closed</td>
+        </tr>
+        <tr>
+            <td><img src='@(Url.Content("~/Content/img/new_header.png"))' /></td>
+            <td>Update Baru Belum Dibaca</td>
+        </tr>
+        <tr>
+            <td><img src='@(Url.Content("~/Content/img/error3.gif"))' /></td>
+            <td>Prioritas Urgent</td>
+        </tr>
+    </table>
+</text>)
+    .Draggable()
+    .Resizable()
+    .Width(300)
+    .Height(175)
+    .Modal(true)
+    .Visible(false)
+    .Events(ev => ev.Close("onClose"))
+)
+
+<script type="text/javascript">
+    function onClose() {
+        $("#showLegend").show();
+    }
+
+    $(document).ready(function () {
+        $("#showLegend").bind("click", function () {
+            $("#legend").data("kendoWindow").center();
+            $("#legend").data("kendoWindow").open();
+            $("#showLegend").hide();
+        });
+    });
+</script>

@@ -54,5 +54,18 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
             var customers = this._customerRepository.Get(custId); ;
             return customers;
         }
+
+        public MCustomer GetLastCreatedCustomer()
+        {
+            MCustomer cust = this._customerRepository.GetLastCreatedCustomer();
+            return cust;
+        }
+
+
+        public IEnumerable<MCustomer> GetListNotDeleted()
+        {
+            var customers = this._customerRepository.GetListNotDeleted(); ;
+            return customers;
+        }
     }
 }

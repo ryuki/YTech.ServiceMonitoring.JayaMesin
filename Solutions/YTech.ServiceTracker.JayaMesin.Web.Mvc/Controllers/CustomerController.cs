@@ -7,10 +7,12 @@ using YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels;
 using System.Linq;
 using YTech.ServiceTracker.JayaMesin.Domain;
 using System;
+using System.Web;
 
 namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
 {
     [HandleError]
+    [Authorize]
     public partial class CustomerController : Controller
     {
         private readonly IMCustomerTasks customerTasks;
@@ -19,8 +21,14 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             this.customerTasks = customerTasks;
         }
 
-        public ActionResult Index()
+        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS")] 
+        [AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult Index(bool? isModal)
         {
+            if (isModal.HasValue)
+                if (isModal.HasValue)
+                    return View("Index", "~/Views/Shared/_NoMenuLayout.cshtml");
+
             return View();
         }
 
@@ -37,9 +45,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                 MCustomer cust = new MCustomer();
                 cust.SetAssignedIdTo(Guid.NewGuid().ToString());
 
-                cust.CustomerName = custVM.CustomerName;
-                cust.CustomerPhone = custVM.CustomerPhone;
-                cust.CustomerAddress = custVM.CustomerAddress;
+                ConvertToCustomer(custVM, cust);
 
                 cust.CreatedDate = DateTime.Now;
                 cust.CreatedBy = User.Identity.Name;
@@ -51,23 +57,28 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             return Json(new[] { custVM }.ToDataSourceResult(request, ModelState));
         }
 
+        private static void ConvertToCustomer(CustomerViewModel custVM, MCustomer cust)
+        {
+            cust.CustomerName = custVM.CustomerName;
+            cust.CustomerPhone = custVM.CustomerPhone;
+            cust.CustomerAddress = custVM.CustomerAddress;
+        }
+
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Customers_Update([DataSourceRequest] DataSourceRequest request, CustomerViewModel custVM)
         {
             if (custVM != null && ModelState.IsValid)
             {
-                var target = customerTasks.One(custVM.CustomerID);
-                if (target != null)
+                var cust = customerTasks.One(custVM.CustomerID);
+                if (cust != null)
                 {
-                    target.CustomerName = custVM.CustomerName;
-                    target.CustomerPhone = custVM.CustomerPhone;
-                    target.CustomerAddress = custVM.CustomerAddress;
+                    ConvertToCustomer(custVM, cust);
 
-                    target.ModifiedDate = DateTime.Now;
-                    target.ModifiedBy = User.Identity.Name;
-                    target.DataStatus = "Updated";
+                    cust.ModifiedDate = DateTime.Now;
+                    cust.ModifiedBy = User.Identity.Name;
+                    cust.DataStatus = "Updated";
 
-                    customerTasks.Update(target);
+                    customerTasks.Update(cust);
                 }
             }
 
@@ -79,19 +90,21 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
         {
             if (custVM != null)
             {
-                var target = customerTasks.One(custVM.CustomerID);
-                if (target != null)
+                var cust = customerTasks.One(custVM.CustomerID);
+                if (cust != null)
                 {
-                    customerTasks.Delete(target);
+                    cust.ModifiedDate = DateTime.Now;
+                    cust.ModifiedBy = User.Identity.Name;
+                    cust.DataStatus = "Deleted";
+                    customerTasks.Update(cust);
                 }
             }
-
             return Json(ModelState.ToDataSourceResult());
         }
 
         private IEnumerable<CustomerViewModel> GetCustomers()
         {
-            var customers = this.customerTasks.GetAllCustomers();
+            var customers = this.customerTasks.GetListNotDeleted();
 
             return from cust in customers
                    select new CustomerViewModel
@@ -102,6 +115,12 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             CustomerAddress = cust.CustomerAddress
         };
 
+        }
+
+        public ActionResult GetLastCreatedCustomer(string random)
+        {
+            MCustomer cust = customerTasks.GetLastCreatedCustomer();
+            return Content(cust.Id);
         }
 
     }

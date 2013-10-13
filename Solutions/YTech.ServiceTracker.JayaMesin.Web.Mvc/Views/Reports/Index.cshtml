@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = "Laporan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.ReportsViewModel
+<div id="result"></div>
+
+
+
+@using (Html.BeginForm())
+{
+    <div class="editor-label">
+        @Html.LabelFor(model => model.RptDateFrom)
+    </div>
+    <div class="editor-field">
+        @Html.EditorFor(model => model.RptDateFrom)
+        @Html.ValidationMessageFor(model => model.RptDateFrom)
+    </div>
+    
+    <div class="editor-label">
+        @Html.LabelFor(model => model.RptDateTo)
+    </div>
+    <div class="editor-field">
+        @Html.EditorFor(model => model.RptDateTo)
+        @Html.ValidationMessageFor(model => model.RptDateTo)
+    </div>
+    @Html.Button("btnGenerate", "OK", HtmlButtonType.Button)
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("button[name='btnGenerate']").bind("click", function () {
+            //alert("test");
+            var f = $('form');
+            $.ajax({
+                url: location.pathname + location.search,
+                type: 'post',
+                data: f.serialize(),
+                success: function (result) {
+                    var urlreport = '@(Url.Content("~/ReportViewer.aspx?rpt="))' + result.UrlReport;
+                    //alert(urlreport);
+                    window.open(urlreport);
+                }
+            });
+        });
+        return false;
+    });
+</script>

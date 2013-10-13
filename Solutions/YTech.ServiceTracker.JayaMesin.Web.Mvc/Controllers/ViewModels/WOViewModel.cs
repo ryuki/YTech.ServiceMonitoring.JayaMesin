@@ -10,25 +10,19 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
 {
     public class WOViewModel
     {
+        public WOViewModel()
+        {
+            //set new customer to woviewmodel to prevent error in web when create new WO
+            _Customer = new CustomerViewModel();
+        }
+
         [ScaffoldColumn(false)]
-        //string _WOID;
-        //public string WOID
-        //{
-        //    get
-        //    {
-        //        if (string.IsNullOrEmpty(_WOID))
-        //            _WOID = Guid.NewGuid().ToString();
-        //        return _WOID;
-        //    }
-        //    set { _WOID = value; }
-        //}
         public string WOID
         {
             get;
             set;
         }
 
-        [Required]
         [DisplayName("No WO")]
         public string WONo
         {
@@ -43,6 +37,27 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
             set;
         }
 
+        [DisplayName("Id Konsumen")]
+        public string HiddenCustomerId
+        {
+            get;
+            set;
+        }
+
+        [DisplayName("HP Konsumen")]
+        public string CustomerPhone
+        {
+            get;
+            set;
+        }
+
+        [DisplayName("Alamat Konsumen")]
+        public string CustomerAddress
+        {
+            get;
+            set;
+        }
+
         CustomerViewModel _Customer;
         [Required]
         [DisplayName("Konsumen")]
@@ -51,20 +66,13 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
         {
             get
             {
-                //if (_Customer == null)
-                //{
-                //    _Customer = new CustomerViewModel();
-                //    _Customer.CustomerID = string.Empty;
-                //    _Customer.CustomerName = "Customer baru";
-                //}
                 return _Customer;
             }
             set { _Customer = value; }
         }
-        //public CustomerViewModel Customer { get; set; }
 
         [Required]
-        [DisplayName("Tgl WO")]
+        [DisplayName("Tgl Masuk")]
         [UIHint("Date")]
         public DateTime? WODate
         {
@@ -101,13 +109,15 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
         }
 
         [DisplayName("SC / Toko")]
+        [UIHint("SCToko")]
         public string WOScStore
         {
             get;
             set;
         }
 
-        [DisplayName("Priority")]
+        [DisplayName("Prioritas")]
+        [UIHint("Priority")]
         public string WOPriority
         {
             get;
@@ -123,7 +133,6 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
             set;
         }
 
-        //[Required]
         [DisplayName("Status")]
         [UIHint("WOStatus")]
         public string WOLastStatus
@@ -133,7 +142,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
         }
 
         [DisplayName("Tgl Selesai Dikerjakan")]
-        [UIHint("Date")]
+        [UIHint("DateTime")]
         public DateTime? WOEstFinishDate
         {
             get;
@@ -155,6 +164,23 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
             set;
         }
 
+        [DisplayName("Sisa")]
+        [ReadOnly(true)]
+        public string WOSisa
+        {
+            get
+            {
+                if (WOTotal.HasValue && WODp.HasValue)
+                    return (WOTotal.Value - WODp.Value).ToString("N0");
+                else if (WOTotal.HasValue)
+                    return WOTotal.Value.ToString("N0");
+                else if (WODp.HasValue)
+                    return (WODp.Value*-1).ToString("N0");
+                else
+                    return "0";
+            }
+        }
+
         [DisplayName("No Invoice")]
         public string WOInvoiceNo
         {
@@ -170,7 +196,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
             set;
         }
 
-        [DisplayName("Keterangan Rusak")]
+        [DisplayName("Update")]
         [UIHint("TextArea")]
         public string WOBrokenDesc
         {
@@ -181,6 +207,21 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
         [DisplayName("Keterangan")]
         [UIHint("TextArea")]
         public string WODesc
+        {
+            get;
+            set;
+        }
+
+        [DisplayName("Keluhan")]
+        [UIHint("TextArea")]
+        public string WOComplain
+        {
+            get;
+            set;
+        }
+        
+        [DisplayName("Sudah dibaca?")]
+        public bool HaveBeenRead
         {
             get;
             set;

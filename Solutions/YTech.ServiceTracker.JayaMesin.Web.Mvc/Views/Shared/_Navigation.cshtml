@@ -1,25 +1,50 @@
 ﻿@{ Layout = null; }
-
+@if (Request.IsAuthenticated) {
 @(Html.Kendo().PanelBar()
     .Name("navigationPanelBar")
     .Animation(true)
     .ExpandMode(PanelBarExpandMode.Single)
     .HighlightPath(true)
     .SelectedIndex(0)
+    .HtmlAttributes(new { style = "font-weight:bold;" })
     .Items(panels =>
-    {
+    {        
         panels.Add()
            .Text("Master")
            .Items(childPanels =>
            {
-               childPanels.Add().Text("Konsumen").Action("Index", "Customer");
+               childPanels.Add().Text("Konsumen").Action("Index", "Customer").HtmlAttributes(new { style = "font-weight:normal;" });
            });
-        
+
         panels.Add()
             .Text("Work Order")
             .Items(childPanels =>
             {
-                childPanels.Add().Text("Daftar Work Order").Action("Index", "WO");
+                childPanels.Add().Text("Daftar Work Order")
+                    .Action("Index", "WO").HtmlAttributes(new { style = "font-weight:normal;" });
+                    //.Expanded(true)
+                    //.Items(cucuPanels =>
+                    //{
+                    //    cucuPanels.Add().Text("Aktif").Action("Index", "WO", new { lastStatus = "Aktif" }).HtmlAttributes(new { style = "font-weight:normal;" });
+                    //    cucuPanels.Add().Text("Closed").Action("Index", "WO", new { lastStatus = "Closed" }).HtmlAttributes(new { style = "font-weight:normal;" });
+                    //    cucuPanels.Add().Text("Semua").Action("Index", "WO").HtmlAttributes(new { style = "font-weight:normal;" });
+                    //}
+                    //);
+                childPanels.Add().Text("Update Work Order").Action("UpdateStatus", "WO").HtmlAttributes(new { style = "font-weight:normal;" });
+            });
+
+        panels.Add()
+            .Text("Laporan")
+            .Items(childPanels =>
+            {
+                childPanels.Add().Text("Laporan Harian Servis Printer").Action("Index", "Reports",new {rpt = YTech.ServiceTracker.JayaMesin.Enums.EnumReports.RptWODailyRecap}).HtmlAttributes(new { style = "font-weight:normal;" });
+            });
+
+        panels.Add()
+            .Text("Utiliti")
+            .Items(childPanels =>
+            {
+                childPanels.Add().Text("Daftar User").Action("Index", "Account").HtmlAttributes(new { style = "font-weight:normal;" });
             });
     })
-)
+)}

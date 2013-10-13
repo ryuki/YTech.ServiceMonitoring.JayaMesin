@@ -8,5 +8,6 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts
 {
     public interface ITWOStatusRepository : INHibernateRepositoryWithTypedId<TWOStatus, string>
     {
+        IEnumerable<Domain.TWOStatus> GetWOStatus(string woId);
     }
 }

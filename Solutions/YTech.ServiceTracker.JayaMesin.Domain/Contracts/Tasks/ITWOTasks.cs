@@ -12,5 +12,8 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts.Tasks
         TWO Update(TWO wo);
         TWO Delete(TWO wo);
         TWO One(string woId);
+        IEnumerable<TWO> GetWOByDate(DateTime? dateFrom, DateTime? dateTo);
+
+        IEnumerable<TWO> GetListNotDeleted();
     }
 }

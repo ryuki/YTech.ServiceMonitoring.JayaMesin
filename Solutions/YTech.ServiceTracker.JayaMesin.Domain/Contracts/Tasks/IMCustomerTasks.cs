@@ -12,5 +12,7 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts.Tasks
         MCustomer Update(MCustomer cust);
         MCustomer Delete(MCustomer cust);
         MCustomer One(string custId);
+        MCustomer GetLastCreatedCustomer();
+        IEnumerable<MCustomer> GetListNotDeleted();
     }
 }
