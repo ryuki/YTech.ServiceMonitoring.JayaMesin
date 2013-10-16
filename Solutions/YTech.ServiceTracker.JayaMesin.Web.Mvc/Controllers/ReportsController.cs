@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using YTech.ServiceTracker.JayaMesin.Domain.Contracts.Tasks;
 using YTech.ServiceTracker.JayaMesin.Enums;
 using YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels;
+using Microsoft.CSharp;
 
 namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
 {
@@ -32,7 +33,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                     title = "Laporan Harian Servis Printer";
                     break;
             }
-            ViewData["Title"] = title;
+            ViewBag.Title = title;
 
             ReportsViewModel rptVM = new ReportsViewModel();
             return View(rptVM);
@@ -42,13 +43,22 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
         public ActionResult Index(EnumReports rpt, ReportsViewModel rptVM)
         {
             ReportDataSource[] repCol = new ReportDataSource[1];
+            ReportParameterCollection paramCol = null;
             switch (rpt)
             {
                 case EnumReports.RptWODailyRecap:
                     repCol[0] = GetWOs(rptVM.RptDateFrom, rptVM.RptDateTo);
+
+                    //set params 
+                    paramCol = new ReportParameterCollection();
+                    paramCol.Add(new ReportParameter("V_START_DATE", rptVM.RptDateFrom.Value.ToString()));
+                    paramCol.Add(new ReportParameter("V_END_DATE", rptVM.RptDateTo.Value.ToString()));
                     break;
             }
+
+            //send report data source and report params to session data
             Session["ReportData"] = repCol;
+            Session["ReportParams"] = paramCol;
 
             var e = new
             {
@@ -81,6 +91,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                          WOBrokenDesc = wo.WOBrokenDesc,
                          WOLastStatus = wo.WOLastStatus,
                          WOStartDate = wo.WOStartDate,
+                         WOEstFinishDate = wo.WOEstFinishDate,
                          WOTotal = wo.WOTotal,
                          WODp = wo.WODp,
                          WOTakenDate = wo.WOTakenDate,

@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels;
+using Microsoft.CSharp;
 
 namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
 {
@@ -222,13 +223,12 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             string actionName = ControllerContext.RouteData.GetRequiredString("action");
             if (Request.QueryString["content"] != null)
             {
-                //ViewBag.FormAction = "Json" + actionName;
+                ViewBag.FormAction = "Json" + actionName;
                 return PartialView();
             }
             else
             {
-
-                //ViewBag.FormAction = actionName;
+                ViewBag.FormAction = actionName;
                 return View();
             }
         }

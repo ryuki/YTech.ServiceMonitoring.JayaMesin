@@ -110,6 +110,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
 
                 if (allowPrint)
                 {
+                    ReportParameterCollection paramCol = null;
                     ReportDataSource[] repCol = new ReportDataSource[1];
                     //get data source
                     repCol[0] = GetWOById(wo);
@@ -117,6 +118,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                     SaveLog(wo, EnumWOLog.Print);
 
                     Session["ReportData"] = repCol;
+                    Session["ReportParams"] = paramCol;
 
                     success = true;
                     msg = "Print WO success";

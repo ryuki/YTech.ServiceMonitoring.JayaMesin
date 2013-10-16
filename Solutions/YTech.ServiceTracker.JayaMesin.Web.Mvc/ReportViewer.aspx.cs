@@ -23,7 +23,6 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc
 
                 rv.ProcessingMode = ProcessingMode.Local;
                 rv.LocalReport.ReportPath = Server.MapPath(string.Format("~/Views/Reports/{0}.rdlc", rpt));
-
                 rv.LocalReport.DataSources.Clear();
 
                 ReportDataSource[] repCol = Session["ReportData"] as ReportDataSource[];
@@ -33,6 +32,12 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc
                     {
                         rv.LocalReport.DataSources.Add(d);
                     }
+                }
+
+                if (Session["ReportParams"] != null)
+                {
+                    ReportParameterCollection paramCol = Session["ReportParams"] as ReportParameterCollection;
+                    rv.LocalReport.SetParameters(paramCol);
                 }
 
                 rv.LocalReport.Refresh();

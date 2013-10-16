@@ -41,6 +41,7 @@
     @(Html.TextBox("search", "", new { @class = "k-textbox" }))
     @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "searchWO(false);", new { @class = "k-button" }))
     @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchWO(true);", new { @class = "k-button" }))
+    @Html.Partial("_CountDown")
     @Html.Partial("ColourLegend")
 </div>
 </text>);
@@ -92,12 +93,6 @@
 </script>
 
 <script type="text/javascript">
-    //refresh data grid every 2 minutes
-    window.setInterval(function () {
-        var grid = $('#Grid').data().kendoGrid;
-        grid.dataSource.read();
-    }, 300000);
-
     function searchWO(reset) {
         //reset search textbox if reset button clicked
         //alert(reset);
@@ -134,8 +129,8 @@
         //bug fix : refresh after insert new data, 
         //alert(e.type);
         if (e.type === "create" || e.type === "update" || e.type === "destroy") {
-            var grid = $("#Grid").data("kendoGrid");
-            grid.dataSource.read();
+            //call refresh grid and reset timer
+            $("#RefreshGrid").click();
         }
     }
 
@@ -166,9 +161,8 @@
     }
 
     function onCancel(e) {
-        //reload grid when cancel clicked
-        var grid = $("#Grid").data("kendoGrid");
-        grid.dataSource.read();
+        //call refresh grid and reset timer
+        $("#RefreshGrid").click();
     }
 
     function onDataBound(e) {
