@@ -74,8 +74,9 @@
     .ClientDetailTemplateId("woStatusTemplate")
     .DataSource(dataSource => dataSource
         .Ajax()
-        .ServerOperation(false)
         .PageSize(20)
+        .Batch(false)
+        .ServerOperation(false)
         .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
         .Create(create => create.Action("WO_Create", "WO"))
         .Read(read => read.Action("WO_Read", "WO"))
@@ -183,8 +184,11 @@
         //bug fix : refresh after insert new data, 
         //alert(e.type);
         if (e.type === "create" || e.type === "update" || e.type === "destroy") {
-            //call refresh grid and reset timer
-            $("#RefreshGrid").click();
+            //check for errors in the response
+            if (e.response == null || e.response.Errors == null) {
+                //call refresh grid and reset timer
+                $("#RefreshGrid").click();
+            }           
         }
     }
 
@@ -352,6 +356,9 @@
             var message = "Errors:\n";
 
             var grid = $('#Grid').data('kendoGrid');
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();   // cancel grid rebind
+            });
             //var gridElement = grid.editable.element;
 
             //var validationMessageTemplate = kendo.template(
@@ -376,10 +383,6 @@
                 }
             });
             alert(message);
-
-            grid.one("dataBinding", function (e) {
-                e.preventDefault();   // cancel grid rebind
-            });
         }
     }
 </script>

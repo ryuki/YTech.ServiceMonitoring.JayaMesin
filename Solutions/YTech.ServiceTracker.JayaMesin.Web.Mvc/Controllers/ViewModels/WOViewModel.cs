@@ -37,7 +37,8 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
             set;
         }
 
-        [DisplayName("Id Konsumen")]
+        [Required]
+        [DisplayName("Konsumen")]
         public string HiddenCustomerId
         {
             get;
@@ -135,6 +136,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
 
         [DisplayName("Status")]
         [UIHint("WOStatus")]
+        [Required]
         public string WOLastStatus
         {
             get;
