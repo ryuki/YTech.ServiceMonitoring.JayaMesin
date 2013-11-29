@@ -896,7 +896,7 @@
           <IISUrl>http://localhost:51949/ServiceTracker</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>True</UseCustomServer>
-          <CustomServerUrl>http://localhost:81/ServiceTracker</CustomServerUrl>
+          <CustomServerUrl>http://localhost:81/WO</CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>

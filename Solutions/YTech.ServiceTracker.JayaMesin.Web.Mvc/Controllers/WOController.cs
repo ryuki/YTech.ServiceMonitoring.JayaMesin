@@ -87,7 +87,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                                                        select new CustomerViewModel
                                                        {
                                                            CustomerID = cust.Id,
-                                                           CustomerName = cust.CustomerName
+                                                           CustomerName = cust.CustomerName + " - " + cust.CustomerPhone
                                                        };
             ViewData["customers"] = customers;
             return Json(customers, JsonRequestBehavior.AllowGet);
@@ -424,7 +424,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                    {
                        WOID = wo.Id,
                        Customer = ConvertToCustomerVM(wo.CustomerId),
-                       CustomerName = wo.CustomerId.CustomerName,
+                       CustomerName = wo.CustomerId.CustomerName + " - " + wo.CustomerId.CustomerPhone,
                        CustomerPhone = wo.CustomerId.CustomerPhone,
                        CustomerAddress = wo.CustomerId.CustomerAddress,
                        HiddenCustomerId = wo.CustomerId.Id,

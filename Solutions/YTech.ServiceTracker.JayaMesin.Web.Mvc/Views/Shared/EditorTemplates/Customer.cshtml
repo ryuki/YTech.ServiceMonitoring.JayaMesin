@@ -5,7 +5,7 @@
         .DataValueField("CustomerID")
         .DataTextField("CustomerName")
         //.BindTo((System.Collections.IEnumerable)ViewData["customers"])
-         .HtmlAttributes(new { @style="width:150px;" })
+         .HtmlAttributes(new { @style="width:200px;" })
          .AutoBind(false)
          .Events(e => e.Change("onCustomerChange"))
          .DataSource(source => {
