@@ -489,6 +489,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
         Baru_Masuk,
         Sedang_Dikerjakan,
         Menunggu_Persetujuan,
+        Sudah_Setuju,
         Menunggu_Part,
         Selesai,
         Batal,
