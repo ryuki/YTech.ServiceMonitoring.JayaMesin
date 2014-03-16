@@ -7,13 +7,19 @@ using SharpArch.Domain.DomainModel;
 using System;
 using SharpArch.Domain;
 
+
 namespace YTech.ServiceTracker.JayaMesin.Domain
 {
-    public class TWO : EntityWithTypedId<string>, IHasAssignedId<string>
+    public class TWOHaveRead : EntityWithTypedId<string>, IHasAssignedId<string>
     {
         [DomainSignature]
         public virtual string WONo { get; set; }
-        public virtual MCustomer CustomerId { get; set; }
+        
+        public virtual string CustomerId { get; set; }
+        public virtual string CustomerName { get; set; }
+        public virtual string CustomerAddress { get; set; }
+        public virtual string CustomerPhone { get; set; }
+
         public virtual DateTime? WODate { get; set; }
         public virtual string WOItemType { get; set; }
         public virtual string WOItemSn { get; set; }
@@ -38,9 +44,7 @@ namespace YTech.ServiceTracker.JayaMesin.Domain
         public virtual string ModifiedBy { get; set; }
         public virtual DateTime? ModifiedDate { get; set; }
         public virtual byte[] RowVersion { get; set; }
-
-        public virtual IList<TWOLog> WOLogs { get; protected set; }
-        //public virtual TWOLog WOLog { get; protected set; }
+        public virtual bool HaveBeenRead { get; protected set; }
 
         #region Implementation of IHasAssignedId<string>
 

@@ -109,9 +109,9 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
             return wos;
         }
 
-        public IEnumerable<TWO> GetListNotDeleted()
+        public IEnumerable<TWOHaveRead> GetListNotDeleted(string userName)
         {
-            IEnumerable<Domain.TWO> wos = this._woRepository.GetListNotDeleted();
+            IEnumerable<Domain.TWOHaveRead> wos = this._woRepository.GetListNotDeleted(userName);
             return wos;
         }
     }

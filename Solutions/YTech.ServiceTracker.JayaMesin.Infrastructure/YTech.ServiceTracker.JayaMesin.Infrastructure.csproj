@@ -110,6 +110,7 @@
     <Compile Include="NHibernateMaps\AutoPersistenceModelGenerator.cs" />
     <Compile Include="NHibernateMaps\MCustomerMap.cs" />
     <Compile Include="NHibernateMaps\TReferenceMap.cs" />
+    <Compile Include="NHibernateMaps\TWOHaveReadMap.cs" />
     <Compile Include="NHibernateMaps\TWOLogMap.cs" />
     <Compile Include="NHibernateMaps\TWOMap.cs" />
     <Compile Include="NHibernateMaps\TWOStatusMap.cs" />

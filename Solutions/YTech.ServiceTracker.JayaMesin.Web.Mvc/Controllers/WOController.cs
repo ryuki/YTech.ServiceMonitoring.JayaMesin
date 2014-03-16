@@ -299,7 +299,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             return Json(new[] { WOVM }.ToDataSourceResult(request, ModelState));
         }
 
-        private void ConvertToWO(WOViewModel WOVM, TWO wo,string custId)
+        private void ConvertToWO(WOViewModel WOVM, TWO wo, string custId)
         {
             //wo.WONo = WOVM.WONo;
             wo.CustomerId = GetCustomer(custId);
@@ -417,17 +417,17 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
 
         private IEnumerable<WOViewModel> GetWOs()
         {
-            var wos = this._woTasks.GetListNotDeleted();
+            var wos = this._woTasks.GetListNotDeleted(User.Identity.Name);
 
             return from wo in wos
                    select new WOViewModel
                    {
                        WOID = wo.Id,
-                       Customer = ConvertToCustomerVM(wo.CustomerId),
-                       CustomerName = wo.CustomerId.CustomerName + " - " + wo.CustomerId.CustomerPhone,
-                       CustomerPhone = wo.CustomerId.CustomerPhone,
-                       CustomerAddress = wo.CustomerId.CustomerAddress,
-                       HiddenCustomerId = wo.CustomerId.Id,
+                       Customer = ConvertToCustomerVM(wo.CustomerId, wo.CustomerName),
+                       CustomerName = wo.CustomerName + " - " + wo.CustomerPhone,
+                       CustomerPhone = wo.CustomerPhone,
+                       CustomerAddress = wo.CustomerAddress,
+                       HiddenCustomerId = wo.CustomerId,
                        WODate = wo.WODate,
                        WONo = wo.WONo,
                        WOItemType = wo.WOItemType,
@@ -445,7 +445,9 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                        WOTakenDate = wo.WOTakenDate,
                        WOInvoiceNo = wo.WOInvoiceNo,
                        WOComplain = wo.WOComplain,
-                       HaveBeenRead = _woLogTasks.HaveBeenRead(wo, User.Identity.Name)
+                       HaveBeenRead = wo.HaveBeenRead
+                       //use stored procedure, looping to get read flag make wo list slow response
+                       //HaveBeenRead = _woLogTasks.HaveBeenRead(wo, User.Identity.Name)
                    };
         }
 
@@ -466,18 +468,18 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                    };
         }
 
-        private CustomerViewModel ConvertToCustomerVM(Domain.MCustomer mCustomer)
+        private CustomerViewModel ConvertToCustomerVM(string customerId, string customerName)
         {
             CustomerViewModel custVM = new CustomerViewModel();
-            if (mCustomer == null)
+            if (string.IsNullOrEmpty(customerId))
             {
                 custVM.CustomerID = string.Empty;
                 custVM.CustomerName = "Select a value";
             }
             else
             {
-                custVM.CustomerID = mCustomer.Id;
-                custVM.CustomerName = mCustomer.CustomerName;
+                custVM.CustomerID = customerId;
+                custVM.CustomerName = customerName;
             }
             return custVM;
         }

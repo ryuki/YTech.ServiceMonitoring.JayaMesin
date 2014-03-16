@@ -76,7 +76,7 @@
         .Ajax()
         .PageSize(20)
         .Batch(false)
-        .ServerOperation(false)
+        .ServerOperation(true)
         .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
         .Create(create => create.Action("WO_Create", "WO"))
         .Read(read => read.Action("WO_Read", "WO"))
@@ -112,6 +112,7 @@
             })
             .DataSource(dataSource => dataSource
                 .Ajax()
+                .ServerOperation(true)
                 .Read(read => read.Action("WOStatus_Read", "WO", new { woID = "#=WOID#" }))
             )
             .Sortable()

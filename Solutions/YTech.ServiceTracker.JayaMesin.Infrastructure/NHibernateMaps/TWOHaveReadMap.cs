@@ -7,20 +7,24 @@ using YTech.ServiceTracker.JayaMesin.Domain;
 
 namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
 {
-    public class TWOMap : IAutoMappingOverride<TWO>
+    public class TWOHaveReadMap : IAutoMappingOverride<TWOHaveRead>
     {
-        public void Override(FluentNHibernate.Automapping.AutoMapping<TWO> mapping)
+        public void Override(FluentNHibernate.Automapping.AutoMapping<TWOHaveRead> mapping)
         {
-            mapping.DynamicUpdate();
-            mapping.DynamicInsert();
-            mapping.SelectBeforeUpdate();
-
-            mapping.Table("dbo.T_WO");
+            //use virtual table (not present in database) to display in wo list
+            mapping.Table("dbo.T_WO_HAVE_READ");
+            mapping.ReadOnly();
             mapping.Id(x => x.Id, "WO_ID")
                  .GeneratedBy.Assigned();
 
             mapping.Map(x => x.WONo, "WO_NO");
-            mapping.References(x => x.CustomerId, "CUSTOMER_ID").Fetch.Join();
+            //mapping.References(x => x.CustomerId, "CUSTOMER_ID").Fetch.Join();
+
+            mapping.Map(x => x.CustomerId, "CUSTOMER_ID");
+            mapping.Map(x => x.CustomerName, "CUSTOMER_NAME");
+            mapping.Map(x => x.CustomerPhone, "CUSTOMER_PHONE");
+            mapping.Map(x => x.CustomerAddress, "CUSTOMER_ADDRESS");
+
             mapping.Map(x => x.WODate, "WO_DATE");
             mapping.Map(x => x.WOItemType, "WO_ITEM_TYPE");
             mapping.Map(x => x.WOItemSn, "WO_ITEM_SN");
@@ -46,15 +50,7 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
             mapping.Map(x => x.ModifiedDate, "MODIFIED_DATE");
             mapping.Map(x => x.RowVersion, "ROW_VERSION").ReadOnly();
 
-
-            //mapping.HasOne(x => x.WOLog)
-            //    .Class<TWOLog>()
-            //    .ForeignKey("WO_ID");
-
-            mapping.HasMany(x => x.WOLogs)
-                .AsBag()
-                .Inverse()
-                .KeyColumn("WO_ID");
+            mapping.Map(x => x.HaveBeenRead, "HaveBeenRead").ReadOnly();
         }
     }
 }
