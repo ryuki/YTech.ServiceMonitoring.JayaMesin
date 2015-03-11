@@ -1,0 +1,124 @@
+﻿@{
+    ViewBag.Title = "Tracking Work Order";
+}
+
+@model YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.WOTrackingViewModel
+<style>
+    table {
+        display: table;
+        border-collapse: separate;
+        border-spacing: 2px;
+        border-color: gray;
+    }
+
+    .trackH {
+        background: #103293;
+        text-align: center;
+        color: #fff;
+    }
+
+    .trackC {
+        background: #e0e0e0;
+        text-align: left;
+        color: #000;
+    }
+
+    .btnSearch {
+        background: rgb(76, 142, 250);
+        border: 0;
+        border-radius: 2px;
+        box-sizing: border-box;
+        color: #fff;
+        cursor: pointer;
+        font-size: .875em;
+        margin: 6px 0 0;
+        padding: 4px 26px;
+        height: 32px;
+        transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .top {
+        padding: 3px 0px 3px 7px;
+        color: #fff;
+        font-family: 'LeagueGothicRegular';
+        text-decoration: none;
+        font-size: 20px;
+        font-weight: 100;
+        background-color: #103293;
+        border-bottom: 1px #333 solid;
+    }
+
+    .middle {
+        padding: 3px 0px 3px 7px;
+    }
+
+    .search {
+        padding: 0px;
+    }
+</style>
+@if (!Model.FirstLoad)
+            {    
+                <text>
+    <div class="top">
+        <img src="../Content/img/track.jpg" width="32" height="20" />
+        Tracking Servis
+    </div>
+ </text>
+}
+    <div class="middle">
+        @using (Html.BeginForm("Tracking", "WO", FormMethod.Post, new { target = Model.FirstLoad ? "_blank" : "_self" }))
+        {
+            <label for="Search" class="lbl">
+                Masukkan No WO di kotak dibawah ini, lalu klik tombol Cari (contoh:WO014xxxxx)</label>
+            <div class="search">
+                <input id="Search" name="Search" type="text" style="width: 160px; height: 32px;" /><br />
+                <input id="Button1" type="submit" value="Cari" class="btnSearch" />
+            </div>
+        }
+    </div>
+    <div class="bottom">
+        <table border="1" cellpadding="2" cellspacing="2" style='border-collapse: collapse; table-layout: fixed; border-color: black'>
+            @if (string.IsNullOrEmpty(Model.StatusMessage) && !Model.FirstLoad)
+            {    
+                <text>
+                <thead style="background-color: lightblue; text-align: center">
+                    <tr class="trackH">
+                        <td style="text-align: center">No WO
+                        </td>
+                        @* <td class=xl15376 >Nama Konsumen
+                </td>*@
+                        <td class="xl15376">Tanggal Masuk 
+                        </td>
+                        <td class="xl15376">Status
+                        </td>
+                    </tr>
+
+                </thead>
+                </text>
+                for (var i = 0; i < Model.WOs.Count; i++)
+                {
+                <text>
+                <tr class="trackC">
+                    <td>@Html.ActionLink(Model.WOs[i].WONo, "WODetail", new { WoId = Model.WOs[i].WOID }, new { target = "_blank" })</td>
+                    @*<td>@Html.DisplayFor(m => Model.WOs[i].CustomerName)</td>*@
+                    <td>@Html.DisplayFor(m => Model.WOs[i].WODate)</td>
+                    <td>@Html.DisplayFor(m => Model.WOs[i].WOLastStatus)</td>
+                </tr></text>
+                }
+            }
+             @if (!string.IsNullOrEmpty(Model.StatusMessage))
+            {
+                <text>
+                <h3>@Model.StatusMessage</h3></text>
+            }
+        </table>
+        @if (string.IsNullOrEmpty(Model.StatusMessage) && !Model.FirstLoad)
+        {
+            <text>
+            <div>
+                <h4>*Klik Nomor WO untuk detail</h4>
+            </div>
+            </text>
+        }
+    </div>
+

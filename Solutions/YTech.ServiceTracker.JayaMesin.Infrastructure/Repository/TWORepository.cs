@@ -40,5 +40,13 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.Repository
             //List<TWO> result = new List<TWO>(q.List());
             //return result;
         }
+            
+        public TWO GetWOByWONo(string woNo)
+        {
+            ICriteria criteria = Session.CreateCriteria(typeof(TWO));
+            criteria.Add(Expression.Eq("WONo", woNo));
+            criteria.Add(Expression.Not(Expression.Eq("DataStatus", "Deleted")));
+            return criteria.UniqueResult<TWO>();
+        }
     }
 }

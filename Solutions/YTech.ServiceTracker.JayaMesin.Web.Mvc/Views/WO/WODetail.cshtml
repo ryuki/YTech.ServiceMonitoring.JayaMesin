@@ -1,0 +1,164 @@
+﻿@{
+    ViewBag.Title = "Detail Work Order";
+}
+
+<style>
+    table {
+        display: table;
+        border-collapse: separate;
+        border-spacing: 2px;
+        border-color: gray;
+        width: 830px;
+        vertical-align: top;
+    }
+
+    .trackH {
+        background: #103293;
+        text-align: center;
+        color: #fff;
+    }
+
+    .trackC {
+        background: #e0e0e0;
+        text-align: left;
+        color: #000;
+    }
+
+    body {
+        text-align: center;
+    }
+</style>
+
+@model YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.WODetailViewModel
+<h1>Detail Work Order
+</h1>
+
+<table align="center">
+    <tr>
+        <td style="width: 30%; vertical-align: top;">
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WONo)
+            </div>
+            <div class="trackC">
+                @Html.DisplayTextFor(model => model.Wo.WONo)&nbsp;
+            </div>
+
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WODate)
+            </div>
+            <div class="trackC">
+                @Html.DisplayFor(model => model.Wo.WODate)&nbsp;
+            </div>
+
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WOItemType)
+            </div>
+            <div class="trackC">
+                @Html.DisplayTextFor(model => model.Wo.WOItemType)&nbsp;
+            </div>
+
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WOItemSN)
+            </div>
+            <div class="trackC">
+                @Html.DisplayTextFor(model => model.Wo.WOItemSN)&nbsp;
+            </div>
+
+        </td>
+        <td style="width: 30%; vertical-align: top;">
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WOLastStatus)
+            </div>
+            <div class="trackC">
+                @Html.DisplayTextFor(model => model.Wo.WOLastStatus)&nbsp;
+            </div>
+
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WORemarkStatus)
+            </div>
+            <div class="trackC">
+                @Html.DisplayTextFor(model => model.Wo.WORemarkStatus)&nbsp;
+            </div>
+
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WOReceivedBy)
+            </div>
+            <div class="trackC">
+                @Html.DisplayTextFor(model => model.Wo.WOReceivedBy)&nbsp;
+            </div>
+
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WORepairedBy)
+            </div>
+            <div class="trackC">
+                @Html.DisplayTextFor(model => model.Wo.WORepairedBy)&nbsp;
+            </div>
+        </td>
+        <td style="width: 30%; vertical-align: top;">
+
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WOTotal)
+            </div>
+            <div class="trackC" style="text-align: right; font-size: 14pt; font-weight: bold;">
+                Rp @Html.DisplayFor(model => model.Wo.WOTotal)&nbsp;
+            </div>
+
+            @*  <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WODp)
+            </div>
+            <div class="trackC">
+                @Html.DisplayTextFor(model => model.Wo.WODp)
+            </div>*@
+
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WOSisa)
+            </div>
+            <div class="trackC" style="text-align: right; font-size: 14pt; font-weight: bold;">
+                Rp @Html.DisplayTextFor(model => model.Wo.WOSisa)&nbsp;
+            </div>
+
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" style="vertical-align: top;">
+
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WOEquipments)
+            </div>
+            <div class="trackC">
+                @Html.DisplayTextFor(model => model.Wo.WOEquipments)&nbsp;
+            </div>
+
+            <div class="trackH">
+                @Html.LabelFor(model => model.Wo.WOComplain)
+            </div>
+            <div class="trackC">
+                @Html.DisplayTextFor(model => model.Wo.WOComplain)&nbsp;
+            </div>
+
+        </td>
+    </tr>
+</table>
+
+<h3>Histori</h3>
+<table align="center">
+    <thead>
+        <tr class="trackH">
+            <td>Tanggal
+            </td>
+            <td>Status
+            </td>
+            <td>Keterangan
+            </td>
+        </tr>
+
+    </thead>
+    @for (var i = 0; i < Model.WOStatus.Count(); i++)
+    {
+        <tr class="trackC">
+            <td>@Html.DisplayFor(m => Model.WOStatus[i].WOStatusDate)</td>
+            <td>@Html.DisplayFor(m => Model.WOStatus[i].WOStatus)</td>
+            <td>@Html.DisplayFor(m => Model.WOStatus[i].WOStatusDesc)</td>
+        </tr>
+    }
+</table>

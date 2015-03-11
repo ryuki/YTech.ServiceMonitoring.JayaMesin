@@ -10,5 +10,6 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts
     {
         IEnumerable<TWO> GetWOByDate(DateTime? dateFrom, DateTime? dateTo);
         IEnumerable<TWOHaveRead> GetListNotDeleted(string userName);
+        TWO GetWOByWONo(string woNo);
     }
 }

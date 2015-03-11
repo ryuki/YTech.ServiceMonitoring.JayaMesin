@@ -15,7 +15,6 @@ using Microsoft.Reporting.WebForms;
 namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
 {
     [HandleError]
-    [Authorize]
     public class WOController : Controller
     {
         private readonly IMCustomerTasks _customerTasks;
@@ -56,6 +55,115 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             PopulateSCToko();
             PopulatePriority();
             return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult Tracking()
+        {
+            WOTrackingViewModel vm = new WOTrackingViewModel();
+            IList<WOViewModel> wos = new List<WOViewModel>();
+            vm.Search = string.Empty;
+            vm.WOs = wos;
+            vm.FirstLoad = true;
+            return View(vm);
+        }
+
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Tracking(WOTrackingViewModel woTrackVM)
+        {
+            IList<WOViewModel> wos = new List<WOViewModel>();
+            TWO wo = _woTasks.GetWOByWONo(woTrackVM.Search);
+            string msg = string.Empty;
+            if (wo != null)
+            {
+                WOViewModel woVM = new WOViewModel();
+                woVM.WOID = wo.Id;
+                woVM.CustomerName = wo.CustomerId.CustomerName;
+                woVM.CustomerPhone = wo.CustomerId.CustomerPhone;
+                woVM.CustomerAddress = wo.CustomerId.CustomerAddress;
+                woVM.WODate = wo.WODate;
+                woVM.WONo = wo.WONo;
+                woVM.WOItemType = wo.WOItemType;
+                woVM.WOItemSN = wo.WOItemSn;
+                woVM.WOIsGuarantee = wo.WOIsGuarantee;
+                woVM.WOEquipments = wo.WOEquipments;
+                woVM.WOScStore = wo.WOScStore;
+                woVM.WOPriority = wo.WOPriority;
+                woVM.WOBrokenDesc = wo.WOBrokenDesc;
+                woVM.WOLastStatus = wo.WOLastStatus;
+                woVM.WOStartDate = wo.WOStartDate;
+                woVM.WOTotal = wo.WOTotal;
+                woVM.WODp = wo.WODp;
+                woVM.WOTakenDate = wo.WOTakenDate;
+                woVM.WOInvoiceNo = wo.WOInvoiceNo;
+                woVM.WOComplain = wo.WOComplain;
+                woVM.WORemarkStatus = wo.WORemarkStatus;
+                woVM.WOReceivedBy = wo.WOReceivedBy;
+                woVM.WORepairedBy = wo.WORepairedBy;
+                wos.Add(woVM);
+            }
+            else
+            {
+                msg = string.Format("Maaf, WO dengan nomor {0} tidak ditemukan.", woTrackVM.Search);
+            }
+
+            WOTrackingViewModel vm = new WOTrackingViewModel();
+            vm.Search = woTrackVM.Search;
+            vm.WOs = wos;
+            vm.StatusMessage = msg;
+            vm.FirstLoad = false;
+            return View(vm);
+        }
+
+        [AllowAnonymous]
+        public ActionResult WODetail(string WoId)
+        {
+            WOViewModel woVM = new WOViewModel();
+            TWO wo = _woTasks.One(WoId);
+            if (wo != null)
+            {
+                woVM.WOID = wo.Id;
+                woVM.CustomerName = wo.CustomerId.CustomerName;
+                woVM.CustomerPhone = wo.CustomerId.CustomerPhone;
+                woVM.CustomerAddress = wo.CustomerId.CustomerAddress;
+                woVM.WODate = wo.WODate;
+                woVM.WONo = wo.WONo;
+                woVM.WOItemType = wo.WOItemType;
+                woVM.WOItemSN = wo.WOItemSn;
+                woVM.WOIsGuarantee = wo.WOIsGuarantee;
+                woVM.WOEquipments = wo.WOEquipments;
+                woVM.WOScStore = wo.WOScStore;
+                woVM.WOPriority = wo.WOPriority;
+                woVM.WOBrokenDesc = wo.WOBrokenDesc;
+                woVM.WOLastStatus = wo.WOLastStatus;
+                woVM.WOStartDate = wo.WOStartDate;
+                woVM.WOTotal = wo.WOTotal;
+                woVM.WODp = wo.WODp;
+                woVM.WOTakenDate = wo.WOTakenDate;
+                woVM.WOInvoiceNo = wo.WOInvoiceNo;
+                woVM.WOComplain = wo.WOComplain;
+                woVM.WORemarkStatus = wo.WORemarkStatus;
+                woVM.WOReceivedBy = wo.WOReceivedBy;
+                woVM.WORepairedBy = wo.WORepairedBy;
+            }
+            IEnumerable<TWOStatus> woStatus = _woStatusTasks.GetWOStatus(WoId);
+
+            WODetailViewModel vm = new WODetailViewModel();
+            vm.Wo = woVM;
+            vm.WOStatus = (from wos in woStatus
+                           select new WOStatusViewModel
+                           {
+                               WOStatusId = wos.Id,
+                               WOStatusUser = wos.WOStatusUser,
+                               WOStatus = wos.WOStatus,
+                               WOStatusDate = wos.WOStatusDate,
+                               WOStatusBrokenDesc = wos.WOStatusBrokenDesc,
+                               WOStatusStartDate = wos.WOStatusStartDate,
+                               WOStatusFinishDate = wos.WOStatusFinishDate,
+                               WOStatusDesc = wos.WOStatusDesc
+                           }).ToList<WOStatusViewModel>();
+            return View(vm);
         }
 
         private void PopulateWOStatus()
@@ -193,7 +301,10 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                          WODp = wo.WODp,
                          WOTakenDate = wo.WOTakenDate,
                          WOInvoiceNo = wo.WOInvoiceNo,
-                         WOComplain = wo.WOComplain
+                         WOComplain = wo.WOComplain,
+                         WORemarkStatus = wo.WORemarkStatus,
+                         WOReceivedBy = wo.WOReceivedBy,
+                         WORepairedBy = wo.WORepairedBy
                      };
 
             IList<WOViewModel> listWO = new List<WOViewModel>();
@@ -320,6 +431,9 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             wo.WOBrokenDesc = WOVM.WOBrokenDesc;
             wo.WODesc = WOVM.WODesc;
             wo.WOComplain = WOVM.WOComplain;
+            wo.WORemarkStatus = WOVM.WORemarkStatus;
+            wo.WOReceivedBy = WOVM.WOReceivedBy;
+            wo.WORepairedBy = WOVM.WORepairedBy;
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
@@ -372,6 +486,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                     //wo.WOInvoiceNo = WOVM.WOInvoiceNo;
                     //wo.WOTakenDate = WOVM.WOTakenDate;
                     wo.WOBrokenDesc = WOVM.WOBrokenDesc;
+                    wo.WORemarkStatus = WOVM.WORemarkStatus;
                     //wo.WODesc = WOVM.WODesc;
 
                     wo.ModifiedDate = DateTime.Now;
@@ -445,7 +560,10 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                        WOTakenDate = wo.WOTakenDate,
                        WOInvoiceNo = wo.WOInvoiceNo,
                        WOComplain = wo.WOComplain,
-                       HaveBeenRead = wo.HaveBeenRead
+                       HaveBeenRead = wo.HaveBeenRead,
+                       WORemarkStatus = wo.WORemarkStatus,
+                       WOReceivedBy = wo.WOReceivedBy,
+                       WORepairedBy = wo.WORepairedBy
                        //use stored procedure, looping to get read flag make wo list slow response
                        //HaveBeenRead = _woLogTasks.HaveBeenRead(wo, User.Identity.Name)
                    };
@@ -464,7 +582,8 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                        WOStatusDate = wo.WOStatusDate,
                        WOStatusBrokenDesc = wo.WOStatusBrokenDesc,
                        WOStatusStartDate = wo.WOStatusStartDate,
-                       WOStatusFinishDate = wo.WOStatusFinishDate
+                       WOStatusFinishDate = wo.WOStatusFinishDate,
+                       WOStatusDesc = wo.WOStatusDesc
                    };
         }
 

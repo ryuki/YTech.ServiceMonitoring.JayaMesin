@@ -128,6 +128,22 @@
         <td style="width: 50%;vertical-align:top;">
 
             <div class="editor-label">
+                @Html.LabelFor(model => model.WOReceivedBy)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.WOReceivedBy, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.WOReceivedBy)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WORepairedBy)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.WORepairedBy, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.WORepairedBy)
+            </div>
+
+            <div class="editor-label">
                 @Html.LabelFor(model => model.WOTotal)
             </div>
             <div class="editor-field">
@@ -193,7 +209,15 @@
             <div class="editor-field">
                 @Html.EditorFor(model => model.WOLastStatus)
                 @Html.ValidationMessageFor(model => model.WOLastStatus)
-            </div>            
+            </div>   
+            
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WORemarkStatus)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WORemarkStatus)
+                @Html.ValidationMessageFor(model => model.WORemarkStatus)
+            </div>         
 
             <div class="editor-label">
                 @Html.LabelFor(model => model.WOStartDate)

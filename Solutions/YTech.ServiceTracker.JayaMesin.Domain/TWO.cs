@@ -31,6 +31,9 @@ namespace YTech.ServiceTracker.JayaMesin.Domain
         public virtual string WOBrokenDesc { get; set; }
         public virtual string WODesc { get; set; }
         public virtual string WOComplain { get; set; }
+        public virtual string WORemarkStatus { get; set; }
+        public virtual string WOReceivedBy { get; set; }
+        public virtual string WORepairedBy { get; set; }
 
         public virtual string DataStatus { get; set; }
         public virtual string CreatedBy { get; set; }

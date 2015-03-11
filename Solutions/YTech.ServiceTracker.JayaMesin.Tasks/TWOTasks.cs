@@ -61,7 +61,7 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
             woLog.WOId = wo;
             woLog.LogUser = woCreatedBy;
             woLog.LogDate = DateTime.Now;
-            woLog.LogStatus = logStatus.ToString();                           
+            woLog.LogStatus = logStatus.ToString();
 
             woLog.CreatedDate = DateTime.Now;
             woLog.CreatedBy = woCreatedBy;
@@ -80,7 +80,7 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
             woStatus.WOStatusDate = DateTime.Now;
             woStatus.WOStatusStartDate = wo.WOStartDate;
             woStatus.WOStatusFinishDate = wo.WOEstFinishDate;
-
+            woStatus.WOStatusDesc = wo.WORemarkStatus;
 
             woStatus.CreatedDate = DateTime.Now;
             woStatus.CreatedBy = woCreatedBy;
@@ -113,6 +113,12 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
         {
             IEnumerable<Domain.TWOHaveRead> wos = this._woRepository.GetListNotDeleted(userName);
             return wos;
+        }
+
+        public TWO GetWOByWONo(string woNo)
+        {
+            TWO wo = this._woRepository.GetWOByWONo(woNo);
+            return wo;
         }
     }
 }

@@ -75,6 +75,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
         [Required]
         [DisplayName("Tgl Masuk")]
         [UIHint("Date")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public DateTime? WODate
         {
             get;
@@ -128,6 +129,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
         //[Required]
         [DisplayName("Tgl Mulai Dikerjakan")]
         [UIHint("Date")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy HH:mm}")]
         public DateTime? WOStartDate
         {
             get;
@@ -145,6 +147,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
 
         [DisplayName("Tgl Selesai Dikerjakan")]
         [UIHint("DateTime")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy HH:mm}")]
         public DateTime? WOEstFinishDate
         {
             get;
@@ -153,6 +156,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
 
         [Required]
         [DisplayName("Total")]
+        [DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal? WOTotal
         {
             get;
@@ -160,6 +164,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
         }
 
         [DisplayName("DP")]
+        [DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal? WODp
         {
             get;
@@ -192,6 +197,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
 
         [DisplayName("Tgl Diambil")]
         [UIHint("Date")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public DateTime? WOTakenDate
         {
             get;
@@ -224,6 +230,27 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
         
         [DisplayName("Sudah dibaca?")]
         public bool HaveBeenRead
+        {
+            get;
+            set;
+        }
+
+        [DisplayName("Ket Status")]
+        public string WORemarkStatus
+        {
+            get;
+            set;
+        }
+
+        [DisplayName("Diterima Oleh")]
+        public string WOReceivedBy
+        {
+            get;
+            set;
+        }
+
+        [DisplayName("Dikerjakan Oleh")]
+        public string WORepairedBy
         {
             get;
             set;

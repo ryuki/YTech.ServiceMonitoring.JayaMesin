@@ -53,9 +53,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>1.13453cm</Top>
-                          <Left>3.82293cm</Left>
+                          <Left>0.06351cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>8.4202cm</Width>
+                          <Width>17.49069cm</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
@@ -74,7 +74,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Jl. T.Tambusai No 69-73 Telp.0761-855939</Value>
+                                  <Value EvaluationMode="Constant">Jl. T.Tambusai No 69-73 Telp.0761-855939 HP/WA:0821-7445-4433 PIN BB:28DD17DC, www.jayamesin.com</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -88,9 +88,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox2</rd:DefaultName>
                           <Top>1.7825cm</Top>
-                          <Left>3.82293cm</Left>
+                          <Left>0.06351cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>8.4202cm</Width>
+                          <Width>17.49069cm</Width>
                           <ZIndex>2</ZIndex>
                           <Style>
                             <Border>

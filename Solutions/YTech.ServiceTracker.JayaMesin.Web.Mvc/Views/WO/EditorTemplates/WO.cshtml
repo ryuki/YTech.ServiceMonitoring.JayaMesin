@@ -89,6 +89,30 @@
             </div>
 
             <div class="editor-label">
+                @Html.LabelFor(model => model.WORemarkStatus)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WORemarkStatus)
+                @Html.ValidationMessageFor(model => model.WORemarkStatus)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOReceivedBy)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOReceivedBy)
+                @Html.ValidationMessageFor(model => model.WOReceivedBy)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WORepairedBy)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WORepairedBy)
+                @Html.ValidationMessageFor(model => model.WORepairedBy)
+            </div>
+
+            <div class="editor-label">
                 @Html.LabelFor(model => model.WOEstFinishDate)
             </div>
             <div class="editor-field">

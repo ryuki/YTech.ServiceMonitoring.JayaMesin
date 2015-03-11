@@ -79,6 +79,21 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\Packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Microsoft.ReportViewer.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.DataVisualization, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Microsoft.ReportViewer.DataVisualization.DLL</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Microsoft.ReportViewer.ProcessingObjectModel.DLL</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -124,6 +139,9 @@
       <HintPath>..\..\ReferencedAssemblies\ASP.NET MVC\System.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Providers">
+      <HintPath>..\..\Packages\Microsoft.AspNet.Providers.Core.1.0\lib\net40\System.Web.Providers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ReferencedAssemblies\ASP.NET MVC\System.Web.Razor.dll</HintPath>
@@ -164,9 +182,11 @@
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\RouteRegistrar.cs" />
     <Compile Include="Controllers\ViewModels\AccountViewModel.cs" />
+    <Compile Include="Controllers\ViewModels\WODetailViewModel.cs" />
     <Compile Include="Controllers\ViewModels\CustomerViewModel.cs" />
     <Compile Include="Controllers\ViewModels\ReportsViewModel.cs" />
     <Compile Include="Controllers\ViewModels\WOStatusViewModel.cs" />
+    <Compile Include="Controllers\ViewModels\WOTrackingViewModel.cs" />
     <Compile Include="Controllers\ViewModels\WOViewModel.cs" />
     <Compile Include="Controllers\WOController.cs" />
     <Compile Include="Global.asax.cs">
@@ -186,6 +206,7 @@
     <Content Include="Content\img\logo_new.jpg" />
     <Content Include="Content\img\new_header.png" />
     <Content Include="Content\img\rtg_print.gif" />
+    <Content Include="Content\img\track.jpg" />
     <Content Include="Content\img\window16.gif" />
     <Content Include="Content\js\jquery-1.6.1.min.js" />
     <Content Include="Content\js\modernizr-1.7.min.js" />
@@ -339,6 +360,10 @@
     <Content Include="Content\js\jquery-1.6.1.js" />
     <Content Include="Content\js\modernizr-1.7.js" />
     <Content Include="ReportViewer.aspx" />
+    <None Include="Properties\PublishProfiles\jayamesin - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\jayamesin - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\jayamesin2 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\jayamesin2 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.9.1-vsdoc.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\kendo.modernizr.custom.js" />
@@ -829,12 +854,20 @@
     <Content Include="Views\Shared\_NoMenuLayout.cshtml" />
     <Content Include="Views\Reports\Index.cshtml" />
     <Content Include="Views\Shared\ColourLegend.cshtml" />
-    <Content Include="Views\WO\GetWONo.cshtml" />
+    <Content Include="Views\WO\Tracking.cshtml" />
     <Content Include="Views\Shared\_LogOn.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Account\EditorTemplates\_User.cshtml" />
     <Content Include="Views\Account\EditorTemplates\_Role.cshtml" />
     <Content Include="Views\Shared\_CountDown.cshtml" />
+    <Content Include="Views\WO\WODetail.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\YTech.ServiceTracker.JayaMesin.Domain\YTech.ServiceTracker.JayaMesin.Domain.csproj">
@@ -855,7 +888,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NHibernate.config" />
+    <Content Include="NHibernate.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\Queries\" />
@@ -890,12 +925,12 @@
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
-          <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>51949</DevelopmentServerPort>
-          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>88</DevelopmentServerPort>
+          <DevelopmentServerVPath>/WO</DevelopmentServerVPath>
           <IISUrl>http://localhost:51949/ServiceTracker</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
-          <UseCustomServer>True</UseCustomServer>
+          <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>http://localhost:81/WO</CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>

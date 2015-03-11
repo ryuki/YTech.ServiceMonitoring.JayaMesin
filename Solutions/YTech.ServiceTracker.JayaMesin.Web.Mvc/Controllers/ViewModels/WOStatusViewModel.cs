@@ -24,6 +24,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
         }
 
         [DisplayName("Tanggal Update")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy HH:mm}")]
         public DateTime? WOStatusDate
         {
             get;
@@ -45,6 +46,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
         }
 
         [DisplayName("Tanggal Mulai Dikerjakan")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy HH:mm}")]
         public DateTime? WOStatusStartDate
         {
             get;
@@ -52,7 +54,15 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
         }
 
         [DisplayName("Tanggal Selesai Dikerjakan")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy HH:mm}")]
         public DateTime? WOStatusFinishDate
+        {
+            get;
+            set;
+        }
+
+        [DisplayName("Keterangan Status")]
+        public string WOStatusDesc
         {
             get;
             set;
