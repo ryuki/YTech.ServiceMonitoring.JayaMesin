@@ -14,7 +14,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
     [HandleError]
     public class AccountController : Controller
     {
-        [Authorize(Roles = "ADMINISTRATOR")]
+        //[Authorize(Roles = "ADMINISTRATOR")]
         public ActionResult Index()
         {
             return View();
@@ -239,14 +239,14 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                 .Select(error => error.ErrorMessage));
         }
 
-        [Authorize(Roles = "ADMINISTRATOR")]
+        //[Authorize(Roles = "ADMINISTRATOR")]
         public ActionResult Account_Read([DataSourceRequest] DataSourceRequest request)
         {
             return Json(GetUsers().ToDataSourceResult(request));
         }
 
         [HttpPost]
-        [Authorize(Roles = "ADMINISTRATOR")]
+        //[Authorize(Roles = "ADMINISTRATOR")]
         public ActionResult Account_Create([DataSourceRequest] DataSourceRequest request, RegisterModel model)
         {
             if (ModelState.IsValid)
@@ -265,7 +265,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "ADMINISTRATOR")]
+        //[Authorize(Roles = "ADMINISTRATOR")]
         public ActionResult Account_Update([DataSourceRequest] DataSourceRequest request, RegisterModel model)
         {
             if (ModelState.IsValid)
@@ -287,7 +287,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "ADMINISTRATOR")]
+        //[Authorize(Roles = "ADMINISTRATOR")]
         public ActionResult Account_Destroy([DataSourceRequest] DataSourceRequest request, RegisterModel model)
         {
             if (ModelState.IsValid)

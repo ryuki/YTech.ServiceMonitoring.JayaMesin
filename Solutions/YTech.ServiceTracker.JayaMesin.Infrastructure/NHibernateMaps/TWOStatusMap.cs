@@ -15,7 +15,7 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
             mapping.DynamicInsert();
             mapping.SelectBeforeUpdate();
 
-            mapping.Table("dbo.T_WO_STATUS");
+            mapping.Table("dbo.JAYAMESIN_T_WO_STATUS");
             mapping.Id(x => x.Id, "WO_STATUS_ID")
                  .GeneratedBy.Assigned();
 

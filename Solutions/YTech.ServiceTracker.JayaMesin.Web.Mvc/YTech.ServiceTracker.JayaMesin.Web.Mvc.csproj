@@ -362,7 +362,9 @@
     <Content Include="ReportViewer.aspx" />
     <None Include="Properties\PublishProfiles\jayamesin - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\jayamesin - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\jayamesin2 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\jayamesin2 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\jayamesin2 - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\jayamesin2 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.9.1-vsdoc.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
@@ -824,10 +826,12 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Home\Index.cshtml" />
-    <None Include="Web.config">
+    <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
-    </None>
-    <Content Include="Views\Web.config" />
+    </Content>
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Shared\EditorTemplates\Currency.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Date.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DateTime.cshtml" />
@@ -886,11 +890,6 @@
       <Project>{C9AAC14B-E695-4508-83B7-ACB8FC5A7284}</Project>
       <Name>YTech.ServiceTracker.JayaMesin.Tasks</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="NHibernate.config">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\Queries\" />

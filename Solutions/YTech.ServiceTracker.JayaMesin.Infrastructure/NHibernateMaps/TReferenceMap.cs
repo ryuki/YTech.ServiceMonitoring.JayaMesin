@@ -18,7 +18,7 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
             mapping.DynamicInsert();
             mapping.SelectBeforeUpdate();
 
-            mapping.Table("dbo.T_REFERENCE");
+            mapping.Table("dbo.JAYAMESIN_T_REFERENCE");
             mapping.Id(x => x.Id, "REFERENCE_ID")
                  .GeneratedBy.Assigned();
 

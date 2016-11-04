@@ -30,7 +30,7 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.Repository
             //return criteria.List<TWO>();
 
             StringBuilder sql = new StringBuilder();
-            sql.AppendLine(@"   EXEC [dbo].[SP_GET_LIST_WO_READ]
+            sql.AppendLine(@"   EXEC [dbo].[JAYAMESIN_SP_GET_LIST_WO_READ]
                         		@User_Name = :UserName ");
             IQuery q = Session.CreateSQLQuery(sql.ToString()).AddEntity(typeof(TWOHaveRead));
             q.SetString("UserName", userName);

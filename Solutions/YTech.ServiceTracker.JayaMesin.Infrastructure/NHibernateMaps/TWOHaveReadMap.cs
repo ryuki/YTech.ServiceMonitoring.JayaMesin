@@ -12,7 +12,7 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
         public void Override(FluentNHibernate.Automapping.AutoMapping<TWOHaveRead> mapping)
         {
             //use virtual table (not present in database) to display in wo list
-            mapping.Table("dbo.T_WO_HAVE_READ");
+            mapping.Table("dbo.JAYAMESIN_T_WO_HAVE_READ");
             mapping.ReadOnly();
             mapping.Id(x => x.Id, "WO_ID")
                  .GeneratedBy.Assigned();

@@ -100,11 +100,17 @@
         {
             NHibernateSession.ConfigurationCache = new NHibernateConfigurationFileCache();
 
+            //NHibernateSession.Init(
+            //    this.webSessionStorage,
+            //    new[] { Server.MapPath("~/bin/YTech.ServiceTracker.JayaMesin.Infrastructure.dll") },
+            //    new AutoPersistenceModelGenerator().Generate(),
+            //    Server.MapPath("~/NHibernate.config"));
+
             NHibernateSession.Init(
                 this.webSessionStorage,
                 new[] { Server.MapPath("~/bin/YTech.ServiceTracker.JayaMesin.Infrastructure.dll") },
                 new AutoPersistenceModelGenerator().Generate(),
-                Server.MapPath("~/NHibernate.config"));
+                Server.MapPath("~/Web.config"));
         }
     }
 }
