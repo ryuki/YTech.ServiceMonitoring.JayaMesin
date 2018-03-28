@@ -109,9 +109,9 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
             return wos;
         }
 
-        public IEnumerable<TWOHaveRead> GetListNotDeleted(string userName)
+        public IEnumerable<TWOHaveRead> GetListNotDeleted(string userName, string WOStatus, string TextSearch)
         {
-            IEnumerable<Domain.TWOHaveRead> wos = this._woRepository.GetListNotDeleted(userName);
+            IEnumerable<Domain.TWOHaveRead> wos = this._woRepository.GetListNotDeleted(userName, WOStatus,TextSearch);
             return wos;
         }
 
@@ -119,6 +119,16 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
         {
             TWO wo = this._woRepository.GetWOByWONo(woNo);
             return wo;
+        }
+
+        /// <summary>
+        /// 20170511 : add new feature, get expired wo list
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<TWOHaveRead> GetListExpiredWO()
+        {
+            IEnumerable<Domain.TWOHaveRead> wos = this._woRepository.GetListExpiredWO();
+            return wos;
         }
     }
 }

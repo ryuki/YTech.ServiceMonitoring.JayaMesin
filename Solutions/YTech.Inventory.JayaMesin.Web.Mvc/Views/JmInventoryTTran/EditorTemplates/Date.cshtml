@@ -1,0 +1,8 @@
+@model DateTime?
+@{
+    String randomCssClassName = "DateTimeTextBox_" + new Random().Next(10000, 99999).ToString();
+}
+@Html.TextBoxFor(item => item, new { @Class = "date-time " + @randomCssClassName })
+<span style="visibility:hidden">
+@(Html.Kendo().DatePickerFor(item => item))
+</span>

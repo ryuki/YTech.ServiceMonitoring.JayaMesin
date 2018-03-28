@@ -1,0 +1,125 @@
+﻿@(Html.Kendo()
+.Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.TransPOViewModel>()
+    .Name("GridPO")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.TransNo).Width("auto");
+        columns.Bound(p => p.SupplierName).Width("auto").Title("Supplier");
+        columns.Bound(p => p.TransDate).Format("{0:dd-MMM-yy}").Width("auto");
+        columns.Bound(p => p.InvoiceNo).Width("auto");
+        columns.Bound(p => p.TransStatus).Width("auto");
+        columns.Bound(p => p.TransInputBy).Width("auto").Title("Diinput Oleh");
+        columns.Bound(p => p.TransInputDate).Width("auto").Title("Diinput Tanggal").Format("{0:dd-MMM-yy HH:mm}");
+        columns.Bound(p => p.TransApprovedBy).Width("auto").Title("Disetujui Oleh");
+        columns.Bound(p => p.TransApprovedDate).Width("auto").Title("Disetujui Tanggal").Format("{0:dd-MMM-yy HH:mm}");
+
+        columns.Command(command =>
+        {
+            //command.Custom("Pilih PO").Click("SelectPO").HtmlAttributes(new { style = "min-width:20px;" });
+        })
+            .Width("135px");
+    })
+        //.ToolBar(toolbar => { toolbar.Create().Text("Tambah Konsumen Baru"); })
+    .ToolBar(toolbar =>
+    {
+        toolbar.Template(@<text>
+<div class="k-toolbar k-grid-toolbar k-grid-top">
+    <label class="status-label" for="status">Filter status PO :</label>
+    @(Html.Kendo().DropDownList()
+                            .Name("polist_status")
+                            .OptionLabel("All")
+                            .DataTextField("Text")
+                            .DataValueField("Value")
+                            .AutoBind(false)
+                            .Events(e => e.Change("searchPO"))
+                            .HtmlAttributes(new { style = "min-width:150px;" })
+                            .BindTo((System.Collections.IEnumerable)ViewData["trans_status"])
+                        )
+
+    @*<label class="search-label" for="search">Pencarian :</label>
+    @(Html.TextBox("search", "", new { @class = "k-textbox" }))
+    @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "searchPO(false);", new { @class = "k-button" }))
+    @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchPO(true);", new { @class = "k-button" }))*@
+</div>
+</text>);
+    })
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
+    .Pageable()
+    .Sortable()
+    .Scrollable()
+    .ColumnMenu()
+    .Selectable()
+    .Filterable()
+    .Groupable()
+    .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorder => reorder.Columns(true))
+    .HtmlAttributes(new { style = "height:400px;" })
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(10)
+        .Batch(false)
+        .ServerOperation(false)
+        .Model(model => model.Id(p => p.TransId))
+        .Read(read => read.Action("POList_Read", "JmInventoryTTran", new { TransType = YTech.ServiceTracker.JayaMesin.Enums.EnumTransType.PO.ToString() }))
+    )
+    )
+
+<script type="text/kendo-template" id="message">
+<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+            <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>
+</script>
+
+@(Html.Hidden("HiddenSelectedTransId"))
+<script type="text/javascript">
+    //function searchPO(reset) {
+    //    //reset search textbox if reset button clicked
+    //    //alert(reset);
+    //    if (reset) {
+    //        //alert("reset");
+    //        $("#search").val("");
+    //    }
+
+    //    grid = $("#GridPO").data("kendoGrid");
+    //    //search by woNO
+    //    var textSearch = $("#search").val();
+    //    //alert(textSearch);
+    //    //search by status
+    //    var status = $("#polist_status").val();
+    //    //alert(status);
+
+    //    if (textSearch || status) {
+    //        //alert("search");
+    //        var andFilter = { logic: "and", filters: [] };
+    //        var orFilter = { logic: "or", filters: [] };
+    //        andFilter.filters.push({ field: "TransStatus", operator: "contains", value: status });
+    //        orFilter.filters.push({ field: "TransNo", operator: "contains", value: textSearch });
+    //        orFilter.filters.push({ field: "SupplierName", operator: "contains", value: textSearch });
+    //        orFilter.filters.push({ field: "TransInvoiceNo", operator: "contains", value: textSearch });
+    //        andFilter.filters.push(orFilter);
+    //        grid.dataSource.query({ filter: andFilter });
+    //    } else {
+    //        grid.dataSource.filter({});
+    //    }
+    //}
+
+    function onPODataBound(e) {
+        //set bg color based on last status
+        //SetBgColor('#GridSms');
+    }
+
+    function SelectPO(e) {
+        e.preventDefault();
+
+        //set datasource for print WO
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var WONo = dataItem.WONo;
+        //alert(WONo);
+
+        ///set text search WO list
+        $("#search").val(WONo);
+        searchWO(false);
+
+        ///close window
+        $("#ExpiredWO").data("kendoWindow").close();
+    }
+</script>

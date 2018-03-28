@@ -1,0 +1,154 @@
+﻿@using YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels;
+
+@{
+    ViewBag.Title = "PO Baru";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (false)
+{ <script src="@Url.Content("~/Scripts/jquery-1.9.1-vsdoc.js")" type="text/javascript"></script> }
+
+@model TransPOViewModel
+<h2>Input PO</h2>
+
+@using(Html.BeginForm(FormMethod.Post)){
+@Html.HiddenFor(model => model.TransId)
+
+<table style="width: auto;vertical-align:top;">
+    <tr><td colspan="2">
+        @Html.Button("btnSave", "Simpan", HtmlButtonType.Submit)
+        </td></tr>
+    <tr>
+        <td style="width: 50%;vertical-align:top;">
+            <div class="editor-label">
+                @Html.LabelFor(model => model.TransNo)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.TransNo)
+                @Html.ValidationMessageFor(model => model.TransNo)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.SupplierId)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.SupplierId)
+                @Html.ValidationMessageFor(model => model.SupplierId)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.TransDate)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(s => s.TransDate)               
+                @Html.ValidationMessageFor(model => model.TransDate)
+            </div>
+            </td>
+        <td style="width: 50%;vertical-align:top;">
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InvoiceNo)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.InvoiceNo)
+                @Html.ValidationMessageFor(model => model.InvoiceNo)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.TransDesc)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.TransDesc)
+                @Html.ValidationMessageFor(model => model.TransDesc)
+            </div>
+        </td>
+    </tr>   
+</table>    
+}
+
+
+@(Html.Kendo()
+.Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.TransPODetViewModel>()
+    .Name("GridPODetail")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.ProductName).Width("auto").Title("Produk");
+        columns.Bound(p => p.TransDetQty).Format("{0:N0}").Width("auto").FooterTemplate(@<text>@item.Sum</text>);
+        columns.Bound(p => p.TransDetPrice).Format("{0:N0}").Width("auto");
+        //columns.Bound(p => p.TransDetDisc).Format("{0:N0}").Width("auto");
+        columns.Bound(p => p.TransDetTotal).Format("{0:N0}").Width("auto");
+        columns.Bound(p => p.TransDetDesc).Width("auto");
+
+        columns.Command(command =>
+        {
+            command.Edit().Text(" ").HtmlAttributes(new { style = "min-width:20px;" });
+            command.Destroy().Text(" ").HtmlAttributes(new { style = "min-width:20px;" });
+        })
+            .Width("135px");
+    })
+    .ToolBar(toolbar => toolbar.Create())
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
+    .Sortable()
+    .Scrollable()
+    .ColumnMenu()
+    .Selectable()
+    .Filterable()
+    .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorder => reorder.Columns(true))
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(10)
+        .Batch(false)
+        .ServerOperation(false)
+        .Events(events => events.RequestEnd("onPODetailRequestEnd"))
+        .Read(read => read.Action("PODetail_Read", "JmInventoryTTransDet").Data("GetTransId"))
+                .Create(create => create.Action("PODetail_Create", "JmInventoryTTransDet").Data("GetTransId"))
+                .Update(update => update.Action("PODetail_Update", "JmInventoryTTransDet").Data("GetTransId"))
+                .Destroy(destroy => destroy.Action("PODetail_Destroy", "JmInventoryTTransDet").Data("GetTransId"))
+                .Model(x =>
+        {
+            x.Id(p => p.TransDetId);
+            x.Field(c => c.TransDetIsTaxed).DefaultValue(false);
+        })
+        .Aggregates(aggregates =>
+            {
+                aggregates.Add(p => p.TransDetQty).Sum();
+            })
+    )
+    .Events(e => e.DataBound("onPODetailDataBound"))
+    )
+
+<script type="text/kendo-template" id="message">
+<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+            <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>
+</script>
+
+
+<script type="text/javascript">
+    function GetTransId() {
+        return {
+            TransId: $("#TransId").val()
+        }
+    }
+
+    function onPODetailDataBound(e) {
+        //set bg color based on last status
+        //SetBgColor('#GridSms');
+    }
+
+    function onPODetailRequestEnd(e) {
+        //RequestEnd handler code
+        //bug : error when update after insert or update new data, no id catched
+        //bug fix : refresh after insert new data, 
+        //alert(e.type);
+        if (e.type === "create" || e.type === "update" || e.type === "destroy") {
+            //check for errors in the response
+            if (e.response == null || e.response.Errors == null) {
+                //call refresh grid and reset timer
+                //reload grid when cancel clicked
+                var grid = $("#GridPODetail").data("kendoGrid");
+                grid.dataSource.read();
+            }
+        }
+    }
+</script>
+

@@ -1,0 +1,137 @@
+﻿@(Html.Kendo()
+.Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.TransPODetViewModel>()
+    .Name("GridPODetail")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.ProductName).Width("auto").Title("Produk");
+        columns.Bound(p => p.TransDetQty).Format("{0:N0}").Width("auto");
+        columns.Bound(p => p.TransDetStatus).Width("auto");
+
+        columns.Command(command =>
+        {
+            command.Edit().Text(" ").HtmlAttributes(new { style = "min-width:20px;" });
+            command.Destroy().Text(" ").HtmlAttributes(new { style = "min-width:20px;" });
+        })
+            .Width("135px");
+    })
+        //.ToolBar(toolbar => { toolbar.Create().Text("Tambah Konsumen Baru"); })
+    .ToolBar(toolbar =>
+    {
+        toolbar.Template(@<text>
+<div class="k-toolbar k-grid-toolbar k-grid-top">
+    <a class="k-button k-button-icontext k-grid-add" href="#Grid-mode=insert"><span class="k-icon k-add"></span>Tambah PO Detail Baru</a>
+    @*<label class="status-label" for="status">Filter status WO :</label>
+    @(Html.Kendo().DropDownList()
+                            .Name("statusFilterForWOExpired")
+                            .OptionLabel("All")
+                            .DataTextField("Text")
+                            .DataValueField("Value")
+                            .AutoBind(false)
+                            .Events(e => e.Change("searchPODetail"))
+                            .HtmlAttributes(new { style = "min-width:150px;" })
+                            .BindTo((System.Collections.IEnumerable)ViewData["wo_status"])
+                        )*@
+
+    <label class="search-label" for="search">Pencarian :</label>
+    @(Html.TextBox("txtSearchPODetail", "", new { @class = "k-textbox" }))
+    @(Html.Button("btnSearchPODetail", "Cari", HtmlButtonType.Button, "searchPODetail(false);", new { @class = "k-button" }))
+    @(Html.Button("btnResetSearchPODetail", "Reset", HtmlButtonType.Button, "searchPODetail(true);", new { @class = "k-button" }))
+</div>
+</text>);
+    })
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
+    .Pageable()
+    .Sortable()
+    .Scrollable()
+    .ColumnMenu()
+    .Selectable()
+    .Filterable()
+    .Groupable()
+    .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorder => reorder.Columns(true))
+    .HtmlAttributes(new { style = "height:400px;" })
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(10)
+        .Batch(false)
+        .ServerOperation(false)
+        .Events(events => events.RequestEnd("onPODetailRequestEnd"))
+        .Read(read => read.Action("PODetail_Read", "JmInventoryTTransDet").Data("GetTransId"))
+                .Create(create => create.Action("PODetail_Create", "JmInventoryTTransDet").Data("GetTransId"))
+                .Update(update => update.Action("PODetail_Update", "JmInventoryTTransDet").Data("GetTransId"))
+                .Destroy(destroy => destroy.Action("PODetail_Destroy", "JmInventoryTTransDet").Data("GetTransId"))
+                .Model(x =>
+        {
+            x.Id(p => p.TransDetId);
+            x.Field(c => c.TransDetIsTaxed).DefaultValue(false);
+        })
+    )
+    .Events(e => e.DataBound("onPODetailDataBound"))
+    ))
+
+<script type="text/kendo-template" id="message">
+<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+            <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>
+</script>
+
+@(Html.Hidden("HiddenSelectedTransId"))
+<script type="text/javascript">
+    function GetTransId() {
+        return {
+            TransId: $("#HiddenSelectedTransId").val()
+        }
+    }
+
+    function searchPODetail(reset) {
+        //reset search textbox if reset button clicked
+        //alert(reset);
+        if (reset) {
+            //alert("reset");
+            $("#txtSearchPODetail").val("");
+        }
+
+        grid = $("#GridPODetail").data("kendoGrid");
+        //search by woNO
+        var textSearch = $("#txtSearchPODetail").val();
+        //alert(textSearch);
+        //search by status
+        //var status = $("#statusFilterForWOExpired").val();
+        //alert(status);
+
+        if (textSearch || status) {
+            //alert("search");
+            var andFilter = { logic: "and", filters: [] };
+            var orFilter = { logic: "or", filters: [] };
+            //andFilter.filters.push({ field: "WOLastStatus", operator: "contains", value: status });
+            orFilter.filters.push({ field: "ProductName", operator: "contains", value: textSearch });
+            //orFilter.filters.push({ field: "TransDetQty", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "TransDetStatus", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "TransDetDesc", operator: "contains", value: textSearch });
+            andFilter.filters.push(orFilter);
+            grid.dataSource.query({ filter: orFilter });
+        } else {
+            grid.dataSource.filter({});
+        }
+    }
+
+    function onPODetailDataBound(e) {
+        //set bg color based on last status
+        //SetBgColor('#GridSms');
+    }
+
+    function onPODetailRequestEnd(e) {
+        //RequestEnd handler code
+        //bug : error when update after insert or update new data, no id catched
+        //bug fix : refresh after insert new data, 
+        //alert(e.type);
+        if (e.type === "create" || e.type === "update" || e.type === "destroy") {
+            //check for errors in the response
+            if (e.response == null || e.response.Errors == null) {
+                //call refresh grid and reset timer
+                //reload grid when cancel clicked
+                var grid = $("#GridPODetail").data("kendoGrid");
+                grid.dataSource.read();
+            }
+        }
+    }
+</script>

@@ -43,27 +43,4 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
             set;
         }
     }
-
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class CustomProductNameValidationAttribute : ValidationAttribute, IClientValidatable
-    {
-        public override bool IsValid(object value)
-        {
-            var productName = (string)value;
-            if (!string.IsNullOrEmpty(productName))
-            {
-                return Regex.IsMatch(productName, "^[A-Z]");
-            }
-            return true;
-        }
-
-        public IEnumerable<ModelClientValidationRule> GetClientValidationRules(ModelMetadata metadata, ControllerContext context)
-        {
-            yield return new ModelClientValidationRule
-            {
-                ErrorMessage = ErrorMessage,
-                ValidationType = "productnamevalidation"
-            };
-        }
-    }
 }

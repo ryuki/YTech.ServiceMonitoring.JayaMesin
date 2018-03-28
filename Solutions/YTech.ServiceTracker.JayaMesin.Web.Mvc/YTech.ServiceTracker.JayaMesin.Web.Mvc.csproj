@@ -13,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>YTech.ServiceTracker.JayaMesin.Web.Mvc</RootNamespace>
     <AssemblyName>YTech.ServiceTracker.JayaMesin.Web.Mvc</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Build\Signing\YTech.ServiceTracker.JayaMesin.snk</AssemblyOriginatorKeyFile>
@@ -35,6 +35,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +45,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -52,6 +54,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core">
@@ -110,6 +113,9 @@
     <Reference Include="NHibernate.ByteCode.Castle">
       <HintPath>..\..\Packages\NHibernate.Castle.3.1.0.4000\lib\Net35\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\..\..\..\Jaya Mesin\smsviro\RestSharp.104.1\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="SharpArch.Domain">
       <HintPath>..\..\ReferencedAssemblies\SharpArchitecture\SharpArch.Domain.dll</HintPath>
     </Reference>
@@ -124,7 +130,10 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.DynamicData" />
@@ -177,11 +186,14 @@
     <Compile Include="Controllers\AccountController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controllers\SmsTemplateController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\RouteRegistrar.cs" />
     <Compile Include="Controllers\ViewModels\AccountViewModel.cs" />
+    <Compile Include="Controllers\ViewModels\SmsViewModel.cs" />
+    <Compile Include="Controllers\ViewModels\SmsTemplateViewModel.cs" />
     <Compile Include="Controllers\ViewModels\WODetailViewModel.cs" />
     <Compile Include="Controllers\ViewModels\CustomerViewModel.cs" />
     <Compile Include="Controllers\ViewModels\ReportsViewModel.cs" />
@@ -201,7 +213,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\img\alert_blink.gif" />
     <Content Include="Content\img\error3.gif" />
+    <Content Include="Content\img\logo-ayooklik.png" />
     <Content Include="Content\img\logo.png" />
     <Content Include="Content\img\logo_new.jpg" />
     <Content Include="Content\img\new_header.png" />
@@ -850,7 +864,7 @@
     <Content Include="Views\WO\EditorTemplates\WO.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Decimal.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Bool.cshtml" />
-    <Content Include="Views\WO\EditorTemplates\WOStatus.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\WOStatus.cshtml" />
     <Content Include="Views\WO\EditorTemplates\SCToko.cshtml" />
     <Content Include="Views\WO\EditorTemplates\Priority.cshtml" />
     <Content Include="Views\WO\UpdateStatus.cshtml" />
@@ -865,6 +879,13 @@
     <Content Include="Views\Account\EditorTemplates\_Role.cshtml" />
     <Content Include="Views\Shared\_CountDown.cshtml" />
     <Content Include="Views\WO\WODetail.cshtml" />
+    <Content Include="Views\WO\EditorTemplates\WOType.cshtml" />
+    <Content Include="Views\WO\ExpiredWO.cshtml" />
+    <Content Include="Views\WO\ExpiredWOContent.cshtml" />
+    <Content Include="Views\WO\CreateSMS.cshtml" />
+    <Content Include="Views\SmsTemplate\Index.cshtml" />
+    <Content Include="Views\WO\ListSMS.cshtml" />
+    <Content Include="Views\WO\ListSMSContent.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -923,11 +944,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>False</AutoAssignPort>
-          <DevelopmentServerPort>88</DevelopmentServerPort>
+          <DevelopmentServerPort>12212</DevelopmentServerPort>
           <DevelopmentServerVPath>/WO</DevelopmentServerVPath>
-          <IISUrl>http://localhost:51949/ServiceTracker</IISUrl>
+          <IISUrl>http://localhost:65424/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>http://localhost:81/WO</CustomServerUrl>

@@ -10,10 +10,23 @@
     {
         columns.Bound(p => p.CustomerName).Width("auto");
         columns.Bound(p => p.CustomerPhone).Width("auto");
-        columns.Bound(p => p.CustomerAddress).Width("auto"); 
+        columns.Bound(p => p.CustomerAddress).Width("auto");
         columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
     })
-    .ToolBar(toolbar => { toolbar.Create().Text("Tambah Konsumen Baru"); })
+        //.ToolBar(toolbar => { toolbar.Create().Text("Tambah Konsumen Baru"); })
+    .ToolBar(toolbar =>
+    {
+        toolbar.Template(@<text>
+<div class="k-toolbar k-grid-toolbar k-grid-top">
+    <a class="k-button k-button-icontext k-grid-add" href="#"><span class="k-icon k-add"></span>Tambah Konsumen Baru</a>
+    
+    <label class="search-label" for="search">Pencarian :</label>
+    @(Html.TextBox("search", "", new { @class = "k-textbox" }))
+    @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "searchCustomer(false);", new { @class = "k-button" }))
+    @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchCustomer(true);", new { @class = "k-button" })) 
+</div>
+</text>);
+    })
     .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
     .Pageable()
     .Sortable()
@@ -115,6 +128,35 @@
                 }
             });
             alert(message);
+        }
+    }
+
+    function searchCustomer(reset) {
+        //reset search textbox if reset button clicked
+        //alert(reset);
+        if (reset) {
+            //alert("reset");
+            $("#search").val("");
+        }
+
+        grid = $("#Grid").data("kendoGrid");
+        //search by woNO
+        var textSearch = $("#search").val();
+        //alert(textSearch);
+        //search by status
+        var status = $("#status").val();
+        //alert(status);
+
+        if (textSearch || status) {
+            //alert("search");
+            var andFilter = { logic: "and", filters: [] };
+            var orFilter = { logic: "or", filters: [] };
+            orFilter.filters.push({ field: "CustomerName", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "CustomerPhone", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "CustomerAddress", operator: "contains", value: textSearch });
+            grid.dataSource.query({ filter: orFilter });
+        } else {
+            grid.dataSource.filter({});
         }
     }
 </script>

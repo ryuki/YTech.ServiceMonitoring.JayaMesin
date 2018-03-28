@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>YTech.ServiceTracker.JayaMesin.Infrastructure</RootNamespace>
     <AssemblyName>YTech.ServiceTracker.JayaMesin.Infrastructure</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Build\Signing\YTech.ServiceTracker.JayaMesin.snk</AssemblyOriginatorKeyFile>
@@ -52,6 +52,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -61,6 +62,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core">
@@ -108,12 +110,36 @@
     <Compile Include="NHibernateMaps\Conventions\PrimaryKeyConvention.cs" />
     <Compile Include="NHibernateMaps\Conventions\TableNameConvention.cs" />
     <Compile Include="NHibernateMaps\AutoPersistenceModelGenerator.cs" />
+    <Compile Include="NHibernateMaps\JmInventoryMProductMap.cs" />
+    <Compile Include="NHibernateMaps\JmInventoryMProgramMap.cs" />
+    <Compile Include="NHibernateMaps\JmInventoryMSupplierMap.cs" />
+    <Compile Include="NHibernateMaps\JmInventoryTLogMap.cs" />
+    <Compile Include="NHibernateMaps\JmInventoryTRedeemDetMap.cs" />
+    <Compile Include="NHibernateMaps\JmInventoryTRedeemMap.cs" />
+    <Compile Include="NHibernateMaps\JmInventoryTReferenceMap.cs" />
+    <Compile Include="NHibernateMaps\JmInventoryTStockMap.cs" />
+    <Compile Include="NHibernateMaps\JmInventoryTTranMap.cs" />
+    <Compile Include="NHibernateMaps\JmInventoryTTransDetMap.cs" />
+    <Compile Include="NHibernateMaps\TSmsMap.cs" />
+    <Compile Include="NHibernateMaps\MSmsTemplateMap.cs" />
     <Compile Include="NHibernateMaps\MCustomerMap.cs" />
     <Compile Include="NHibernateMaps\TReferenceMap.cs" />
     <Compile Include="NHibernateMaps\TWOHaveReadMap.cs" />
     <Compile Include="NHibernateMaps\TWOLogMap.cs" />
     <Compile Include="NHibernateMaps\TWOMap.cs" />
     <Compile Include="NHibernateMaps\TWOStatusMap.cs" />
+    <Compile Include="Repository\JmInventoryMProductRepository.cs" />
+    <Compile Include="Repository\JmInventoryMProgramRepository.cs" />
+    <Compile Include="Repository\JmInventoryMSupplierRepository.cs" />
+    <Compile Include="Repository\JmInventoryTLogRepository.cs" />
+    <Compile Include="Repository\JmInventoryTRedeemDetRepository.cs" />
+    <Compile Include="Repository\JmInventoryTRedeemRepository.cs" />
+    <Compile Include="Repository\JmInventoryTReferenceRepository.cs" />
+    <Compile Include="Repository\JmInventoryTStockRepository.cs" />
+    <Compile Include="Repository\JmInventoryTTranRepository.cs" />
+    <Compile Include="Repository\JmInventoryTTransDetRepository.cs" />
+    <Compile Include="Repository\TSmsRepository.cs" />
+    <Compile Include="Repository\MSmsTemplateRepository.cs" />
     <Compile Include="Repository\MCustomerRepository.cs" />
     <Compile Include="Repository\TReferenceRepository.cs" />
     <Compile Include="Repository\TWOLogRepository.cs" />

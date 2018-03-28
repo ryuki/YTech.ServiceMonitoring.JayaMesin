@@ -72,6 +72,14 @@
             </div>
 
             <div class="editor-label">
+                @Html.LabelFor(model => model.WOType)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.WOType)
+                @Html.ValidationMessageFor(model => model.WOType)
+            </div>
+
+            <div class="editor-label">
                 @Html.LabelFor(model => model.WOStartDate)
             </div>
             <div class="editor-field">

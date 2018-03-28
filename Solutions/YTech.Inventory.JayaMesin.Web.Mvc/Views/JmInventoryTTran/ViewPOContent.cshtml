@@ -1,0 +1,190 @@
+﻿@using YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels;
+
+@if (false)
+{ <script src="@Url.Content("~/Scripts/jquery-1.9.1-vsdoc.js")" type="text/javascript"></script> }
+
+@model TransPOViewModel
+
+<div id="divViewPOContent">
+@using(Html.BeginForm(FormMethod.Post)){
+@Html.HiddenFor(model => model.TransId)
+
+<table style="width: 400px;vertical-align:top;">
+    <tr>
+        <td style="width: 50%;vertical-align:top;">
+            <div class="editor-label">
+                @Html.LabelFor(model => model.TransNo)
+            </div>
+            <div class="editor-field">
+                @Html.DisplayFor(model => model.TransNo)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.SupplierId)
+            </div>
+            <div class="editor-field">
+                @Html.DisplayFor(model => model.SupplierName)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.TransDate)
+            </div>
+            <div class="editor-field">
+                @Html.DisplayFor(s => s.TransDate)               
+            </div>
+            </td>
+        <td style="width: 50%;vertical-align:top;">
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InvoiceNo)
+            </div>
+            <div class="editor-field">
+                @Html.DisplayFor(model => model.InvoiceNo)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.TransDesc)
+            </div>
+            <div class="editor-field">
+                @Html.DisplayFor(model => model.TransDesc)
+            </div>
+        </td>
+    </tr>   
+</table>    
+}
+
+
+@(Html.Kendo()
+.Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.TransPODetViewModel>()
+    .Name("GridPODetail")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.ProductName).Width("auto").Title("Produk");
+        columns.Bound(p => p.TransDetQty).Format("{0:N0}").Width("auto").ClientFooterTemplate("<div style='align:right'>#=kendo.format('{0:N0}', sum)#</div>");
+        columns.Bound(p => p.TransDetPrice).Format("{0:N0}").Width("auto");
+        //columns.Bound(p => p.TransDetDisc).Format("{0:N0}").Width("auto");
+        columns.Bound(p => p.TransDetTotal).Format("{0:N0}").Width("auto").ClientFooterTemplate("<div style='align:right'>#=kendo.format('{0:N0}', sum)#</div>");
+        columns.Bound(p => p.TransDetDesc).Width("auto");
+    })
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
+    .Sortable()
+    .Scrollable()
+    .ColumnMenu()
+    .Selectable()
+    .Filterable()
+    .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorder => reorder.Columns(true))
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .Batch(false)
+        .ServerOperation(false)
+        .Read(read => read.Action("PODetail_Read", "JmInventoryTTransDet").Data("GetTransId"))
+                .Create(create => create.Action("PODetail_Create", "JmInventoryTTransDet").Data("GetTransId"))
+                .Update(update => update.Action("PODetail_Update", "JmInventoryTTransDet").Data("GetTransId"))
+                .Destroy(destroy => destroy.Action("PODetail_Destroy", "JmInventoryTTransDet").Data("GetTransId"))
+                .Model(x =>
+        {
+            x.Id(p => p.TransDetId);
+            x.Field(c => c.TransDetIsTaxed).DefaultValue(false);
+        })
+        .Aggregates(aggregates =>
+            {
+                aggregates.Add(p => p.TransDetQty).Sum();
+                aggregates.Add(p => p.TransDetTotal).Sum();
+            })
+    )
+    )
+
+<script type="text/kendo-template" id="message">
+<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+            <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>
+</script>
+
+@(Html.Hidden("HiddenSelectedTransId"))
+
+<button onclick="ApprovePO('Disetujui')" value="Disetujui" id="btnDisetujui">Setuju</button>
+<button onclick="ApprovePO('Ditolak')" value="Ditolak" id="btnDitolak">Tolak</button>
+<button onclick="ApprovePO('Diproses')" value="Diproses" id="btnDiproses">Proses</button>
+
+<script type="text/javascript">
+    function GetTransId() {
+        return {
+            TransId: $("#TransId").val()
+        }
+    }
+
+    function ApprovePO(status) {
+        if (!confirm("Anda yakin menyetujui/menolak/memproses PO ini?")) {
+            return;
+        }
+        var TransId = $("#TransId").val();
+        var getPrintWOUrl = '@(Url.Action("POList_Approve", "JmInventoryTTran", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))' + '&TransId=' + TransId + '&TransStatus=' + status;
+        var statusMsg = status;
+
+        $.ajax({
+            type: 'POST',
+            url: getPrintWOUrl,
+            error: function (response) {
+                alert("error: " + response);
+            }, success: function (response) {
+                //alert(response.Success);
+                if (!response.Success)
+                    alert("Error, PO gagal " + statusMsg + " : " + response.Message);
+                else {
+                    alert("PO Berhasil " + statusMsg);
+                }
+                //call refresh grid and reset timer
+                $("#WindowViewPO").data("kendoWindow").close();
+                $("#RefreshGrid").click();
+            }
+        });
+    }
+
+    function GetReadParam() {
+        return {
+            TransType: "PO",
+            TransStatus: getUrlParameter('TransStatus')
+        };
+    }
+    $(document).ready(function () {
+        var TransStatus = getUrlParameter('TransStatus');
+        
+        if (TransStatus == "Baru") {
+            $("#btnDisetujui").show();
+            $("#btnDitolak").show();
+            $("#btnDiproses").hide();
+        }
+        else if (TransStatus == "Disetujui") {
+            $("#btnDisetujui").hide();
+            $("#btnDitolak").hide();
+            $("#btnDiproses").show();
+        }
+        else if (TransStatus == "Ditolak") {
+            $("#btnDisetujui").hide();
+            $("#btnDitolak").hide();
+            $("#btnDiproses").hide();
+        }
+        else if (TransStatus == "Diproses") {
+            $("#btnDisetujui").hide();
+            $("#btnDitolak").hide();
+            $("#btnDiproses").hide();
+        }
+    });
+
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : sParameterName[1];
+            }
+        }
+    };
+</script>
+    
+</div>

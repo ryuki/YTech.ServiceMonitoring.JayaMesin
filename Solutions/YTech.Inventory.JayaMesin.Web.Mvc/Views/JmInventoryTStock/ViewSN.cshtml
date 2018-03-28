@@ -1,0 +1,18 @@
+﻿@(Html.Kendo().Window()
+    .Name("WindowViewSN")
+    .Title("Detail SN")
+     .Content(@<text>@Html.Partial("ViewSNContent")</text>)
+    .Draggable()
+    .Resizable()
+    .Width(450)
+    .Height(570)
+    .Modal(true)
+    .Visible(false)
+)
+
+<script type="text/javascript">
+    function OpenViewSNContent() {
+        $("#WindowViewSN").data("kendoWindow").center();
+        $("#WindowViewSN").data("kendoWindow").open();
+    }
+</script>

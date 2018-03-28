@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>YTech.ServiceTracker.JayaMesin.Domain</RootNamespace>
     <AssemblyName>YTech.ServiceTracker.JayaMesin.Domain</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Build\Signing\YTech.ServiceTracker.JayaMesin.snk</AssemblyOriginatorKeyFile>
@@ -52,6 +52,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -61,6 +62,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SharpArch.Domain">
@@ -84,16 +86,52 @@
     <Compile Include="..\..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Contracts\IJmInventoryMProductRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryMProgramRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryMSupplierRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryTLogRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryTRedeemDetRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryTRedeemRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryTReferenceRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryTStockRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryTTranRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryTTransDetRepository.cs" />
+    <Compile Include="Contracts\ITSmsRepository.cs" />
+    <Compile Include="Contracts\IMSmsTemplateRepository.cs" />
     <Compile Include="Contracts\IMCustomerRepository.cs" />
     <Compile Include="Contracts\ITReferenceRepository.cs" />
     <Compile Include="Contracts\ITWOLogRepository.cs" />
     <Compile Include="Contracts\ITWORepository.cs" />
     <Compile Include="Contracts\ITWOStatusRepository.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryMProductTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryMProgramTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryMSupplierTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryTLogTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryTRedeemDetTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryTRedeemTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryTReferenceTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryTStockTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryTTransDetTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryTTranTasks.cs" />
+    <Compile Include="Contracts\Tasks\ITSmsTasks.cs" />
+    <Compile Include="Contracts\Tasks\IMSmsTemplateTasks.cs" />
     <Compile Include="Contracts\Tasks\IMCustomerTasks.cs" />
     <Compile Include="Contracts\Tasks\ITReferenceTasks.cs" />
     <Compile Include="Contracts\Tasks\ITWOLogTasks.cs" />
     <Compile Include="Contracts\Tasks\ITWOStatusTasks.cs" />
     <Compile Include="Contracts\Tasks\ITWOTasks.cs" />
+    <Compile Include="JmInventoryMProduct.cs" />
+    <Compile Include="JmInventoryMProgram.cs" />
+    <Compile Include="JmInventoryMSupplier.cs" />
+    <Compile Include="JmInventoryTLog.cs" />
+    <Compile Include="JmInventoryTRedeem.cs" />
+    <Compile Include="JmInventoryTRedeemDet.cs" />
+    <Compile Include="JmInventoryTReference.cs" />
+    <Compile Include="JmInventoryTStock.cs" />
+    <Compile Include="JmInventoryTTran.cs" />
+    <Compile Include="JmInventoryTTransDet.cs" />
+    <Compile Include="TSms.cs" />
+    <Compile Include="MSmsTemplate.cs" />
     <Compile Include="MCustomer.cs" />
     <Compile Include="MyEntity1.cs" />
     <Compile Include="TReference.cs" />

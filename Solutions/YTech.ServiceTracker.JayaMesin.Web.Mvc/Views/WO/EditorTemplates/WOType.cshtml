@@ -1,0 +1,10 @@
+﻿@model string
+           
+@(
+ Html.Kendo().DropDownListFor(m => m)  
+        .OptionLabel("-Pilih Tipe WO-")
+        .DataValueField("Value")
+        .DataTextField("Text")     
+        .HtmlAttributes(new { @style="width:180px;" })
+        .BindTo((System.Collections.IEnumerable)ViewData["wo_type"])
+)

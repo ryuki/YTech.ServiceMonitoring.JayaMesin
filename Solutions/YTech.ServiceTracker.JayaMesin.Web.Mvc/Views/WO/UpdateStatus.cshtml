@@ -32,7 +32,7 @@
                             .DataTextField("Text")
                             .DataValueField("Value")
                             .AutoBind(false)
-                            .Events(e => e.Change("searchWO"))
+                            .Events(e => e.Change("rebindWO"))
                             .HtmlAttributes(new { style = "min-width:150px;" })
                             .BindTo((System.Collections.IEnumerable)ViewData["wo_status"])
                         )
@@ -43,6 +43,7 @@
     @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchWO(true);", new { @class = "k-button" }))
     @Html.Partial("_CountDown")
     @Html.Partial("ColourLegend")
+    @Html.Partial("ExpiredWO")
 </div>
 </text>);
     })
@@ -65,7 +66,7 @@
                 .ServerOperation(false)
                 .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
                 .Model(model => model.Id(p => p.WOID))
-                .Read(read => read.Action("WO_Read", "WO"))
+                .Read(read => read.Action("WO_Read", "WO").Data("additionalInfo"))
                 .Update(update => update.Action("WO_UpdateStatus", "WO"))
 
                 )
@@ -96,6 +97,17 @@
 </script>
 
 <script type="text/javascript">
+
+    function rebindWO() {
+        $("#RefreshGrid").click();
+    }
+
+    function additionalInfo() {
+        return {
+            WOStatus: $("#status").val()
+        }
+    }
+
     function searchWO(reset) {
         //reset search textbox if reset button clicked
         //alert(reset);
@@ -119,6 +131,7 @@
             andFilter.filters.push({ field: "WOLastStatus", operator: "contains", value: status });
             orFilter.filters.push({ field: "WONo", operator: "contains", value: textSearch });
             orFilter.filters.push({ field: "CustomerName", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "WOItemSN", operator: "contains", value: textSearch });
             andFilter.filters.push(orFilter);
             grid.dataSource.query({ filter: andFilter });
         } else {
@@ -183,12 +196,12 @@
         $("img.img-urgent[alt=Normal]").hide();
 
         //set bg color based on last status
-        SetBgColor();
+        SetBgColor('#Grid');
     }
 
-    function SetBgColor() {
+    function SetBgColor(gridName) {
         //set bg color based on last status
-        var grid = $('#Grid').data().kendoGrid;
+        var grid = $(gridName).data().kendoGrid;
         var data = grid.dataSource.data();
         $.each(data, function (i, row) {
             var lastStatus = row.WOLastStatus;

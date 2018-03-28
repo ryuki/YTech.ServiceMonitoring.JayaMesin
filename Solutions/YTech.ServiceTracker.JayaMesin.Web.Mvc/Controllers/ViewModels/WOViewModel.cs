@@ -255,5 +255,13 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels
             get;
             set;
         }
+
+        [DisplayName("Tipe WO")]
+        [UIHint("WOType")]
+        public string WOType
+        {
+            get;
+            set;
+        }
     }
 }

@@ -1,0 +1,9 @@
+﻿@model string
+@(Html.Kendo().Upload()
+        .Name("files")
+        .Async(a => a
+            .Save("Save", "Upload")
+            .Remove("Remove", "Upload")
+            .AutoUpload(true)
+        )
+    )

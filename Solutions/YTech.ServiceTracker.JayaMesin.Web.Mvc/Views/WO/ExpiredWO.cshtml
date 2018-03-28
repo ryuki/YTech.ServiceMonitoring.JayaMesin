@@ -1,0 +1,50 @@
+﻿<style type="text/css">
+    .flash {
+   animation-name: flash;
+    animation-duration: 0.3s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-play-state: running;
+    font-weight:bold;
+    font-size:13px;
+}
+
+@@keyframes flash {
+    from {color: red;}
+    to {color: black;}
+}
+</style>
+
+<span id="showExpiredWO" class="k-button flash">@ViewData["countExpiredWO"].ToString()  WO Telah Kadaluarsa</span>
+
+@(Html.Kendo().Window()
+    .Name("ExpiredWO")
+    .Title("Status WO Yang Telah Kadaluarsa")
+     .Content(@<text>@Html.Partial("ExpiredWOContent")</text>)
+    .Draggable()
+    .Resizable()
+    .Width(600)
+    .Height(480)
+    .Modal(true)
+    .Visible(false)
+    .Events(ev => ev.Close("onClose"))
+)
+
+<script type="text/javascript">
+    function onClose() {
+        //$("#showExpiredWO").show();
+    }
+
+    $(document).ready(function () {
+        $("#showExpiredWO").bind("click", function () {
+            $("#ExpiredWO").data("kendoWindow").center();
+            $("#ExpiredWO").data("kendoWindow").open();
+            //$("#showExpiredWO").hide();
+
+            //reload grid when cancel clicked
+            var grid = $("#GridExpiredWO").data("kendoGrid");
+            grid.dataSource.read();
+        });
+    });
+</script>

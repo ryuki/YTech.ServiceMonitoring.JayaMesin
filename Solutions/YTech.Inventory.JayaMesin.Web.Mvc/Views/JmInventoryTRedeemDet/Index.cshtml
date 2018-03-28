@@ -1,0 +1,123 @@
+@{
+    ViewBag.Title = "JmInventoryTRedeemDet";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@(Html.Kendo()
+.Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmInventoryTRedeemDetViewModel>()
+    .Name("Grid")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.RedeemId).Width("auto").ClientTemplate("#:RedeemIdName#");
+        columns.Bound(p => p.StockId).Width("auto").ClientTemplate("#:StockIdName#");
+        
+        columns.Bound(p => p.RedeemDetValue).Width("auto").Format("{0:N2}");
+        columns.Bound(p => p.RedeemDetStatus).Width("auto");
+        columns.Bound(p => p.RedeemDetDesc).Width("auto");
+        columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
+    })
+    .ToolBar(toolbar => { toolbar.Create().Text("Tambah JmInventoryTRedeemDet Baru"); })
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
+    .Pageable()
+    .Sortable()
+    .Scrollable()
+    .ColumnMenu()
+    .Selectable()
+    .Filterable()
+    .Groupable()
+    .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorder => reorder.Columns(true))
+    .HtmlAttributes(new { style = "height:500px;" })
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Batch(false)
+        .ServerOperation(false)
+        .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
+        .Model(model => model.Id(p => p.RedeemDetId))
+        .Create(create => create.Action("JmInventoryTRedeemDets_Create", "JmInventoryTRedeemDet"))
+        .Read(read => read.Action("JmInventoryTRedeemDets_Read", "JmInventoryTRedeemDet"))
+        .Update(update => update.Action("JmInventoryTRedeemDets_Update", "JmInventoryTRedeemDet"))
+        .Destroy(destroy => destroy.Action("JmInventoryTRedeemDets_Destroy", "JmInventoryTRedeemDet"))
+    )
+    .Events(e => e.DataBound("onDataBound"))
+    )
+
+<script type="text/kendo-template" id="message">
+<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+            <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>
+</script>
+
+<script type="text/javascript">
+    function onRequestEnd(e) {
+        //RequestEnd handler code
+        //bug : error when update after insert new data, no id catched
+        //bug fix : refresh after insert new data, 
+        if (e.type === "create") {
+            //alert("onRequestEnd");
+            //check for errors in the response
+            if (e.response == null || e.response.Errors == null) {
+                //refresh grid if no errors
+                $('#Grid').data().kendoGrid.dataSource.read();
+            }
+        }
+    }
+
+    function onDataBound(e) {
+        //edit data when double click
+        $('#Grid tbody tr').dblclick(function () {
+            var grid = $('#Grid').data().kendoGrid;
+            grid.editRow(this);
+        })
+    }
+    jQuery(document).ready(function () {
+        //auto click add new customer when iframe = 1
+        if (getURLParameter("isModal") === "True") {
+            //$("a.k-grid-add").trigger("click");
+            setTimeout('$("a.k-grid-add").trigger("click");', 3000);
+        }
+    })
+
+    function getURLParameter(name) {
+        return decodeURI(
+            (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1]
+        );
+    }
+
+    //show server errors if any
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+
+            var grid = $('#Grid').data('kendoGrid');
+
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();   // cancel grid rebind
+            });
+            //var gridElement = grid.editable.element;
+
+            //var validationMessageTemplate = kendo.template(
+            //    "<div id='#=field#_validationMessage' " +
+            //        "class='k-widget k-tooltip k-tooltip-validation " +
+            //            "k-invalid-msg field-validation-error' " +
+            //        "style='margin: 0.5em;' data-for='#=field#' " +
+            //        "data-val-msg-for='#=field#' role='alert'>" +
+            //        "<span class='k-icon k-warning'></span>" +
+            //        "#=message#" +
+            //        "<div class='k-callout k-callout-n'></div>" +
+            //    "</div>");
+
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                    //gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]")
+                    //.replaceWith(validationMessageTemplate({ field: key, message: value.errors[0] }));
+                    //gridElement.find("input[name=" + key + "]").focus();
+                }
+            });
+            alert(message);
+        }
+    }
+</script>

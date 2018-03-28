@@ -96,7 +96,8 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                          WODp = wo.WODp,
                          WOTakenDate = wo.WOTakenDate,
                          WOInvoiceNo = wo.WOInvoiceNo,
-                         WOComplain = wo.WOComplain
+                         WOComplain = wo.WOComplain,
+                         WOType = wo.WOType
                      };
 
             ReportDataSource reportDataSource = new ReportDataSource("WOViewModel", vm);

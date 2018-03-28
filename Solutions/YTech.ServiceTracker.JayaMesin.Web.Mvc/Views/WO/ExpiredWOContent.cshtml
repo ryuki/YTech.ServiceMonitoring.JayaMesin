@@ -1,0 +1,120 @@
+﻿ @(Html.Kendo()
+.Grid<YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.WOViewModel>()
+    .Name("GridExpiredWO")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.WONo).Width("auto");
+        columns.Bound(p => p.WODate).Format("{0:dd-MMM-yy}").Width("auto");
+        columns.Bound(p => p.WOLastStatus).Width("auto");
+        columns.Bound(p => p.CustomerName).Width("auto");
+        columns.Command(command =>
+        {
+            command.Custom("Pilih WO").Click("SelectWOExpired").HtmlAttributes(new { style = "min-width:20px;" });
+        }).Width("auto");
+    })
+        //.ToolBar(toolbar => { toolbar.Create().Text("Tambah Konsumen Baru"); })
+    .ToolBar(toolbar =>
+    {
+        toolbar.Template(@<text>
+<div class="k-toolbar k-grid-toolbar k-grid-top">
+       
+     <label class="status-label" for="status">Filter status WO :</label>
+    @(Html.Kendo().DropDownList()
+                            .Name("statusFilterForWOExpired")
+                            .OptionLabel("All")
+                            .DataTextField("Text")
+                            .DataValueField("Value")
+                            .AutoBind(false)
+                            .Events(e => e.Change("searchExpiredWO"))
+                            .HtmlAttributes(new { style = "min-width:150px;" })
+                            .BindTo((System.Collections.IEnumerable)ViewData["wo_status"])
+                        )
+
+    <label class="search-label" for="search">Pencarian :</label>
+    @(Html.TextBox("txtSearchExpiredWO", "", new { @class = "k-textbox" }))
+    @(Html.Button("btnSearchExpiredWO", "Cari", HtmlButtonType.Button, "searchExpiredWO(false);", new { @class = "k-button" }))
+    @(Html.Button("btnResetSearchExpiredWO", "Reset", HtmlButtonType.Button, "searchExpiredWO(true);", new { @class = "k-button" })) 
+</div>
+</text>);
+    })
+    //.Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
+    .Pageable()
+    .Sortable()
+    .Scrollable()
+    .ColumnMenu()
+    .Selectable()
+    .Filterable()
+    .Groupable()
+    .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorder => reorder.Columns(true))
+    .HtmlAttributes(new { style = "height:400px;" })
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(10)
+        .Batch(false)
+        .ServerOperation(false)
+        .Model(model => model.Id(p => p.WOID))
+        .Read(read => read.Action("ExpiredWO_List", "WO"))
+    )
+    .Events(e => e.DataBound("onExpiredWODataBound"))
+    )
+
+<script type="text/kendo-template" id="message">
+<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+            <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>
+</script>
+
+
+<script type="text/javascript">
+    function searchExpiredWO(reset) {
+        //reset search textbox if reset button clicked
+        //alert(reset);
+        if (reset) {
+            //alert("reset");
+            $("#txtSearchExpiredWO").val("");
+        }
+
+        grid = $("#GridExpiredWO").data("kendoGrid");
+        //search by woNO
+        var textSearch = $("#txtSearchExpiredWO").val();
+        //alert(textSearch);
+        //search by status
+        var status = $("#statusFilterForWOExpired").val();
+        //alert(status);
+
+        if (textSearch || status) {
+            //alert("search");
+            var andFilter = { logic: "and", filters: [] };
+            var orFilter = { logic: "or", filters: [] };
+            andFilter.filters.push({ field: "WOLastStatus", operator: "contains", value: status });
+            orFilter.filters.push({ field: "WONo", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "WOLastStatus", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "CustomerName", operator: "contains", value: textSearch });
+            andFilter.filters.push(orFilter);
+            grid.dataSource.query({ filter: andFilter });
+        } else {
+            grid.dataSource.filter({});
+        }
+    }
+
+    function SelectWOExpired(e) {
+        e.preventDefault();
+
+        //set datasource for print WO
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var WONo = dataItem.WONo;
+        //alert(WONo);
+
+        ///set text search WO list
+        $("#search").val(WONo);
+        searchWO(false);
+
+        ///close window
+        $("#ExpiredWO").data("kendoWindow").close();
+    }
+
+    function onExpiredWODataBound(e) {
+        //set bg color based on last status
+        SetBgColor('#GridExpiredWO');
+    }
+</script>

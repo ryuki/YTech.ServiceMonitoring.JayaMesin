@@ -1,0 +1,21 @@
+﻿@(Html.Kendo().Window()
+    .Name("WindowViewPO")
+    .Title("Detail PO")
+     .Content(@<text>@Html.Partial("ViewPOContent")</text>)
+    .Draggable()
+    .Resizable()
+    .Width(450)
+    .Height(370)
+    .Modal(true)
+    .Visible(false)
+    .Events(ev => ev.Close("onClose"))
+)
+
+<script type="text/javascript">
+    function OpenViewPOContent() {
+        $("#WindowViewPO").data("kendoWindow").center();
+        $("#WindowViewPO").data("kendoWindow").open();
+        
+       
+    }
+</script>

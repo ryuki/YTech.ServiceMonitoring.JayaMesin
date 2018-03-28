@@ -1,0 +1,272 @@
+@{
+    ViewBag.Title = "Daftar Penerimaan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (false)
+{ <script src="@Url.Content("~/Scripts/jquery-1.9.1-vsdoc.js")" type="text/javascript"></script> }
+
+<style type="text/css">
+    .k-Print {
+        background-image: url('Content/img/rtg_print.gif');
+    }
+</style>
+@(Html.Kendo()
+.Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.TransReceiptViewModel>()
+    .Name("GridTrans")
+    .Columns(columns =>
+    {
+        //columns.Template(e => { }).ClientTemplate("<img class='img-new' src='" + Url.Content("~/Content/img/new_header.png") + "' alt='#: data.TransNo #' /> <img class='img-urgent' src='" + Url.Content("~/Content/img/error3.gif") + "' style='width:16px;height:16px;' alt='#: data.InvoiceNo #' />").Width(30).Title(" ");
+        columns.Bound(p => p.TransNo).Width("auto");
+        columns.Bound(p => p.SupplierName).Width("auto").Title("Supplier");
+        columns.Bound(p => p.TransDate).Format("{0:dd-MMM-yy}").Width("auto");
+        columns.Bound(p => p.InvoiceNo).Width("auto");
+        columns.Bound(p => p.TransStatus).Width("auto");
+        columns.Bound(p => p.TransInputBy).Width("auto").Title("Diinput Oleh");
+        columns.Bound(p => p.TransInputDate).Width("auto").Title("Diinput Tanggal").Format("{0:dd-MMM-yy HH:mm}");
+        //columns.Bound(p => p.TransApprovedBy).Width("auto").Title("Disetujui Oleh");
+        //columns.Bound(p => p.TransApprovedDate).Width("auto").Title("Disetujui Tanggal").Format("{0:dd-MMM-yy HH:mm}");
+        columns.Command(command =>
+        {
+            command.Edit().Text(" ").HtmlAttributes(new { style = "min-width:20px;" });
+            command.Destroy().Text(" ").HtmlAttributes(new { style = "min-width:20px;" });
+            command.Custom("Detail PO").Click("OpenTransDet").HtmlAttributes(new { style = "min-width:20px;" });
+        })
+            .Width("135px");
+    })
+    .ToolBar(toolbar =>
+    {
+        toolbar.Template(@<text>
+<div class="k-toolbar k-grid-toolbar k-grid-top">
+    <a class="k-button k-button-icontext k-grid-add" href="#Grid-mode=insert"><span class="k-icon k-add"></span>Tambah Penerimaan Baru</a>
+
+    <label class="status-label" for="status">Filter status Penerimaan :</label>
+    @(Html.Kendo().DropDownList()
+                            .Name("status")
+                            .OptionLabel("All")
+                            .DataTextField("Text")
+                            .DataValueField("Value")
+                            .AutoBind(false)
+                            .Events(e => e.Change("searchPO"))
+                            .HtmlAttributes(new { style = "min-width:150px;" })
+                            .BindTo((System.Collections.IEnumerable)ViewData["trans_status"])
+                        )
+
+    <label class="search-label" for="search">Pencarian :</label>
+    @(Html.TextBox("search", "", new { @class = "k-textbox" }))
+    @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "searchPO(false);", new { @class = "k-button" }))
+    @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchPO(true);", new { @class = "k-button" })) | 
+    @Html.Partial("_CountDown")
+    @Html.Partial("ColourLegend")
+    @Html.Partial("ReceiptDetail")
+</div>
+</text>);
+    })
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(500).Modal(true)))
+    .Pageable()
+    .Sortable()
+    .Scrollable()
+    .Selectable()
+    .Filterable()
+    .Groupable()
+    .ColumnMenu()
+    .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorder => reorder.Columns(true))
+    .HtmlAttributes(new { style = "height:500px;" })
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Batch(false)
+        .ServerOperation(true)
+        .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
+                .Create(create => create.Action("ReceiptList_Create", "JmInventoryTTran"))
+                .Read(read => read.Action("ReceiptList_Read", "JmInventoryTTran", new { TransType = YTech.ServiceTracker.JayaMesin.Enums.EnumTransType.Receipt.ToString() }))
+                .Update(update => update.Action("ReceiptList_Update", "JmInventoryTTran"))
+                .Destroy(destroy => destroy.Action("ReceiptList_Destroy", "JmInventoryTTran"))
+        .Model(x =>
+        {
+            //string woNo = Html.Action("GetWONo", "WO").ToHtmlString();
+            x.Id(p => p.TransId);
+            x.Field(c => c.TransDate).DefaultValue(DateTime.Today);
+            x.Field(c => c.TransStatus).DefaultValue(YTech.ServiceTracker.JayaMesin.Enums.EnumTransStatus.Baru.ToString());
+        }
+    ))
+    .Events(e => e.DataBound("onDataBound").Edit("onEdit").Cancel("onCancel"))
+)
+@(Html.Hidden("SelectedUid"))
+
+
+<script type="text/javascript">
+    function searchPO(reset) {
+        //reset search textbox if reset button clicked
+        //alert(reset);
+        if (reset) {
+            //alert("reset");
+            $("#search").val("");
+        }
+
+        grid = $("#GridTrans").data("kendoGrid");
+        //search by woNO
+        var textSearch = $("#search").val();
+        //alert(textSearch);
+        //search by status
+        var status = $("#status").val();
+        //alert(status);
+
+        if (textSearch || status) {
+            //alert("search");
+            var andFilter = { logic: "and", filters: [] };
+            var orFilter = { logic: "or", filters: [] };
+            andFilter.filters.push({ field: "TransStatus", operator: "contains", value: status });
+            orFilter.filters.push({ field: "TransNo", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "SupplierName", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "TransInvoiceNo", operator: "contains", value: textSearch });
+            andFilter.filters.push(orFilter);
+            grid.dataSource.query({ filter: andFilter });
+        } else {
+            grid.dataSource.filter({});
+        }
+    }
+
+    function onRequestEnd(e) {
+        //RequestEnd handler code
+        //bug : error when update after insert or update new data, no id catched
+        //bug fix : refresh after insert new data, 
+        //alert(e.type);
+        if (e.type === "create" || e.type === "update" || e.type === "destroy") {
+            //check for errors in the response
+            if (e.response == null || e.response.Errors == null) {
+                //call refresh grid and reset timer
+                $("#RefreshGrid").click();
+            }
+        }
+    }
+
+    function onEdit(e) {
+        //stop interval
+        clearInterval(refreshIntervalId);
+
+        //alert("onedit");
+        // get wo id
+
+        var TransId = e.container.find("input[name=TransId]").val();
+        //alert(woId);
+        //get uid of selected row
+        //var dataItem = $("#GridTrans").data("kendoGrid").dataSource.get(TransId);
+        //var uid = $("#GridTrans").find("tr[data-uid='" + dataItem.uid + "']").attr("data-uid");
+        //alert("selected data uid = " + uid);
+        //set uid of temporary hidden input
+        //$("#SelectedUid").val(uid);
+
+        //log when open po
+        if (!TransId) {
+            return;
+        }
+        var getLogWOUrl = '@(Url.Action("LogTrans_Open", "JmInventoryTTran", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))' + '&TransId=' + TransId;
+        $.ajax({
+            type: 'POST',
+            url: getLogWOUrl,
+            error: function (response) {
+                alert("error: " + response);
+            }, success: function (response) {
+                if (!response.Success)
+                    alert("Error : " + response.Message);
+            }
+        });
+    }
+
+    function onCancel(e) {
+        //call refresh grid and reset timer
+        $("#RefreshGrid").click();
+    }
+
+    function onDataBound(e) {
+        //edit data when double click
+        var grid = $('#GridTrans').data().kendoGrid;
+        $('#GridTrans tbody tr').dblclick(function () {
+            grid.editRow(this);
+        })
+        //hide image new if have been read
+        $("img.img-new[alt=true]").hide();
+        //hide image urgent if priority is normal
+        $("img.img-urgent[alt=Normal]").hide();
+
+        //set print icon image to print button
+        $("a.k-grid-Print").addClass("k-grid-Print-eee");
+        $("a.k-grid-Print").html("<span class='k-icon k-Print'></span>");
+
+        //set bg color based on last status
+        SetBgColor('#GridTrans');
+    }
+
+    function SetBgColor(gridName) {
+        //set bg color based on last status
+        var grid = $(gridName).data().kendoGrid;
+        var data = grid.dataSource.data();
+        $.each(data, function (i, row) {
+            var lastStatus = row.TransStatus;
+            var color = "white";
+            var showSms = false;
+            if (lastStatus == "Baru") {
+                color = "#D5D5CA";
+                showSms = false;
+            }
+            else if (lastStatus == "Disetujui") {
+                color = "#EBEB99";
+                showSms = true;
+            }
+            else if (lastStatus == "Menunggu_Persetujuan") {
+                color = "#9494FF";
+                showSms = false;
+            }
+            else if (lastStatus == "Telah_Dipesan") {
+                color = "gray";
+                showSms = false;
+            }
+            //Change the background color of lastStatus
+            $('tr[data-uid="' + row.uid + '"]').css("background-color", color);
+
+        });
+    }
+
+    //show server errors if any
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+
+            var grid = $('#GridTrans').data('kendoGrid');
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();   // cancel grid rebind
+            });
+
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            alert(message);
+        }
+    }
+
+    function OpenTransDet(e) {
+        e.preventDefault();
+
+        //set datasource for print WO
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var TransId = dataItem.TransId;
+        //alert(woId);
+        //set HiddenSelectedWOId of temporary hidden input
+        $("#HiddenSelectedTransId").val(TransId);
+        OpenReceiptDetailContent();
+    }
+
+    ///for list PO script
+        $(document).ready(function () {
+            $("#showPO").bind("click", function () {
+                $("#WindowPO").data("kendoWindow").center();
+                $("#WindowPO").data("kendoWindow").open();
+                //$("#showLegend").hide();
+            });
+        });
+</script>

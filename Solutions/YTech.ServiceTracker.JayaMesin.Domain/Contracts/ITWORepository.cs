@@ -9,7 +9,9 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts
     public interface ITWORepository : INHibernateRepositoryWithTypedId<TWO, string>
     {
         IEnumerable<TWO> GetWOByDate(DateTime? dateFrom, DateTime? dateTo);
-        IEnumerable<TWOHaveRead> GetListNotDeleted(string userName);
+        IEnumerable<TWOHaveRead> GetListNotDeleted(string userName, string WOStatus, string TextSearch);
         TWO GetWOByWONo(string woNo);
+
+        IEnumerable<TWOHaveRead> GetListExpiredWO();
     }
 }

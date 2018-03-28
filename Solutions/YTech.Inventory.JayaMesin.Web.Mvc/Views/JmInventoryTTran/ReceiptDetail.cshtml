@@ -1,0 +1,24 @@
+﻿@(Html.Kendo().Window()
+    .Name("WindowReceiptDetail")
+    .Title("Daftar Penerimaan Barang")
+     .Content(@<text>@Html.Partial("ReceiptDetailContent")</text>)
+    .Draggable()
+    .Resizable()
+    .Width(450)
+    .Height(480)
+    .Modal(true)
+    .Visible(false)
+    .Events(ev => ev.Close("onClose"))
+)
+
+<script type="text/javascript">
+    function OpenReceiptDetailContent() {
+        $("#WindowReceiptDetail").data("kendoWindow").center();
+        $("#WindowReceiptDetail").data("kendoWindow").open();
+        //$("#showExpiredWO").hide();
+
+        //reload grid when cancel clicked
+        var grid = $("#GridReceiptDetail").data("kendoGrid");
+        grid.dataSource.read();
+    }
+</script>

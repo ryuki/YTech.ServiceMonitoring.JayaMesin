@@ -41,6 +41,12 @@ namespace YTech.ServiceTracker.JayaMesin.Domain
         public virtual string WOReceivedBy { get; set; }
         public virtual string WORepairedBy { get; set; }
 
+        /// <summary>
+        /// 20170511 - new request, add new column wo type, 
+        /// service, ganti sparepart, service dan ganti sparepart
+        /// </summary>
+        public virtual string WOType { get; set; }
+
         public virtual string DataStatus { get; set; }
         public virtual string CreatedBy { get; set; }
         public virtual DateTime? CreatedDate { get; set; }

@@ -11,6 +11,7 @@ namespace YTech.ServiceTracker.JayaMesin.Enums
         Update,
         Delete,
         Read,
-        Print
+        Print,
+        SMS
     }
 }

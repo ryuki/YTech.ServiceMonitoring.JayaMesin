@@ -1,0 +1,38 @@
+﻿@model string
+@Html.HiddenFor(m => m)
+@Html.ValidationMessageFor(m => m)
+
+<script>
+    function success(e) {
+        var imagePath = e.response.ImageUrl;
+
+        $("#SupplierNpwpImgUrl").val(imagePath).trigger("change");
+
+        var FullImageUrl = e.response.FullImageUrl;
+        $("#ImgUploaded").attr("src", FullImageUrl);
+    }
+
+    //function onFileUpload(e) {
+    //    var files = e.files;
+
+    //    $.each(files, function () {
+
+    //        if (this.size / 1024 / 1024 > 2) {
+    //            alert("Max ukuran gambar adalah 2Mb!")
+    //            e.preventDefault();
+    //        }
+    //    });
+    //}
+</script>
+
+<img id="ImgUploaded" src="" width="200px" height="100px" />
+@(Html.Kendo().Upload()
+    .Name("file")
+    .Multiple(false)
+    .HtmlAttributes(new { accept = "image/*" })
+    .Async(a => a
+        .Save("UploadImage", "JmInventoryMSupplier")
+        .AutoUpload(true)
+    )
+    .Events(e => e.Success("success"))
+     )

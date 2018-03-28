@@ -1,0 +1,24 @@
+﻿@(Html.Kendo().Window()
+    .Name("WindowListSms")
+    .Title("Daftar SMS")
+     .Content(@<text>@Html.Partial("ListSMSContent")</text>)
+    .Draggable()
+    .Resizable()
+    .Width(750)
+    .Height(480)
+    .Modal(true)
+    .Visible(false)
+    .Events(ev => ev.Close("onClose"))
+)
+
+<script type="text/javascript">
+    function OpenSMSListContent() {
+        $("#WindowListSms").data("kendoWindow").center();
+        $("#WindowListSms").data("kendoWindow").open();
+        //$("#showExpiredWO").hide();
+
+        //reload grid when cancel clicked
+        var grid = $("#GridSms").data("kendoGrid");
+        grid.dataSource.read();
+    }
+</script>

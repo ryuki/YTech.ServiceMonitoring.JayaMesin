@@ -1,0 +1,10 @@
+﻿@model string
+           
+@(
+ Html.Kendo().DropDownListFor(m => m) 
+        .OptionLabel("-Pilih Status-")
+        .DataValueField("Value")
+        .DataTextField("Text")    
+        .BindTo((System.Collections.IEnumerable)ViewData["product_status"])
+         .HtmlAttributes(new { @style="width:150px;" })
+)

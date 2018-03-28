@@ -1,0 +1,107 @@
+﻿ @(Html.Kendo()
+.Grid<YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.SmsViewModel>()
+    .Name("GridSms")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.SmsRecipient).Width("auto");
+        columns.Bound(p => p.SmsDate).Format("{0:dd-MMM-yy HH:mm}").Width("auto");
+        columns.Bound(p => p.SmsText).Width("auto");
+        columns.Bound(p => p.SmsReport).Width("auto");
+    })
+        //.ToolBar(toolbar => { toolbar.Create().Text("Tambah Konsumen Baru"); })
+    .ToolBar(toolbar =>
+    {
+        toolbar.Template(@<text>
+<div class="k-toolbar k-grid-toolbar k-grid-top">
+       
+     @*<label class="status-label" for="status">Filter status WO :</label>
+    @(Html.Kendo().DropDownList()
+                            .Name("statusFilterForWOExpired")
+                            .OptionLabel("All")
+                            .DataTextField("Text")
+                            .DataValueField("Value")
+                            .AutoBind(false)
+                            .Events(e => e.Change("searchExpiredWO"))
+                            .HtmlAttributes(new { style = "min-width:150px;" })
+                            .BindTo((System.Collections.IEnumerable)ViewData["wo_status"])
+                        )*@
+
+    <label class="search-label" for="search">Pencarian :</label>
+    @(Html.TextBox("txtSearchSms", "", new { @class = "k-textbox" }))
+    @(Html.Button("btnSearchSms", "Cari", HtmlButtonType.Button, "searchSms(false);", new { @class = "k-button" }))
+    @(Html.Button("btnResetSearchSms", "Reset", HtmlButtonType.Button, "searchSms(true);", new { @class = "k-button" })) 
+</div>
+</text>);
+    })
+    //.Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
+    .Pageable()
+    .Sortable()
+    .Scrollable()
+    .ColumnMenu()
+    .Selectable()
+    .Filterable()
+    .Groupable()
+    .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorder => reorder.Columns(true))
+    .HtmlAttributes(new { style = "height:400px;" })
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(10)
+        .Batch(false)
+        .ServerOperation(false)
+        .Model(model => model.Id(p => p.SmsId))
+        .Read(read => read.Action("ListSMS_Read", "WO").Data("GetWoId"))
+    )
+    .Events(e => e.DataBound("onSmsDataBound"))
+    )
+
+<script type="text/kendo-template" id="message">
+<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+            <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>
+</script>
+
+@(Html.Hidden("HiddenSelectedWOId"))
+<script type="text/javascript">
+    function GetWoId() {
+        return {
+            woID: $("#HiddenSelectedWOId").val()
+        }
+    }
+
+    function searchSms(reset) {
+        //reset search textbox if reset button clicked
+        //alert(reset);
+        if (reset) {
+            //alert("reset");
+            $("#txtSearchSms").val("");
+        }
+
+        grid = $("#GridSms").data("kendoGrid");
+        //search by woNO
+        var textSearch = $("#txtSearchSms").val();
+        //alert(textSearch);
+        //search by status
+        //var status = $("#statusFilterForSms").val();
+        //alert(status);
+
+        if (textSearch || status) {
+            //alert("search");
+            var andFilter = { logic: "and", filters: [] };
+            var orFilter = { logic: "or", filters: [] };
+            //andFilter.filters.push({ field: "WOLastStatus", operator: "contains", value: status });
+            orFilter.filters.push({ field: "SmsRecipient", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "SmsDate", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "SmsText", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "SmsReport", operator: "contains", value: textSearch });
+            //andFilter.filters.push(orFilter);
+            grid.dataSource.query({ filter: orFilter });
+        } else {
+            grid.dataSource.filter({});
+        }
+    }
+
+    function onSmsDataBound(e) {
+        //set bg color based on last status
+        //SetBgColor('#GridSms');
+    }
+</script>

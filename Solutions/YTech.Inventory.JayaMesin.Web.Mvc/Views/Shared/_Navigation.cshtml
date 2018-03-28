@@ -1,0 +1,69 @@
+﻿@using YTech.ServiceTracker.JayaMesin.Enums;
+
+@{ Layout = null; }
+@if (Request.IsAuthenticated) {
+@(Html.Kendo().PanelBar()
+    .Name("navigationPanelBar")
+    .Animation(true)
+    .ExpandMode(PanelBarExpandMode.Single)
+    .HighlightPath(true)
+    .SelectedIndex(0)
+    .HtmlAttributes(new { style = "font-weight:bold;" })
+    .Items(panels =>
+    {        
+        panels.Add()
+           .Text("Master")
+           .Items(childPanels =>
+           {
+               childPanels.Add().Text("Produk").Action("Index", "JmInventoryMProduct").HtmlAttributes(new { style = "font-weight:normal;" });
+               childPanels.Add().Text("Supplier").Action("Index", "JmInventoryMSupplier").HtmlAttributes(new { style = "font-weight:normal;" });
+               childPanels.Add().Text("Program").Action("Index", "JmInventoryMProgram").HtmlAttributes(new { style = "font-weight:normal;" });
+           });
+
+        panels.Add()
+            .Text("PO")
+            .Items(childPanels =>
+            {
+                childPanels.Add().Text("Tambah PO Baru").Action("NewPO", "JmInventoryTTran").HtmlAttributes(new { style = "font-weight:normal;" });
+               
+                childPanels.Add().Text("Daftar PO Baru").Action("POList", "JmInventoryTTran", new { TransStatus = EnumTransStatus.Baru }).HtmlAttributes(new { style = "font-weight:normal;" });
+                childPanels.Add().Text("Daftar PO Disetujui").Action("POList", "JmInventoryTTran", new { TransStatus = EnumTransStatus.Disetujui }).HtmlAttributes(new { style = "font-weight:normal;" });
+                childPanels.Add().Text("Daftar PO Ditolak").Action("POList", "JmInventoryTTran", new { TransStatus = EnumTransStatus.Ditolak }).HtmlAttributes(new { style = "font-weight:normal;" });
+                childPanels.Add().Text("Daftar PO Diproses").Action("POList", "JmInventoryTTran", new { TransStatus = EnumTransStatus.Diproses }).HtmlAttributes(new { style = "font-weight:normal;" });
+                //childPanels.Add().Text("Daftar Penerimaan").Action("ReceiptList", "JmInventoryTTran").HtmlAttributes(new { style = "font-weight:normal;" });
+                
+            });
+
+        panels.Add()
+            .Text("Penjualan")
+            .Items(childPanels =>
+            {
+                childPanels.Add().Text("Input Penjualan").Action("NewSales", "JmInventoryTTran").HtmlAttributes(new { style = "font-weight:normal;" });
+                childPanels.Add().Text("Daftar Penjualan").Action("SalesList", "JmInventoryTRedeem").HtmlAttributes(new { style = "font-weight:normal;" });
+            });
+
+        panels.Add()
+            .Text("Redeem")
+            .Items(childPanels =>
+            {
+                childPanels.Add().Text("Klaim Redeem Main Dealer").Action("NewRedeem", "JmInventoryTRedeem").HtmlAttributes(new { style = "font-weight:normal;" });
+                childPanels.Add().Text("Daftar Klaim Redeem Main Dealer").Action("NewRedeem", "JmInventoryTRedeem").HtmlAttributes(new { style = "font-weight:normal;" });
+                childPanels.Add().Text("Klaim Redeem End User").Action("NewRedeem", "JmInventoryTRedeem").HtmlAttributes(new { style = "font-weight:normal;" });
+                childPanels.Add().Text("Daftar Klaim Redeem Main Dealer").Action("NewRedeem", "JmInventoryTRedeem").HtmlAttributes(new { style = "font-weight:normal;" });
+            });
+
+        //panels.Add()
+        //    .Text("Laporan")
+        //    .Items(childPanels =>
+        //    {
+        //        childPanels.Add().Text("Laporan Harian Servis Printer").Action("Index", "Reports",new {rpt = EnumReports.RptWODailyRecap}).HtmlAttributes(new { style = "font-weight:normal;" });
+        //    });
+
+        panels.Add()
+            .Text("Utiliti")
+            .Items(childPanels =>
+            {
+                childPanels.Add().Text("Daftar User").Action("Index", "Account").HtmlAttributes(new { style = "font-weight:normal;" });
+            });
+    })
+)}

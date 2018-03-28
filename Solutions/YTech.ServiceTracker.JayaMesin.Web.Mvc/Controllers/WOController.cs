@@ -11,6 +11,12 @@ using YTech.ServiceTracker.JayaMesin.Domain;
 using YTech.ServiceTracker.JayaMesin.Enums;
 using System.Text;
 using Microsoft.Reporting.WebForms;
+using System.IO;
+using System.Diagnostics;
+
+using System.Collections.Specialized;
+using System.Net;
+using RestSharp;
 
 namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
 {
@@ -22,13 +28,17 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
         private readonly ITReferenceTasks _refTasks;
         private readonly ITWOLogTasks _woLogTasks;
         private readonly ITWOStatusTasks _woStatusTasks;
-        public WOController(IMCustomerTasks customerTasks, ITWOTasks woTasks, ITReferenceTasks refTasks, ITWOLogTasks woLogTasks, ITWOStatusTasks woStatusTasks)
+        private readonly IMSmsTemplateTasks _smsTemplateTasks;
+        private readonly ITSmsTasks _smsTasks;
+        public WOController(IMCustomerTasks customerTasks, ITWOTasks woTasks, ITReferenceTasks refTasks, ITWOLogTasks woLogTasks, ITWOStatusTasks woStatusTasks, IMSmsTemplateTasks smsTemplateTasks, ITSmsTasks smsTasks)
         {
             this._customerTasks = customerTasks;
             this._woTasks = woTasks;
             this._refTasks = refTasks;
             this._woLogTasks = woLogTasks;
             this._woStatusTasks = woStatusTasks;
+            this._smsTemplateTasks = smsTemplateTasks;
+            this._smsTasks = smsTasks;
         }
 
         [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS")]
@@ -38,7 +48,15 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             PopulateWOStatus();
             PopulateSCToko();
             PopulatePriority();
+            PopulateWOType();
+            CalculateExpiredWO();
             return View();
+        }
+
+        private void CalculateExpiredWO()
+        {
+            var orderedWOS = GetWOs(_woTasks.GetListExpiredWO());
+            ViewData["countExpiredWO"] = orderedWOS.Count();
         }
 
         public ActionResult ReloadCustomers(string random)
@@ -54,6 +72,8 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             PopulateWOStatus();
             PopulateSCToko();
             PopulatePriority();
+            PopulateWOType();
+            CalculateExpiredWO();
             return View();
         }
 
@@ -101,6 +121,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                 woVM.WORemarkStatus = wo.WORemarkStatus;
                 woVM.WOReceivedBy = wo.WOReceivedBy;
                 woVM.WORepairedBy = wo.WORepairedBy;
+                woVM.WOType = wo.WOType;
                 wos.Add(woVM);
             }
             else
@@ -146,6 +167,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                 woVM.WORemarkStatus = wo.WORemarkStatus;
                 woVM.WOReceivedBy = wo.WOReceivedBy;
                 woVM.WORepairedBy = wo.WORepairedBy;
+                woVM.WOType = wo.WOType;
             }
             IEnumerable<TWOStatus> woStatus = _woStatusTasks.GetWOStatus(WoId);
 
@@ -171,7 +193,6 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             var wostatus = from EnumWOStatus e in Enum.GetValues(typeof(EnumWOStatus))
                            select new { Value = e.ToString(), Text = e.ToString() };
             ViewData["wo_status"] = wostatus;
-
         }
 
         private void PopulateSCToko()
@@ -199,6 +220,17 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                                                        };
             ViewData["customers"] = customers;
             return Json(customers, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// 20170511 : add new wo type and populate to viewdata
+        /// </summary>
+        private void PopulateWOType()
+        {
+            var wo_type = from EnumWOType e in Enum.GetValues(typeof(EnumWOType))
+                          select new { Value = e.ToString(), Text = e.ToString() };
+            ViewData["wo_type"] = wo_type;
+
         }
 
         public ActionResult PrintWOFactur(string random, string woId)
@@ -304,7 +336,8 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                          WOComplain = wo.WOComplain,
                          WORemarkStatus = wo.WORemarkStatus,
                          WOReceivedBy = wo.WOReceivedBy,
-                         WORepairedBy = wo.WORepairedBy
+                         WORepairedBy = wo.WORepairedBy,
+                         WOType = wo.WOType
                      };
 
             IList<WOViewModel> listWO = new List<WOViewModel>();
@@ -368,13 +401,13 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             return factur;
         }
 
-        public ActionResult WO_Read([DataSourceRequest] DataSourceRequest request)
+        public ActionResult WO_Read([DataSourceRequest] DataSourceRequest request, string WOStatus, string TextSearch)
         {
-            var orderedWOS = from wo in GetWOs()
+            var orderedWOS = from wo in GetWOs(this._woTasks.GetListNotDeleted(User.Identity.Name, WOStatus, TextSearch))
                              orderby wo.HaveBeenRead, wo.WOPriority descending, wo.WONo descending
                              select wo;
             DataSourceResult result = orderedWOS.ToDataSourceResult(request);
-            return Json(result);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult WOStatus_Read(string woID, [DataSourceRequest] DataSourceRequest request)
@@ -434,6 +467,7 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             wo.WORemarkStatus = WOVM.WORemarkStatus;
             wo.WOReceivedBy = WOVM.WOReceivedBy;
             wo.WORepairedBy = WOVM.WORepairedBy;
+            wo.WOType = WOVM.WOType;
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
@@ -530,10 +564,8 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             return _customerTasks.One(custId);
         }
 
-        private IEnumerable<WOViewModel> GetWOs()
+        private IEnumerable<WOViewModel> GetWOs(IEnumerable<TWOHaveRead> wos)
         {
-            var wos = this._woTasks.GetListNotDeleted(User.Identity.Name);
-
             return from wo in wos
                    select new WOViewModel
                    {
@@ -563,7 +595,8 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
                        HaveBeenRead = wo.HaveBeenRead,
                        WORemarkStatus = wo.WORemarkStatus,
                        WOReceivedBy = wo.WOReceivedBy,
-                       WORepairedBy = wo.WORepairedBy
+                       WORepairedBy = wo.WORepairedBy,
+                       WOType = wo.WOType
                        //use stored procedure, looping to get read flag make wo list slow response
                        //HaveBeenRead = _woLogTasks.HaveBeenRead(wo, User.Identity.Name)
                    };
@@ -603,29 +636,289 @@ namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
             return custVM;
         }
 
-    }
+        /// <summary>
+        /// 20170511 : add new feature, get expired wo list
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// 
+        public ActionResult ExpiredWO_List([DataSourceRequest] DataSourceRequest request)
+        {
+            var orderedWOS = from wo in GetWOs(_woTasks.GetListExpiredWO())
+                             orderby wo.WODate descending, wo.WONo
+                             select wo;
+            DataSourceResult result = orderedWOS.ToDataSourceResult(request);
+            return Json(result);
+        }
 
-    public enum EnumWOStatus
-    {
-        Baru_Masuk,
-        Sedang_Dikerjakan,
-        Menunggu_Persetujuan,
-        Sudah_Setuju,
-        Menunggu_Part,
-        Selesai,
-        Batal,
-        Closed
-    }
+        public ActionResult ExpiredWO()
+        {
+            return View();
+        }
 
-    public enum EnumSCToko
-    {
-        Toko,
-        SC
-    }
+        public ActionResult SmsCustomer(string random, string woId)
+        {
+            bool success = true;
 
-    public enum EnumPriority
-    {
-        Normal,
-        Urgent
+            //get wo by wo id
+            TWO wo = this._woTasks.One(woId);
+            MSmsTemplate smsTemplate = _smsTemplateTasks.GetByWOStatus(wo.WOLastStatus);
+
+            StringBuilder msg = new StringBuilder();
+            msg.Append(smsTemplate.SmsTemplateText);
+            msg.Replace("[CustomerPhone]", wo.CustomerId.CustomerPhone);
+            msg.Replace("[CustomerName]", wo.CustomerId.CustomerName);
+            msg.Replace("[WONo]", wo.WONo);
+            msg.Replace("[WODate]", wo.WODate.Value.ToString("dd-MMM-yyyy"));
+            msg.Replace("[SMSSentDate]", DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString());
+
+
+            string arg = string.Format(@" --sendsms TEXT {0} -text ""{1}  "" ", wo.CustomerId.CustomerPhone, msg.ToString());
+            string fn = @"C:\Program Files\Gammu 1.38.2\bin\gammu.exe";
+            var psi = new ProcessStartInfo(fn, arg)
+            {
+                WorkingDirectory = "C:\\Program Files\\Gammu 1.38.2\\bin",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+
+            StringBuilder debug = new StringBuilder();
+            using (var process = new Process { StartInfo = psi })
+            {
+                // delegate for writing the process output to the response output
+                Action<Object, DataReceivedEventArgs> dataReceived = ((sender, e) =>
+                {
+                    if (e.Data != null) // sometimes a random event is received with null data, not sure why - I prefer to leave it out
+                    {
+                        debug.AppendLine(e.Data);
+                    }
+                });
+
+                process.OutputDataReceived += new DataReceivedEventHandler(dataReceived);
+                process.ErrorDataReceived += new DataReceivedEventHandler(dataReceived);
+
+
+                // start the process and start reading the standard and error outputs
+                process.Start();
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+
+                // wait for the process to exit
+                process.WaitForExit();
+            }
+
+            if (debug.ToString().Contains("Error"))
+            {
+                success = false;
+            }
+            else
+            {
+                success = true;
+            }
+
+            ///save sms
+            ///
+            TSms sms = new TSms();
+            sms.SetAssignedIdTo(Guid.NewGuid().ToString());
+            sms.SmsRecipient = wo.CustomerId.CustomerPhone;
+            sms.SmsText = msg.ToString();
+            sms.SmsReport = debug.ToString();
+            sms.SmsDate = DateTime.Now;
+            sms.SmsStatus = success.ToString();
+            sms.CreatedBy = User.Identity.Name;
+            sms.DataStatus = "New";
+            sms.CreatedDate = DateTime.Now;
+            sms.WOId = wo;
+            _smsTasks.Insert(sms);
+
+            //save logx
+            SaveLog(wo, EnumWOLog.SMS);
+            var result = new
+            {
+                Success = success.ToString(),
+                Message = debug.ToString()
+            };
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult SmsCustomerApi(string random, string woId)
+        {
+
+            bool success = true;
+
+            //get wo by wo id
+            TWO wo = this._woTasks.One(woId);
+            MSmsTemplate smsTemplate = _smsTemplateTasks.GetByWOStatus(wo.WOLastStatus);
+
+            StringBuilder msg = new StringBuilder();
+            msg.Append(smsTemplate.SmsTemplateText);
+            msg.Replace("[CustomerPhone]", wo.CustomerId.CustomerPhone);
+            msg.Replace("[CustomerName]", wo.CustomerId.CustomerName);
+            msg.Replace("[WONo]", wo.WONo);
+            msg.Replace("[WODate]", wo.WODate.Value.ToString("dd-MMM-yyyy"));
+            msg.Replace("[SMSSentDate]", DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString());
+
+            StringBuilder debug = new StringBuilder();
+            string smsUrl = string.Format("http://www.freesms4us.com/kirimsms.php?user=ryuki2009&pass=ciasen2009&no={0}&isi={1}&return=json&ket=yes", wo.CustomerId.CustomerPhone, msg.ToString());
+
+            try
+            {
+                Stream response = Http.Get(smsUrl);
+                StreamReader sr = new StreamReader(response);
+                debug.Append(sr.ReadToEnd());
+                response.Close();
+
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                debug.Append(ex.GetBaseException().ToString());
+                success = false;
+            }
+
+            ///save sms
+            ///
+            TSms sms = new TSms();
+            sms.SetAssignedIdTo(Guid.NewGuid().ToString());
+            sms.SmsRecipient = wo.CustomerId.CustomerPhone;
+            sms.SmsText = msg.ToString();
+            sms.SmsReport = debug.ToString();
+            sms.SmsDate = DateTime.Now;
+            sms.SmsStatus = success.ToString();
+            sms.CreatedBy = User.Identity.Name;
+            sms.DataStatus = "New";
+            sms.CreatedDate = DateTime.Now;
+            sms.WOId = wo;
+            _smsTasks.Insert(sms);
+
+            //save logx
+            SaveLog(wo, EnumWOLog.SMS);
+            var result = new
+            {
+                Success = success.ToString(),
+                Message = debug.ToString()
+            };
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult SmsCustomerApiWithSmsViro(string random, string woId)
+        {
+            bool success = true;
+
+
+            //get wo by wo id
+            TWO wo = this._woTasks.One(woId);
+            MSmsTemplate smsTemplate = _smsTemplateTasks.GetByWOStatus(wo.WOLastStatus);
+            string phone = wo.CustomerId.CustomerPhone;
+            phone = phone.Replace(" ", "");
+            phone = phone.Replace("-", "");
+            phone = phone.Replace("+", "");
+            if (phone.StartsWith("0"))
+            {
+                phone = "62" + phone.Substring(1);
+            }
+
+            StringBuilder msg = new StringBuilder();
+            msg.Append(smsTemplate.SmsTemplateText);
+            msg.Replace("[CustomerPhone]", phone);
+            msg.Replace("[CustomerName]", wo.CustomerId.CustomerName);
+            msg.Replace("[WONo]", wo.WONo);
+            msg.Replace("[WODate]", wo.WODate.Value.ToString("dd-MMM-yyyy"));
+            msg.Replace("[SMSSentDate]", DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString());
+
+            StringBuilder debug = new StringBuilder();
+            //string smsUrl = string.Format("http://www.freesms4us.com/kirimsms.php?user=ryuki2009&pass=ciasen2009&no={0}&isi={1}&return=json&ket=yes", wo.CustomerId.CustomerPhone, msg.ToString());
+
+            string isiSms = "testing isis sms" + DateTime.Now.ToString();
+
+            string smsJson = "{\"from\":\"JAYA MESIN\",\"to\":\"[phone]\",\"text\":\"[isiSms]\"}";
+            smsJson = smsJson.Replace("[phone]", phone);
+            smsJson = smsJson.Replace("[isiSms]", msg.ToString().Replace(System.Environment.NewLine, " ").Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " "));
+            debug.Append(smsJson);
+
+            try
+            {
+                var client = new
+RestClient("http://107.20.199.106/restapi/sms/1/text/single");
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("accept", "application/json");
+                request.AddHeader("content-type", "application/json");
+                request.AddHeader("authorization", "Basic amF5YW1lc2luOkpheWFtZXNpbjIwMTg=");
+                //request.AddParameter("application/json", string.Format("{\"from\":\"InfoSMS\",\"to\":\"{0}\",\"text\":\"{1}\"}", wo.CustomerId.CustomerPhone, msg.ToString()), ParameterType.RequestBody);
+                request.AddParameter("application/json", smsJson, ParameterType.RequestBody);
+                IRestResponse response = client.Execute(request);
+
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                debug.Append(ex.GetBaseException().ToString());
+                success = false;
+            }
+
+            ///save sms
+            ///
+            TSms sms = new TSms();
+            sms.SetAssignedIdTo(Guid.NewGuid().ToString());
+            sms.SmsRecipient = phone;
+            sms.SmsText = msg.ToString();
+            sms.SmsReport = debug.ToString();
+            sms.SmsDate = DateTime.Now;
+            sms.SmsStatus = success.ToString();
+            sms.CreatedBy = User.Identity.Name;
+            sms.DataStatus = "New";
+            sms.CreatedDate = DateTime.Now;
+            sms.WOId = wo;
+            _smsTasks.Insert(sms);
+
+            //save logx
+            SaveLog(wo, EnumWOLog.SMS);
+            var result = new
+            {
+                Success = success.ToString(),
+                Message = debug.ToString()
+            };
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        public static class Http
+        {
+            public static Stream Get(string uri)
+            {
+                Stream response = null;
+                using (WebClient client = new WebClient())
+                {
+                    response = client.OpenRead(uri);
+                }
+                return response;
+            }
+        }
+
+        public ActionResult ListSMS_Read(string woID, [DataSourceRequest] DataSourceRequest request)
+        {
+            return Json(GetSms(woID).ToDataSourceResult(request));
+        }
+
+        private IEnumerable<SmsViewModel> GetSms(string woID)
+        {
+            if (string.IsNullOrEmpty(woID))
+            {
+                return null;
+            }
+            var wos = this._smsTasks.GetSmsByWoId(woID);
+
+            return from sms in wos
+                   select new SmsViewModel
+                   {
+                       SmsId = sms.Id,
+                       SmsRecipient = sms.SmsRecipient,
+                       SmsText = sms.SmsText,
+                       SmsStatus = sms.SmsStatus,
+                       SmsDate = sms.SmsDate,
+                       SmsReport = sms.SmsReport
+                   };
+        }
     }
 }

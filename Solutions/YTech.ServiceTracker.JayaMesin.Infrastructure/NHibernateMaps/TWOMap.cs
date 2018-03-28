@@ -41,6 +41,12 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
             mapping.Map(x => x.WORemarkStatus, "WO_REMARK_STATUS");
             mapping.Map(x => x.WOReceivedBy, "WO_RECEIVED_BY");
             mapping.Map(x => x.WORepairedBy, "WO_REPAIRED_BY");
+            
+        /// <summary>
+        /// 20170511 - new request, add new column wo type, 
+        /// service, ganti sparepart, service dan ganti sparepart
+        /// </summary>
+            mapping.Map(x => x.WOType, "WO_TYPE");
 
             mapping.Map(x => x.DataStatus, "DATA_STATUS");
             mapping.Map(x => x.CreatedBy, "CREATED_BY");

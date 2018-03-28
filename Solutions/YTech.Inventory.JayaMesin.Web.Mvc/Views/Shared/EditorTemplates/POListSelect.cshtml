@@ -1,0 +1,16 @@
+﻿@model YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.TransPOViewModel
+
+@(Html.TextBox("TransRefId"))<span id="showPO" class="k-button">Pilih PO</span>
+
+@(Html.Kendo().Window()
+    .Name("WindowPO")
+    .Title("Daftar PO")
+     .Content(@<text>@Html.Partial("POListSelectContent")</text>)
+    .Draggable()
+    .Resizable()
+    .Width(450)
+    .Height(480)
+    .Modal(true)
+    .Visible(false)
+)
+

@@ -1,0 +1,43 @@
+﻿@using YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels;
+
+@if (false)
+{ <script src="@Url.Content("~/Scripts/jquery-1.9.1-vsdoc.js")" type="text/javascript"></script> }
+
+@model TStockInputViewModel
+<div id="divViewSNContent">
+    @using (Html.BeginForm("ViewSNContent_Update", "JmInventoryTStock", FormMethod.Post))
+    {
+        @Html.HiddenFor(model => model.TransDetId)
+        <table id="stocks">
+            <tr>
+                <td>ID</td>
+                <td>Produk</td>
+                <td>Serial No</td>
+            </tr>
+            @for (int i = 0; i < Model.Stocks.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @*<input type="text" value="@Model.Students[i].ID" />*@
+                        @Html.DisplayFor(m => m.Stocks[i].StockOrderNo)
+                        @Html.HiddenFor(model => model.Stocks[i].StockId)
+                        @Html.HiddenFor(model => model.Stocks[i].StockOrderNo)
+                    </td>
+
+                    <td>
+                        @*<input type="text" value="@Model.Students[i].Name" />*@
+                        @Html.DisplayFor(m => m.Stocks[i].ProductIdName)
+                    </td>
+                    <td>
+                        @Html.EditorFor(m => m.Stocks[i].StockSn)
+                        @Html.ValidationMessageFor(m => m.Stocks[i].StockSn)
+                    </td>
+                </tr>
+            }
+
+        </table>
+        <p>
+            <input type="submit" value="Simpan" /></p>
+    
+    }
+</div>

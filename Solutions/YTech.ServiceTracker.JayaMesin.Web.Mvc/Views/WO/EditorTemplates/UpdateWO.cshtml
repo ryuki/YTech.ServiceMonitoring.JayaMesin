@@ -123,6 +123,14 @@
             <div class="editor-field">
                 @Html.TextBoxFor(model => model.WOPriority, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.WOPriority)
+            </div>            
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.WOType)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.WOType, new {@style="border:none;width:200px;",@readonly="true",@class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.WOType)
             </div>
         </td>
         <td style="width: 50%;vertical-align:top;">
