@@ -1,0 +1,20 @@
+﻿@model YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmInventoryMBrandViewModel
+
+@(Html.Kendo().DropDownListFor(m => m)
+        .OptionLabel("-Pilih Merek-")
+        .DataValueField("Id")
+        .DataTextField("BrandName")
+        //.BindTo((System.Collections.IEnumerable)ViewData["customers"])
+         .HtmlAttributes(new { @style="width:200px;" })
+         .AutoBind(false)
+         .DataSource(source => {
+              source.Read(read =>
+              {
+                  read.Action("PopulateJmInventoryMBrands", "JmInventoryMBrand");                  
+              });              
+          })
+)
+@Html.Button("", "<span class=\"k-icon k-add\"><\\/span>", HtmlButtonType.Button, "OpenNewBrand();")
+
+
+                

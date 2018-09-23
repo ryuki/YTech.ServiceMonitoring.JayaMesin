@@ -21,6 +21,8 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
 			mapping.Id(x => x.Id, "[PRODUCT_ID]")
                  .GeneratedBy.Assigned();
 
+            mapping.References<JmInventoryMBrand>(x => x.BrandId, "[BRAND_ID]").ForeignKey();
+            mapping.References<JmInventoryMCat>(x => x.CatId, "[CAT_ID]").ForeignKey();
             
             mapping.Map(x => x.ProductName, "[PRODUCT_NAME]");
             mapping.Map(x => x.ProductType, "[PRODUCT_TYPE]");
@@ -35,6 +37,12 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
             mapping.Map(x => x.RowVersion, "[ROW_VERSION]");
             mapping.Map(x => x.ProductImg, "[PRODUCT_IMG]");
             mapping.Map(x => x.ProductImgUrl, "[PRODUCT_IMG_URL]");
+            mapping.Map(x => x.ProductLastPrice, "[PRODUCT_LAST_PRICE]");
+            mapping.Map(x => x.ProductEstStock, "[PRODUCT_EST_STOCK]");
+            mapping.Map(x => x.ProductEstStockDate, "[PRODUCT_EST_STOCK_DATE]");
+            mapping.Map(x => x.ProductMinStock, "[PRODUCT_MIN_STOCK]");
+            mapping.Map(x => x.ProductPriceSales, "[PRODUCT_PRICE_SALES]");
+            mapping.Map(x => x.ProductLastPriceDate, "[PRODUCT_LAST_PRICE_DATE]");
 
             #endregion
         }

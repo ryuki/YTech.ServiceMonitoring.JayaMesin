@@ -6,7 +6,7 @@ Refresh in <span id="minutes"></span> : <span id="seconds"></span>
     $(document).ready(function () {
         //reset time
         var future = new Date();
-        future.setMinutes(future.getMinutes() + 2);
+        future.setMinutes(future.getMinutes() + 10);
         resetTimer(future);
 
         //set click function
@@ -19,7 +19,7 @@ Refresh in <span id="minutes"></span> : <span id="seconds"></span>
 
     function refreshWOGrid() {
         //reload grid when cancel clicked
-        var grid = $("#GridTrans").data("kendoGrid");
+        var grid = $("#Grid").data("kendoGrid");
         grid.dataSource.read();
 
         //reset time

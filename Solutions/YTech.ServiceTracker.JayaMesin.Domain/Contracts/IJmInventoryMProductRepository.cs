@@ -13,5 +13,7 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts
        IEnumerable<JmInventoryMProduct> GetListNotDeleted();
 
        IEnumerable<JmInventoryMProduct> GetListNotDeletedAndNotDisc();
+
+       JmInventoryMProduct GetLastCreatedProduct();
     }
 }

@@ -88,10 +88,18 @@
     <Compile Include="..\..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="JmIntrackTInvoiceLogTasks.cs" />
+    <Compile Include="JmIntrackTInvoiceTasks.cs" />
+    <Compile Include="JmInventoryMBrandTasks.cs" />
+    <Compile Include="JmInventoryMCatTasks.cs" />
+    <Compile Include="JmInventoryMExpeditionTasks.cs" />
+    <Compile Include="JmInventoryMProductSupplierTasks.cs" />
     <Compile Include="JmInventoryMProductTasks.cs" />
     <Compile Include="JmInventoryMProgramTasks.cs" />
     <Compile Include="JmInventoryMSupplierTasks.cs" />
     <Compile Include="JmInventoryTLogTasks.cs" />
+    <Compile Include="JmInventoryTProductPriceLogTasks.cs" />
+    <Compile Include="JmInventoryTProductPriceTasks.cs" />
     <Compile Include="JmInventoryTRedeemDetTasks.cs" />
     <Compile Include="JmInventoryTRedeemTasks.cs" />
     <Compile Include="JmInventoryTReferenceTasks.cs" />

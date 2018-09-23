@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>YTech.ServiceTracker.JayaMesin.WinForms</RootNamespace>
     <AssemblyName>YTech.ServiceTracker.JayaMesin.WinForms</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -49,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="RptProductPriceBySupplier.rdlc" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -61,6 +64,7 @@
     </Compile>
     <Content Include="RptWODailyRecap.rdlc" />
     <Content Include="RptPrintWOFactur.rdlc" />
+    <None Include="Properties\DataSources\YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmInventoryTProductPriceViewModel.datasource" />
     <None Include="Properties\DataSources\YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.CustomerViewModel.datasource" />
     <None Include="Properties\DataSources\YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers.ViewModels.WOViewModel.datasource" />
     <None Include="Properties\Settings.settings">
@@ -74,6 +78,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\YTech.Inventory.JayaMesin.Web.Mvc\YTech.Inventory.JayaMesin.Web.Mvc.csproj">
+      <Project>{08c7486a-6935-4f70-b6d9-ed11ad77d379}</Project>
+      <Name>YTech.Inventory.JayaMesin.Web.Mvc</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YTech.ServiceTracker.JayaMesin.Domain\YTech.ServiceTracker.JayaMesin.Domain.csproj">
       <Project>{8def56cd-601e-443c-9dce-c4ec54c0b6a6}</Project>
       <Name>YTech.ServiceTracker.JayaMesin.Domain</Name>
@@ -82,6 +90,9 @@
       <Project>{39613ba0-1206-4a4b-a16a-c1f2a22d1267}</Project>
       <Name>YTech.ServiceTracker.JayaMesin.Web.Mvc</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

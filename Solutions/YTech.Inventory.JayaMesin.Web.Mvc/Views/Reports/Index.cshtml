@@ -9,7 +9,7 @@
 
 @using (Html.BeginForm())
 {
-    <div class="editor-label">
+    @*<div class="editor-label">
         @Html.LabelFor(model => model.RptDateFrom)
     </div>
     <div class="editor-field">
@@ -23,8 +23,8 @@
     <div class="editor-field">
         @Html.EditorFor(model => model.RptDateTo)
         @Html.ValidationMessageFor(model => model.RptDateTo)
-    </div>
-    @Html.Button("btnGenerate", "OK", HtmlButtonType.Button)
+    </div>*@
+    @Html.Button("btnGenerate", "Lihat Laporan", HtmlButtonType.Button)
 }
 
 <script type="text/javascript">

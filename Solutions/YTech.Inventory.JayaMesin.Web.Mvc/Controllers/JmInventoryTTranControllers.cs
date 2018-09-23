@@ -23,8 +23,12 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
         private readonly IJmInventoryTLogTasks _JmInventoryTLogTasks;
         private readonly IJmInventoryTReferenceTasks _JmInventoryTReferenceTasks;
         private readonly IJmInventoryTTransDetTasks _IJmInventoryTTransDetTasks;
+        private readonly IJmInventoryTProductPriceTasks _JmInventoryTProductPriceTasks;
+        private readonly IJmInventoryTProductPriceLogTasks _JmInventoryTProductPriceLogTasks;
+        private readonly IJmInventoryMExpeditionTasks _JmInventoryMExpeditionTasks;
+        private readonly IJmInventoryMProductTasks _JmInventoryMProductTasks;
 
-        public JmInventoryTTranController(IJmInventoryTTranTasks tasks, IJmInventoryMSupplierTasks _JmInventoryMSupplierTasks, IJmInventoryTTranTasks _JmInventoryTTranTasks, IJmInventoryTLogTasks _JmInventoryTLogTasks, IJmInventoryTReferenceTasks _JmInventoryTReferenceTasks, IJmInventoryTTransDetTasks _IJmInventoryTTransDetTasks)
+        public JmInventoryTTranController(IJmInventoryTTranTasks tasks, IJmInventoryMSupplierTasks _JmInventoryMSupplierTasks, IJmInventoryTTranTasks _JmInventoryTTranTasks, IJmInventoryTLogTasks _JmInventoryTLogTasks, IJmInventoryTReferenceTasks _JmInventoryTReferenceTasks, IJmInventoryTTransDetTasks _IJmInventoryTTransDetTasks, IJmInventoryTProductPriceTasks _JmInventoryTProductPriceTasks, IJmInventoryTProductPriceLogTasks _JmInventoryTProductPriceLogTasks, IJmInventoryMExpeditionTasks _JmInventoryMExpeditionTasks, IJmInventoryMProductTasks _JmInventoryMProductTasks)
         {
             this._tasks = tasks;
             this._JmInventoryMSupplierTasks = _JmInventoryMSupplierTasks;
@@ -32,9 +36,13 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             this._JmInventoryTLogTasks = _JmInventoryTLogTasks;
             this._JmInventoryTReferenceTasks = _JmInventoryTReferenceTasks;
             this._IJmInventoryTTransDetTasks = _IJmInventoryTTransDetTasks;
+            this._JmInventoryTProductPriceTasks = _JmInventoryTProductPriceTasks;
+            this._JmInventoryTProductPriceLogTasks = _JmInventoryTProductPriceLogTasks;
+            this._JmInventoryMExpeditionTasks = _JmInventoryMExpeditionTasks;
+            this._JmInventoryMProductTasks = _JmInventoryMProductTasks;
         }
 
-        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS")]
+        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS, SALES")]
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult POList(bool? isModal, EnumTransStatus TransStatus)
         {
@@ -63,8 +71,8 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             }
             else if (TransStatus == EnumTransStatus.Ditolak)
             {
-                vm.UserCanUpdateStatus = false;
-                vm.UserCanEdit = false;
+                vm.UserCanUpdateStatus = true;
+                vm.UserCanEdit = true;
                 vm.UserCanDelete = true;
                 vm.UserCanView = true;
                 vm.UserCanInputSN = false;
@@ -75,7 +83,15 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                 vm.UserCanEdit = false;
                 vm.UserCanDelete = true;
                 vm.UserCanView = true;
-                vm.UserCanInputSN = true;
+                vm.UserCanInputSN = false;
+            }
+            else if (TransStatus == EnumTransStatus.Direvisi)
+            {
+                vm.UserCanUpdateStatus = true;
+                vm.UserCanEdit = false;
+                vm.UserCanDelete = true;
+                vm.UserCanView = true;
+                vm.UserCanInputSN = false;
             }
             return View(vm);
         }
@@ -126,6 +142,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             //entity.TransInputDate = vm.TransInputDate;
             entity.InvoiceNo = vm.InvoiceNo;
             entity.TransDesc = vm.TransDesc;
+            entity.ExpeditionId = string.IsNullOrEmpty(vm.ExpeditionId) ? null : _JmInventoryMExpeditionTasks.One(vm.ExpeditionId);
 
             ///calculate total base on detail
             CalculateTotal(vm.TransId, entity);
@@ -198,7 +215,8 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             TransInputDate = entity.TransInputDate,
             InvoiceNo = entity.InvoiceNo,
             TransDesc = entity.TransDesc,
-            TransId = entity.Id
+            TransId = entity.Id,
+            TransApprovedComment = entity.TransApprovedComment
         };
 
         }
@@ -222,7 +240,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             ViewData["trans_status"] = trans_status;
         }
 
-        public ActionResult POList_Approve(string random, string TransId, string TransStatus)
+        public ActionResult POList_Approve(string random, string TransId, string TransStatus, string TransApprovedComment)
         {
             bool success = true;
             string debug = string.Empty;
@@ -236,6 +254,9 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                 {
                     if (TransStatus == EnumTransStatus.Disetujui.ToString())
                     {
+                        //update price
+                        UpdatePrice(trans);
+
                         trans.TransStatus = EnumTransStatus.Disetujui.ToString();
                         trans.TransApprovedBy = User.Identity.Name;
                         trans.TransApprovedDate = DateTime.Now;
@@ -245,10 +266,17 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                         trans.TransStatus = EnumTransStatus.Ditolak.ToString();
                         trans.TransApprovedBy = User.Identity.Name;
                         trans.TransApprovedDate = DateTime.Now;
+                        trans.TransApprovedComment = TransApprovedComment;
                     }
                     else if (TransStatus == EnumTransStatus.Diproses.ToString())
                     {
                         trans.TransStatus = EnumTransStatus.Diproses.ToString();
+                        trans.TransApprovedBy = User.Identity.Name;
+                        trans.TransApprovedDate = DateTime.Now;
+                    }
+                    else if (TransStatus == EnumTransStatus.Direvisi.ToString())
+                    {
+                        trans.TransStatus = EnumTransStatus.Direvisi.ToString();
                         trans.TransApprovedBy = User.Identity.Name;
                         trans.TransApprovedDate = DateTime.Now;
                     }
@@ -279,6 +307,69 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                 Message = debug
             };
             return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        private void UpdatePrice(JmInventoryTTran trans)
+        {
+            var details = this._IJmInventoryTTransDetTasks.GetListByTransId(trans.Id);
+
+            foreach (var det in details)
+            {
+                //create new price
+                JmInventoryTProductPrice entity = new JmInventoryTProductPrice();
+                entity.SetAssignedIdTo(Guid.NewGuid().ToString());
+
+                entity.ProductId = det.ProductId;
+                entity.SupplierId = trans.SupplierId;
+
+                entity.ProductPrice = det.TransDetPrice;
+                entity.ProductPriceStatus = EnumPriceStatus.PO.ToString();
+                entity.ProductPriceDesc = trans.TransNo;
+                entity.ProductPriceOngkir = det.TransDetOngkir;
+
+                entity.CreatedDate = DateTime.Now;
+                entity.CreatedBy = User.Identity.Name;
+                entity.DataStatus = EnumDataStatus.New.ToString();
+                entity.ProductPriceDate = trans.TransDate;
+                entity.ProductPriceQty = det.TransDetQty;
+
+                _JmInventoryTProductPriceTasks.Insert(entity);
+
+                //create new price log
+                JmInventoryTProductPriceLog log = new JmInventoryTProductPriceLog();
+                log.SetAssignedIdTo(Guid.NewGuid().ToString());
+
+                log.ProductId = det.ProductId;
+                log.SupplierId = trans.SupplierId;
+
+                log.ProductPrice = det.TransDetPrice;
+                log.ProductPriceStatus = EnumPriceStatus.PO.ToString();
+                log.ProductPriceDesc = trans.TransNo;
+                log.ProductPriceOngkir = det.TransDetOngkir;
+
+                log.CreatedDate = DateTime.Now;
+                log.CreatedBy = User.Identity.Name;
+                log.DataStatus = EnumDataStatus.New.ToString();
+                log.ProductPriceDate = trans.TransDate;
+                log.ProductPriceQty = det.TransDetQty;
+
+                _JmInventoryTProductPriceLogTasks.Insert(log);
+
+                ////update price product
+                //JmInventoryMProduct pro = det.ProductId;
+                //if (pro != null)
+                //{
+                //    pro.ProductLastPrice = det.TransDetPrice;
+                //    if (det.TransDetPrice.HasValue)
+                //    {
+                //        pro.ProductPriceSales = det.TransDetPrice.Value * (decimal)1.02;
+                //    }
+                //    pro.ModifiedDate = DateTime.Now;
+                //    pro.ModifiedBy = User.Identity.Name;
+                //    pro.DataStatus = EnumDataStatus.Updated.ToString();
+                //    _JmInventoryMProductTasks.Update(pro);
+                //}
+            }
         }
 
         private void SaveLog(JmInventoryTTran trans, EnumLogType logType, EnumTransLog transLog)
@@ -366,8 +457,8 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             };
             return Json(e, JsonRequestBehavior.AllowGet);
         }
-
-
+        
+        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS, SALES")]
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult NewPO(string EditTransId)
         {
@@ -407,6 +498,15 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                 vm.InvoiceNo = trans.InvoiceNo;
                 vm.TransDesc = trans.TransDesc;
                 vm.TransId = trans.Id;
+
+                //vm.ExpeditionId = trans.ExpeditionId != null ? trans.ExpeditionId.Id : string.Empty;
+                //vm.ExpeditionName = trans.ExpeditionId != null ? trans.ExpeditionId.ExpeditionName : string.Empty;
+                //JmInventoryMExpeditionViewModel expeditionVm = new JmInventoryMExpeditionViewModel();
+                //if (trans.ExpeditionId != null)
+                //{
+                //    expeditionVm.ExpeditionId = trans.ExpeditionId.Id;
+                //    expeditionVm.ExpeditionName = trans.ExpeditionId.ExpeditionName;
+                //}
             }
             return View(vm);
         }
@@ -491,6 +591,16 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                 vm.InvoiceNo = trans.InvoiceNo;
                 vm.TransDesc = trans.TransDesc;
                 vm.TransId = trans.Id;
+
+                vm.ExpeditionId = trans.ExpeditionId != null ? trans.ExpeditionId.Id : string.Empty;
+                vm.ExpeditionName = trans.ExpeditionId != null ? trans.ExpeditionId.ExpeditionName : string.Empty;
+                JmInventoryMExpeditionViewModel expeditionVm = new JmInventoryMExpeditionViewModel();
+                if (trans.ExpeditionId != null)
+                {
+                    expeditionVm.ExpeditionId = trans.ExpeditionId.Id;
+                    expeditionVm.ExpeditionName = trans.ExpeditionId.ExpeditionName;
+                }
+                vm.TransApprovedComment = trans.TransApprovedComment;
             }
             return PartialView(vm);
         }

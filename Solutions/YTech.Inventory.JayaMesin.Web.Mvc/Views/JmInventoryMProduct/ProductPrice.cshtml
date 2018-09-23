@@ -1,0 +1,87 @@
+﻿@model YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmInventoryTProductPriceViewModel
+@if (false)
+{ <script src="@Url.Content("~/Scripts/jquery-1.9.1-vsdoc.js")" type="text/javascript"></script> }
+
+@Html.ValidationSummary(true)
+@Html.HiddenFor(model => model.ProductId)
+@(Html.Kendo()
+.Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmInventoryTProductPriceViewModel>()
+    .Name("ProductPriceGrid")
+    .Columns(columns =>
+    {
+        //columns.Bound(p => p.ProductId).Width("auto").ClientTemplate("#:ProductName#");
+        columns.Bound(p => p.SupplierId).Width("auto").ClientTemplate("#:SupplierIdName#");
+        columns.Bound(p => p.ProductPriceDate).Width("auto").Format("{0:dd-MMM-yyyy}");
+        columns.Bound(p => p.ProductPrice).Width("auto").Format("{0:N2}");
+        columns.Bound(p => p.ProductPriceStatus).Width("auto");
+        columns.Bound(p => p.ProductPriceOngkir).Width("auto").Format("{0:N2}");
+        columns.Bound(p => p.ProductPriceDesc).Width("auto");
+        columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
+    })
+    .ToolBar(toolbar => { toolbar.Create().Text("Tambah Harga Baru"); })
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
+    .Pageable()
+    .Sortable()
+    .Scrollable()
+    .ColumnMenu()
+    .Selectable()
+    .Filterable()
+    .Groupable()
+    .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorder => reorder.Columns(true))
+    .HtmlAttributes(new { style = "height:500px;" })
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Batch(false)
+        .ServerOperation(false)
+        .Events(events => events.RequestEnd("ProductPriceGrid_onRequestEnd"))
+        .Model(model => model.Id(p => p.ProductPriceId))
+        .Create(create => create.Action("JmInventoryTProductPrices_Create", "JmInventoryMProduct").Data("ParentProductInfo"))
+        .Read(read => read.Action("JmInventoryTProductPrices_Read", "JmInventoryMProduct").Data("ParentProductInfo"))
+        .Update(update => update.Action("JmInventoryTProductPrices_Update", "JmInventoryMProduct").Data("ParentProductInfo"))
+        .Destroy(destroy => destroy.Action("JmInventoryTProductPrices_Destroy", "JmInventoryMProduct").Data("ParentProductInfo"))
+    )
+    .Events(e => e.DataBound("ProductPriceGrid_onDataBound").Edit("onProductPriceEdit"))
+    )
+
+
+<script type="text/javascript">
+    function ProductPriceGrid_onRequestEnd(e) {
+        //RequestEnd handler code
+        //bug : error when update after insert new data, no id catched
+        //bug fix : refresh after insert new data, 
+        if (e.type === "create") {
+            //alert("onRequestEnd");
+            //check for errors in the response
+            if (e.response == null || e.response.Errors == null) {
+                //refresh grid if no errors
+                $('#ProductPriceGrid').data().kendoGrid.dataSource.read();
+            }
+        }
+    }
+
+    function ProductPriceGrid_onDataBound(e) {
+        //edit data when double click
+        $('#ProductPriceGrid tbody tr').dblclick(function () {
+            var grid = $('#ProductPriceGrid').data().kendoGrid;
+            grid.editRow(this);
+        })
+    }
+
+    function ParentProductInfo() {
+        //alert("ProductId price : " + $("#ProductId").val());
+        return {
+            ParentProductId: $("#ProductId").val()
+        }
+    }
+
+
+    function onProductPriceEdit(e) {
+
+        ///display image for product npwp
+        var imgUrl = "@Url.Content(YTech.ServiceTracker.JayaMesin.Enums.UploadFolder.Product)" + $("#ProductPriceImgUrl").val();
+        //alert(imgUrl);
+        $("#ImgUploadedPrice").attr("src", imgUrl);
+    }
+</script>

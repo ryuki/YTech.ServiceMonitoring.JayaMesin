@@ -5,6 +5,13 @@
         .OptionLabel("-Pilih Status-")
         .DataValueField("Value")
         .DataTextField("Text")    
-        .BindTo((System.Collections.IEnumerable)ViewData["supplier_status"])
+        //.BindTo((System.Collections.IEnumerable)ViewData["supplier_status"])
          .HtmlAttributes(new { @style="width:150px;" })
+         .AutoBind(false)
+         .DataSource(source => {
+              source.Read(read =>
+              {
+                  read.Action("PopulateSupplierStatus", "JmInventoryMSupplier");                  
+              });              
+          })
 )

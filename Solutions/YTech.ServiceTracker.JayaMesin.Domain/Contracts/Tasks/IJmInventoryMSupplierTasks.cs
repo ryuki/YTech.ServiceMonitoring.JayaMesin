@@ -13,5 +13,7 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts.Tasks
         JmInventoryMSupplier Delete(JmInventoryMSupplier entity);
         JmInventoryMSupplier One(string id);
         IEnumerable<JmInventoryMSupplier> GetListNotDeleted();
+
+        JmInventoryMSupplier GetLastCreatedSupplier();
     }
 }

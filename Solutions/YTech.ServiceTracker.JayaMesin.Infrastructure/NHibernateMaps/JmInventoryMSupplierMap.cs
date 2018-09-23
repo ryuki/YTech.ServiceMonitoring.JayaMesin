@@ -36,6 +36,8 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
             mapping.Map(x => x.SupplierNpwp, "[SUPPLIER_NPWP]");
             mapping.Map(x => x.SupplierNpwpImg, "[SUPPLIER_NPWP_IMG]");
             mapping.Map(x => x.SupplierNpwpImgUrl, "[SUPPLIER_NPWP_IMG_URL]");
+            mapping.Map(x => x.SupplierDebtLimit, "[SUPPLIER_DEBT_LIMIT]");
+            mapping.Map(x => x.SupplierDebtTermin, "[SUPPLIER_DEBT_TERMIN]");
 
             #endregion
         }

@@ -13,7 +13,7 @@
 </style>
 @(Html.Kendo()
 .Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.TransPOViewModel>()
-    .Name("GridTrans")
+    .Name("Grid")
     .Columns(columns =>
     {
         //columns.Template(e => { }).ClientTemplate("<img class='img-new' src='" + Url.Content("~/Content/img/new_header.png") + "' alt='#: data.TransNo #' /> <img class='img-urgent' src='" + Url.Content("~/Content/img/error3.gif") + "' style='width:16px;height:16px;' alt='#: data.InvoiceNo #' />").Width(30).Title(" ");
@@ -128,7 +128,7 @@
             $("#search").val("");
         }
 
-        grid = $("#GridTrans").data("kendoGrid");
+        grid = $("#Grid").data("kendoGrid");
         //search by woNO
         var textSearch = $("#search").val();
         //alert(textSearch);
@@ -143,7 +143,7 @@
             andFilter.filters.push({ field: "TransStatus", operator: "contains", value: status });
             orFilter.filters.push({ field: "TransNo", operator: "contains", value: textSearch });
             orFilter.filters.push({ field: "SupplierName", operator: "contains", value: textSearch });
-            orFilter.filters.push({ field: "TransInvoiceNo", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "InvoiceNo", operator: "contains", value: textSearch });
             andFilter.filters.push(orFilter);
             grid.dataSource.query({ filter: andFilter });
         } else {
@@ -210,8 +210,8 @@
         var TransId = e.container.find("input[name=TransId]").val();
         //alert(woId);
         //get uid of selected row
-        //var dataItem = $("#GridTrans").data("kendoGrid").dataSource.get(TransId);
-        //var uid = $("#GridTrans").find("tr[data-uid='" + dataItem.uid + "']").attr("data-uid");
+        //var dataItem = $("#Grid").data("kendoGrid").dataSource.get(TransId);
+        //var uid = $("#Grid").find("tr[data-uid='" + dataItem.uid + "']").attr("data-uid");
         //alert("selected data uid = " + uid);
         //set uid of temporary hidden input
         //$("#SelectedUid").val(uid);
@@ -240,8 +240,8 @@
 
     function onDataBound(e) {
         //edit data when double click
-        var grid = $('#GridTrans').data().kendoGrid;
-        //$('#GridTrans tbody tr').dblclick(function () {
+        var grid = $('#Grid').data().kendoGrid;
+        //$('#Grid tbody tr').dblclick(function () {
         //    grid.editRow(this);
         //})
         //hide image new if have been read
@@ -254,7 +254,7 @@
         $("a.k-grid-Print").html("<span class='k-icon k-Print'></span>");
 
         //set bg color based on last status
-        SetBgColor('#GridTrans');
+        SetBgColor('#Grid');
     }
 
     function SetBgColor(gridName) {
@@ -351,7 +351,7 @@
         var uid = $("#SelectedUid").val();
 
         //flag datasource to dirty
-        var dataSource = $("#GridTrans").data("kendoGrid").dataSource;
+        var dataSource = $("#Grid").data("kendoGrid").dataSource;
         var item = dataSource.getByUid(uid);
         //alert("before update is dirty = " + item.dirty);
         item.HiddenCustomerId = custId;
@@ -364,7 +364,7 @@
         if (e.errors) {
             var message = "Errors:\n";
 
-            var grid = $('#GridTrans').data('kendoGrid');
+            var grid = $('#Grid').data('kendoGrid');
             grid.one("dataBinding", function (e) {
                 e.preventDefault();   // cancel grid rebind
             });

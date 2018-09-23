@@ -1,0 +1,16 @@
+﻿@model YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmInventoryMExpeditionViewModel
+
+@(Html.Kendo().DropDownListFor(m => m)
+        .OptionLabel("-Pilih Ekspedisi-")
+        .DataValueField("Id")
+        .DataTextField("ExpeditionName")
+        //.BindTo((System.Collections.IEnumerable)ViewData["customers"])
+         .HtmlAttributes(new { @style="width:200px;" })
+         .AutoBind(false)
+         .DataSource(source => {
+              source.Read(read =>
+              {
+                  read.Action("PopulateJmInventoryMExpeditions", "JmInventoryMExpedition");                  
+              });              
+          })
+)

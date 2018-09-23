@@ -14,6 +14,8 @@ namespace YTech.ServiceTracker.JayaMesin.Domain
         #region Properties
     
         [DomainSignature]
+        public virtual JmInventoryMBrand BrandId { get; set; }
+        public virtual JmInventoryMCat CatId { get; set; }
         
         public virtual string ProductName { get; set; }
         public virtual string ProductType { get; set; }
@@ -28,6 +30,12 @@ namespace YTech.ServiceTracker.JayaMesin.Domain
         public virtual byte[] RowVersion { get; set; }
         public virtual byte[] ProductImg { get; set; }
         public virtual string ProductImgUrl { get; set; }
+        public virtual decimal? ProductLastPrice { get; set; }
+        public virtual decimal? ProductEstStock { get; set; }
+        public virtual System.DateTime? ProductEstStockDate { get; set; }
+        public virtual decimal? ProductMinStock { get; set; }
+        public virtual decimal? ProductPriceSales { get; set; }
+        public virtual System.DateTime? ProductLastPriceDate { get; set; }
 
         #endregion
         

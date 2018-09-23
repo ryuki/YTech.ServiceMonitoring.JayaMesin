@@ -86,10 +86,17 @@
     <Compile Include="..\..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Contracts\IJmIntrackTInvoiceLogRepository.cs" />
+    <Compile Include="Contracts\IJmIntrackTInvoiceRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryMBrandRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryMCatRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryMExpeditionRepository.cs" />
     <Compile Include="Contracts\IJmInventoryMProductRepository.cs" />
     <Compile Include="Contracts\IJmInventoryMProgramRepository.cs" />
     <Compile Include="Contracts\IJmInventoryMSupplierRepository.cs" />
     <Compile Include="Contracts\IJmInventoryTLogRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryTProductPriceLogRepository.cs" />
+    <Compile Include="Contracts\IJmInventoryTProductPriceRepository.cs" />
     <Compile Include="Contracts\IJmInventoryTRedeemDetRepository.cs" />
     <Compile Include="Contracts\IJmInventoryTRedeemRepository.cs" />
     <Compile Include="Contracts\IJmInventoryTReferenceRepository.cs" />
@@ -103,10 +110,19 @@
     <Compile Include="Contracts\ITWOLogRepository.cs" />
     <Compile Include="Contracts\ITWORepository.cs" />
     <Compile Include="Contracts\ITWOStatusRepository.cs" />
+    <Compile Include="Contracts\Tasks\IJmIntrackTInvoiceLogTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmIntrackTInvoiceTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryMBrandTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryMCatTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryMExpeditionTasks.cs" />
+    <Compile Include="Contracts\IJmInventoryMProductSupplierRepository.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryMProductSupplierTasks.cs" />
     <Compile Include="Contracts\Tasks\IJmInventoryMProductTasks.cs" />
     <Compile Include="Contracts\Tasks\IJmInventoryMProgramTasks.cs" />
     <Compile Include="Contracts\Tasks\IJmInventoryMSupplierTasks.cs" />
     <Compile Include="Contracts\Tasks\IJmInventoryTLogTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryTProductPriceLogTasks.cs" />
+    <Compile Include="Contracts\Tasks\IJmInventoryTProductPriceTasks.cs" />
     <Compile Include="Contracts\Tasks\IJmInventoryTRedeemDetTasks.cs" />
     <Compile Include="Contracts\Tasks\IJmInventoryTRedeemTasks.cs" />
     <Compile Include="Contracts\Tasks\IJmInventoryTReferenceTasks.cs" />
@@ -120,10 +136,18 @@
     <Compile Include="Contracts\Tasks\ITWOLogTasks.cs" />
     <Compile Include="Contracts\Tasks\ITWOStatusTasks.cs" />
     <Compile Include="Contracts\Tasks\ITWOTasks.cs" />
+    <Compile Include="JmIntrackTInvoice.cs" />
+    <Compile Include="JmIntrackTInvoiceLog.cs" />
+    <Compile Include="JmInventoryMBrand.cs" />
+    <Compile Include="JmInventoryMCat.cs" />
+    <Compile Include="JmInventoryMExpedition.cs" />
     <Compile Include="JmInventoryMProduct.cs" />
+    <Compile Include="JmInventoryMProductSupplier.cs" />
     <Compile Include="JmInventoryMProgram.cs" />
     <Compile Include="JmInventoryMSupplier.cs" />
     <Compile Include="JmInventoryTLog.cs" />
+    <Compile Include="JmInventoryTProductPrice.cs" />
+    <Compile Include="JmInventoryTProductPriceLog.cs" />
     <Compile Include="JmInventoryTRedeem.cs" />
     <Compile Include="JmInventoryTRedeemDet.cs" />
     <Compile Include="JmInventoryTReference.cs" />

@@ -11,5 +11,7 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts
     public interface IJmInventoryMSupplierRepository : INHibernateRepositoryWithTypedId<JmInventoryMSupplier, string>
     {
        IEnumerable<JmInventoryMSupplier> GetListNotDeleted();
+
+       JmInventoryMSupplier GetLastCreatedSupplier();
     }
 }

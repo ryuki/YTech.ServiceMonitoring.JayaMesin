@@ -53,7 +53,6 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels
         public virtual string InvoiceNo { get; set; }
 
         [DisplayName("Keterangan")]
-        [UIHint("TextArea")]
         public virtual string TransDesc { get; set; }
         
         [DisplayName("TransSubTotal")]
@@ -64,6 +63,17 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels
 
         [DisplayName("TransPpn")]
         public virtual decimal? TransPpn { get; set; }
+
+
+        [DisplayName("Ekspedisi")]
+        [UIHint("Expedition")]
+        [Required]
+        public string ExpeditionId { get; set; }
+
+        [HiddenInput]
+        [ReadOnly(true)]
+        [DisplayName(" ")]
+        public string ExpeditionName { get; set; }
 
         [DisplayName("TransCost")]
         public virtual decimal? TransCost { get; set; }
@@ -90,6 +100,10 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels
         [ReadOnly(true)]
         [DisplayName(" ")]
         public virtual System.DateTime? TransApprovedDate { get; set; }
+
+        [DisplayName("Alasan Ditolak")]
+        [UIHint("TextArea")]
+        public virtual string TransApprovedComment { get; set; }
 
 
         public bool UserCanUpdateStatus { get; set; }

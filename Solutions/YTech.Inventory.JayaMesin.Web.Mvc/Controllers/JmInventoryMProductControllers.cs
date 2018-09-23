@@ -17,13 +17,22 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
     [Authorize]
     public partial class JmInventoryMProductController : Controller
     {
-       private readonly IJmInventoryMProductTasks _tasks;
-        public JmInventoryMProductController(IJmInventoryMProductTasks tasks)
+        private readonly IJmInventoryMProductTasks _tasks;
+        private readonly IJmInventoryMBrandTasks _brandTasks;
+        private readonly IJmInventoryMCatTasks _catTasks;
+        private readonly IJmInventoryTProductPriceTasks _JmInventoryTProductPriceTasks;
+        private readonly IJmInventoryMSupplierTasks _IJmInventoryMSupplierTasks;
+
+        public JmInventoryMProductController(IJmInventoryMProductTasks tasks, IJmInventoryMBrandTasks brandTasks, IJmInventoryMCatTasks catTasks, IJmInventoryTProductPriceTasks _JmInventoryTProductPriceTasks, IJmInventoryMSupplierTasks _IJmInventoryMSupplierTasks)
         {
             this._tasks = tasks;
+            this._brandTasks = brandTasks;
+            this._catTasks = catTasks;
+            this._JmInventoryTProductPriceTasks = _JmInventoryTProductPriceTasks;
+            this._IJmInventoryMSupplierTasks = _IJmInventoryMSupplierTasks;
         }
 
-        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS")]
+        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS, SALES")]
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Index(bool? isModal)
         {
@@ -32,14 +41,17 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                     return View("Index", "~/Views/Shared/_NoMenuLayout.cshtml");
 
             PopulateProductStatus();
+            PopulatePriceStatus();
+
             return View();
         }
 
-        private void PopulateProductStatus()
+        public JsonResult PopulateProductStatus()
         {
             var trans_status = from EnumProductStatus e in Enum.GetValues(typeof(EnumProductStatus))
                                select new { Value = e.ToString(), Text = e.ToString() };
             ViewData["product_status"] = trans_status;
+            return Json(trans_status, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult JmInventoryMProducts_Read([DataSourceRequest] DataSourceRequest request)
@@ -69,32 +81,46 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
 
         private void ConvertToJmInventoryMProduct(JmInventoryMProductViewModel vm, JmInventoryMProduct entity)
         {
-            
+
             entity.ProductName = vm.ProductName;
-            entity.ProductType = vm.ProductType;
-            entity.ProductMerk = vm.ProductMerk;
+            entity.CatId = _catTasks.One(vm.CatId);
+            entity.BrandId = _brandTasks.One(vm.BrandId);
             entity.ProductStatus = vm.ProductStatus;
             entity.ProductDesc = vm.ProductDesc;
             entity.ProductImgUrl = vm.ProductImgUrl;
 
             entity.ProductImg = UploadFiles(UploadFolder.Product, vm.ProductImgUrl);
+
+            entity.ProductLastPrice = vm.ProductLastPrice;
+            entity.ProductEstStock = vm.ProductEstStock;
+            entity.ProductEstStockDate = vm.ProductEstStockDate;
+            entity.ProductMinStock = vm.ProductMinStock;
+            entity.ProductPriceSales = vm.ProductPriceSales;
+            entity.ProductLastPriceDate = vm.ProductLastPriceDate;
         }
 
         public byte[] UploadFiles(string UploadFolder, string imageFileName)
         {
-            var physicalPath = Path.Combine(Server.MapPath(UploadFolder), imageFileName);
-            // Load file meta data with FileInfo
-            FileInfo fileInfo = new FileInfo(physicalPath);
-
-            // The byte[] to save the data in
-            byte[] data = new byte[fileInfo.Length];
-
-            // Load a filestream and put its content into the byte[]
-            using (FileStream fs = fileInfo.OpenRead())
+            if (!string.IsNullOrEmpty(imageFileName))
             {
-                fs.Read(data, 0, data.Length);
+                var physicalPath = Path.Combine(Server.MapPath(UploadFolder), imageFileName);
+                // Load file meta data with FileInfo
+                FileInfo fileInfo = new FileInfo(physicalPath);
+
+                // The byte[] to save the data in
+                byte[] data = new byte[fileInfo.Length];
+
+                // Load a filestream and put its content into the byte[]
+                using (FileStream fs = fileInfo.OpenRead())
+                {
+                    fs.Read(data, 0, data.Length);
+                }
+                return data;
             }
-            return data;
+            else
+            {
+                return null;
+            }
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
@@ -142,14 +168,22 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             return from entity in entitys
                    select new JmInventoryMProductViewModel
         {
-            
+
             ProductName = entity.ProductName,
-            ProductType = entity.ProductType,
-            ProductMerk = entity.ProductMerk,
+            CatId = entity.CatId != null ? entity.CatId.Id : string.Empty,
+            CatName = entity.CatId != null ? entity.CatId.CatName : string.Empty,
+            BrandId = entity.BrandId != null ? entity.BrandId.Id : string.Empty,
+            BrandName = entity.BrandId != null ? entity.BrandId.BrandName : string.Empty,
             ProductStatus = entity.ProductStatus,
             ProductDesc = entity.ProductDesc,
             ProductId = entity.Id,
-            ProductImgUrl = entity.ProductImgUrl
+            ProductImgUrl = entity.ProductImgUrl,
+            ProductLastPrice = entity.ProductLastPrice,
+            ProductEstStock = entity.ProductEstStock,
+            ProductEstStockDate = entity.ProductEstStockDate,
+            ProductMinStock = entity.ProductMinStock,
+            ProductPriceSales = entity.ProductPriceSales,
+            ProductLastPriceDate = entity.ProductLastPriceDate
         };
 
         }
@@ -157,11 +191,11 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
         public JsonResult PopulateProducts()
         {
             var list = from ent in _tasks.GetListNotDeletedAndNotDisc()
-                            select new
-                                    {
-                                        Id = ent.Id,
-                                        ProductName = ent.ProductName
-                                    };
+                       select new
+                               {
+                                   Id = ent.Id,
+                                   ProductName = ent.ProductName
+                               };
             ViewData["Products"] = list;
             return Json(list, JsonRequestBehavior.AllowGet);
         }
@@ -169,6 +203,11 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
         public ActionResult UploadImage(HttpPostedFileBase file)
         {
             return CommonUploadImage(file, UploadFolder.Product);
+        }
+
+        public ActionResult UploadImagePrice(HttpPostedFileBase filePrice)
+        {
+            return CommonUploadImage(filePrice, UploadFolder.Product);
         }
 
         public ActionResult CommonUploadImage(HttpPostedFileBase file, string UploadFolder)
@@ -184,5 +223,159 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
 
             return Json(new { ImageUrl = newFileName, FullImageUrl = fullImageUrl }, "text/plain");
         }
+
+        public ActionResult GetLastCreatedProduct(string random)
+        {
+            JmInventoryMProduct supp = _tasks.GetLastCreatedProduct();
+            return Content(supp.Id);
+        }
+
+        public ActionResult GetProductDetail(string random, string productId)
+        {
+            JmInventoryMProduct supp = _tasks.One(productId);
+            var list = new
+                       {
+                           Id = supp.Id,
+                           ProductName = supp.ProductName,
+                           ProductLastPrice = supp.ProductLastPrice
+                       };
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        #region product price
+
+        public ActionResult JmInventoryTProductPrices_Read([DataSourceRequest] DataSourceRequest request, string ParentProductId)
+        {
+            return Json(GetJmInventoryTProductPrices(ParentProductId).ToDataSourceResult(request));
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult JmInventoryTProductPrices_Create([DataSourceRequest] DataSourceRequest request, JmInventoryTProductPriceViewModel vm, string ParentProductId)
+        {
+            if (vm != null && ModelState.IsValid)
+            {
+                JmInventoryTProductPrice entity = new JmInventoryTProductPrice();
+                entity.SetAssignedIdTo(Guid.NewGuid().ToString());
+
+                ConvertToJmInventoryTProductPrice(vm, entity, ParentProductId);
+
+                entity.CreatedDate = DateTime.Now;
+                entity.CreatedBy = User.Identity.Name;
+                entity.DataStatus = EnumDataStatus.New.ToString();
+
+                _JmInventoryTProductPriceTasks.Insert(entity);
+            }
+
+            return Json(new[] { vm }.ToDataSourceResult(request, ModelState));
+        }
+
+        private void ConvertToJmInventoryTProductPrice(JmInventoryTProductPriceViewModel vm, JmInventoryTProductPrice entity, string ParentProductId)
+        {
+            entity.ProductId = string.IsNullOrEmpty(ParentProductId) ? null : _tasks.One(ParentProductId);
+            entity.SupplierId = string.IsNullOrEmpty(vm.SupplierId) ? null : _IJmInventoryMSupplierTasks.One(vm.SupplierId);
+
+            entity.ProductPrice = vm.ProductPrice;
+            entity.ProductPriceStatus = vm.ProductPriceStatus;
+            entity.ProductPriceDesc = vm.ProductPriceDesc;
+            entity.ProductPriceDate = vm.ProductPriceDate;
+            entity.ProductPriceImgUrl = vm.ProductPriceImgUrl;
+
+            entity.ProductPriceImg = UploadFiles(UploadFolder.Product, vm.ProductPriceImgUrl);
+            entity.ProductPriceQty = vm.ProductPriceQty;
+            entity.ProductPriceOngkir = vm.ProductPriceOngkir;
+
+            //update price to last price
+            if (vm.ProductPriceStatus == EnumPriceStatus.PO.ToString())
+            {
+                decimal purchasePrice = entity.ProductPrice.HasValue ? entity.ProductPrice.Value : 0;
+                decimal priceOngkir = entity.ProductPriceOngkir.HasValue ? entity.ProductPriceOngkir.Value : 0;
+                UpdatePrice(entity.ProductId, purchasePrice, priceOngkir, entity.ProductPriceDate);
+            }
+        }
+
+        private void UpdatePrice(JmInventoryMProduct product, decimal purchasePrice, decimal priceOngkir,DateTime? productPriceDate)
+        {
+            if (product != null)
+            {
+                product.ProductLastPriceDate = productPriceDate;
+                product.ProductLastPrice = purchasePrice;
+                product.ProductPriceSales = (purchasePrice + priceOngkir) * (decimal)1.02;
+                product.ModifiedDate = DateTime.Now;
+                product.ModifiedBy = User.Identity.Name;
+                product.DataStatus = EnumDataStatus.Updated.ToString();
+                _tasks.Update(product);
+            }
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult JmInventoryTProductPrices_Update([DataSourceRequest] DataSourceRequest request, JmInventoryTProductPriceViewModel vm, string ParentProductId)
+        {
+            if (vm != null && ModelState.IsValid)
+            {
+                var entity = _JmInventoryTProductPriceTasks.One(vm.ProductPriceId);
+                if (entity != null)
+                {
+                    ConvertToJmInventoryTProductPrice(vm, entity, ParentProductId);
+
+                    entity.ModifiedDate = DateTime.Now;
+                    entity.ModifiedBy = User.Identity.Name;
+                    entity.DataStatus = EnumDataStatus.Updated.ToString();
+
+                    _JmInventoryTProductPriceTasks.Update(entity);
+                }
+            }
+
+            return Json(ModelState.ToDataSourceResult());
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult JmInventoryTProductPrices_Destroy([DataSourceRequest] DataSourceRequest request, JmInventoryTProductPriceViewModel vm, string ParentProductId)
+        {
+            if (vm != null)
+            {
+                var entity = _JmInventoryTProductPriceTasks.One(vm.ProductPriceId);
+                if (entity != null)
+                {
+                    entity.ModifiedDate = DateTime.Now;
+                    entity.ModifiedBy = User.Identity.Name;
+                    entity.DataStatus = EnumDataStatus.Deleted.ToString();
+                    _JmInventoryTProductPriceTasks.Update(entity);
+                }
+            }
+            return Json(ModelState.ToDataSourceResult());
+        }
+
+        private IEnumerable<JmInventoryTProductPriceViewModel> GetJmInventoryTProductPrices(string ParentProductId)
+        {
+            var entitys = this._JmInventoryTProductPriceTasks.GetListByProductId(ParentProductId);
+
+            return from entity in entitys
+                   select new JmInventoryTProductPriceViewModel
+                   {
+                       ProductId = entity.ProductId != null ? entity.ProductId.Id : string.Empty,
+                       ProductIdName = entity.ProductId != null ? entity.ProductId.ProductName : string.Empty,
+                       SupplierId = entity.SupplierId != null ? entity.SupplierId.Id : string.Empty,
+                       SupplierIdName = entity.SupplierId != null ? entity.SupplierId.SupplierName : string.Empty,
+
+                       ProductPrice = entity.ProductPrice,
+                       ProductPriceStatus = entity.ProductPriceStatus,
+                       ProductPriceDesc = entity.ProductPriceDesc,
+                       ProductPriceId = entity.Id,
+                       ProductPriceImgUrl = entity.ProductPriceImgUrl,
+                       ProductPriceDate = entity.ProductPriceDate,
+                       ProductPriceQty = entity.ProductPriceQty,
+                       ProductPriceOngkir = entity.ProductPriceOngkir
+                   };
+
+        }
+
+        private void PopulatePriceStatus()
+        {
+            var trans_status = from EnumPriceStatus e in Enum.GetValues(typeof(EnumPriceStatus))
+                               select new { Value = e.ToString(), Text = e.ToString() };
+            ViewData["price_status"] = trans_status;
+        }
+
+        #endregion
     }
 }

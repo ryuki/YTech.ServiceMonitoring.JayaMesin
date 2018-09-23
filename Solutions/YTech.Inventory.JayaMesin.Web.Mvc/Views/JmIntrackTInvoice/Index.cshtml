@@ -1,0 +1,314 @@
+@{
+    ViewBag.Title = "Daftar Faktur";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@(Html.Kendo()
+.Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmIntrackTInvoiceViewModel>()
+    .Name("Grid")
+    .Columns(columns =>
+    {
+        columns.Template(e => { }).ClientTemplate("<img class='img-urgent' src='" + Url.Content("~/Content/img/error3.gif") + "' style='width:16px;height:16px;' alt='#: data.InvoiceIsUrgent #' />").Width(30).Title(" ");
+        //columns.Bound(p => p.InvoiceNo).Width("auto");
+        columns.Bound(p => p.InvoicePacketNo).Width("auto");
+        columns.Bound(p => p.InvoiceDate).Width("auto").Format("{0:dd-MMM-yyyy}");
+        columns.Bound(p => p.CustomerId).Width("auto");
+        columns.Bound(p => p.InvoiceAmmount).Width("auto").Format("{0:N2}");
+        columns.Bound(p => p.InvoicePaid).Width("auto").Format("{0:N2}");
+        columns.Bound(p => p.InvoicePacketAdmin).Width("auto");
+        columns.Bound(p => p.SalesmanId).Width("auto");
+        columns.Bound(p => p.InvoiceHelpdesk).Width("auto");
+        columns.Bound(p => p.InvoiceAge).Width("auto").Format("{0:N2}");
+        //columns.Bound(p => p.InvoiceDueDate).Width("auto").Format("{0:dd-MMM-yyyy}");
+        //columns.Bound(p => p.InvoiceDelivery).Width("auto");
+        //columns.Bound(p => p.InvoicePaidOffDate).Width("auto").Format("{0:dd-MMM-yyyy}");
+        columns.Bound(p => p.InvoiceStatus).Width("auto");
+        columns.Command(command =>
+        {
+            command.Edit().Text(" ");
+            command.Destroy().Text(" ");
+            //command.Custom("Copy").Click("CopyInvoice").HtmlAttributes(new { style = "min-width:20px;" });
+        }).Width("auto");
+        columns.Template(e => { }).ClientTemplate("<button type='image' src='" + Url.Content("~/Content/img/window16.gif") + "' class='k-button k-button-icontext' data-clipboard-demo data-clipboard-action='copy' data-clipboard-text='#: data.InvoiceToCopy #'  width='16' height='16'>Copy</button>").Width(80).Title(" ");
+    })
+        //.ToolBar(toolbar => { toolbar.Create().Text("Tambah Invoice Baru"); })
+        .ToolBar(toolbar =>
+        {
+            toolbar.Template(@<text>
+<div class="k-toolbar k-grid-toolbar k-grid-top">
+    <a class="k-button k-button-icontext k-grid-add" href="#"><span class="k-icon k-add"></span>Tambah Faktur Baru</a>
+
+    <label class="status-label" for="status">Filter status Invoice :</label>
+    @(Html.Kendo().DropDownList()
+                            .Name("status")
+                            .OptionLabel("All")
+                            .DataTextField("Text")
+                            .DataValueField("Value")
+                            .AutoBind(false)
+                            .Events(e => e.Change("searchInvoice"))
+                            .HtmlAttributes(new { style = "min-width:150px;" })
+                            .BindTo((System.Collections.IEnumerable)ViewData["invoice_status"])
+                        )
+
+    <label class="search-label" for="search">Pencarian :</label>
+    @(Html.TextBox("search", "", new { @class = "k-textbox" }))
+    @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "searchInvoice(false);", new { @class = "k-button" }))
+    @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchInvoice(true);", new { @class = "k-button" })) | 
+    @*@Html.Partial("_CountDown")*@
+    @Html.Partial("InvoiceColourLegend")
+</div>
+</text>);
+        })
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditJmIntrackTInvoice").Window(win => win.Width(750).Modal(true)))
+    .Pageable()
+    .Sortable()
+    .Scrollable()
+    .ColumnMenu()
+    .Selectable()
+    .Filterable()
+    .Groupable()
+    .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorder => reorder.Columns(true))
+    .HtmlAttributes(new { style = "height:500px;" })
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Batch(false)
+        .ServerOperation(false)
+        .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
+        .Model(model =>
+        {
+            model.Id(p => p.InvoiceId);
+            model.Field(p => p.InvoiceDesc).DefaultValue(string.Format("<{0:dd-MMM} by {1}> : ", DateTime.Today, User.Identity.Name));
+        })
+        .Create(create => create.Action("JmIntrackTInvoices_Create", "JmIntrackTInvoice"))
+        .Read(read => read.Action("JmIntrackTInvoices_Read", "JmIntrackTInvoice"))
+        .Update(update => update.Action("JmIntrackTInvoices_Update", "JmIntrackTInvoice"))
+        .Destroy(destroy => destroy.Action("JmIntrackTInvoices_Destroy", "JmIntrackTInvoice"))
+    )
+    .Events(e => e.DataBound("onDataBound"))
+    )
+
+<script type="text/kendo-template" id="message">
+<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+            <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>
+</script>
+
+<script type="text/javascript">
+    function rebindInvoice(reset) {
+        if (reset) {
+            //alert("reset");
+            $("#search").val("");
+        }
+        $("#RefreshGrid").click();
+    }
+
+    function additionalInfo() {
+        return {
+            InvoiceStatus: $("#status").val(),
+            TextSearch: $("#search").val()
+        }
+    }
+
+    function searchInvoice(reset) {
+        //reset search textbox if reset button clicked
+        //alert(reset);
+        if (reset) {
+            //alert("reset");
+            $("#search").val("");
+        }
+
+        grid = $("#Grid").data("kendoGrid");
+        //search by woNO
+        var textSearch = $("#search").val();
+        //alert(textSearch);
+        //search by status
+        var status = $("#status").val();
+        //alert(status);
+
+        if (textSearch || status) {
+            //alert("search");
+            var andFilter = { logic: "and", filters: [] };
+            var orFilter = { logic: "or", filters: [] };
+            andFilter.filters.push({ field: "InvoiceStatus", operator: "contains", value: status });
+            //orFilter.filters.push({ field: "InvoiceNo", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "CustomerId", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "InvoicePacketNo", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "InvoicePacketAdmin", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "InvoiceHelpdesk", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "SalesmanId", operator: "contains", value: textSearch });
+            andFilter.filters.push(orFilter);
+            grid.dataSource.query({ filter: andFilter });
+        } else {
+            grid.dataSource.filter({});
+        }
+    }
+
+    function onRequestEnd(e) {
+        //RequestEnd handler code
+        //bug : error when update after insert new data, no id catched
+        //bug fix : refresh after insert new data, 
+        if (e.type === "create" || e.type === "update") {
+            //alert("onRequestEnd");
+            //check for errors in the response
+            if (e.response == null || e.response.Errors == null) {
+                //refresh grid if no errors
+                $('#Grid').data().kendoGrid.dataSource.read();
+            }
+        }
+    }
+
+    function onDataBound(e) {
+        //edit data when double click
+        $('#Grid tbody tr').dblclick(function () {
+            var grid = $('#Grid').data().kendoGrid;
+            grid.editRow(this);
+        })
+        //hide image urgent if priority is normal
+        $("img.img-urgent[alt=Normal]").hide();
+
+        //set bg color based on status
+        SetBgColor('#Grid');
+    }
+
+    function SetBgColor(gridName) {
+        //set bg color based on last status
+        var grid = $(gridName).data().kendoGrid;
+        var data = grid.dataSource.data();
+        $.each(data, function (i, row) {
+            var lastStatus = row.InvoiceStatus;
+            var color = "white";
+            var showSms = false;
+            if (lastStatus == "Baru" || lastStatus == "Dokumen" || lastStatus == "Invoicing") {
+                color = "#D5D5CA";
+                showSms = false;
+
+                //change color by invoiceage
+                var invoiceage = row.InvoiceAge;
+                if (invoiceage > 60) {
+                    color = "#FF4500";
+                }
+                else if (invoiceage > 45) {
+                    color = "#FFA500";
+                }
+                else if (invoiceage > 30) {
+                    color = "#FFFF00";
+                }
+            }
+            else if (lastStatus == "Baru_Dilunasi") {
+                color = "#40E0D0";
+                showSms = false;
+            }
+            else if (lastStatus == "Lunas_BelumLengkap") {
+                color = "#DA70D6";
+                showSms = false;
+            }
+            else if (lastStatus == "Lunas_Lengkap") {
+                color = "#7CFC00";
+                showSms = false;
+            }
+            //Change the background color of lastStatus
+            $('tr[data-uid="' + row.uid + '"]').css("background-color", color);
+
+            if (showSms == true) {
+                var item1 = $("a .k-grid-Sms");
+                $('tr[data-uid="' + row.uid + '"]').find("a").val("tes");
+            }
+
+        });
+    }
+
+    function days_between(date1, date2) {
+
+        // The number of milliseconds in one day
+        var ONE_DAY = 1000 * 60 * 60 * 24;
+
+        // Convert both dates to milliseconds
+        var date1_ms = date1.getTime();
+        var date2_ms = date2.getTime();
+
+        // Calculate the difference in milliseconds
+        var difference_ms = Math.abs(date1_ms - date2_ms);
+
+        // Convert back to days and return
+        return Math.round(difference_ms / ONE_DAY);
+
+    }
+
+    jQuery(document).ready(function () {
+        //auto click add new customer when iframe = 1
+        if (getURLParameter("isModal") === "True") {
+            //$("a.k-grid-add").trigger("click");
+            setTimeout('$("a.k-grid-add").trigger("click");', 3000);
+        }
+
+        var clipboardDemos = new ClipboardJS('[data-clipboard-demo]');
+        clipboardDemos.on('success', function (e) {
+            e.clearSelection();
+            console.info('Action:', e.action);
+            console.info('Text:', e.text);
+            console.info('Trigger:', e.trigger);
+            showTooltip(e.trigger, 'Copied!');
+        });
+        clipboardDemos.on('error', function (e) {
+            console.error('Action:', e.action);
+            console.error('Trigger:', e.trigger);
+            showTooltip(e.trigger, fallbackMessage(e.action));
+        });
+    })
+
+    function getURLParameter(name) {
+        return decodeURI(
+            (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1]
+        );
+    }
+
+    //show server errors if any
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+
+            var grid = $('#Grid').data('kendoGrid');
+
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();   // cancel grid rebind
+            });
+            //var gridElement = grid.editable.element;
+
+            //var validationMessageTemplate = kendo.template(
+            //    "<div id='#=field#_validationMessage' " +
+            //        "class='k-widget k-tooltip k-tooltip-validation " +
+            //            "k-invalid-msg field-validation-error' " +
+            //        "style='margin: 0.5em;' data-for='#=field#' " +
+            //        "data-val-msg-for='#=field#' role='alert'>" +
+            //        "<span class='k-icon k-warning'></span>" +
+            //        "#=message#" +
+            //        "<div class='k-callout k-callout-n'></div>" +
+            //    "</div>");
+
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                    //gridElement.find("[data-valmsg-for=" + key + "],[data-val-msg-for=" + key + "]")
+                    //.replaceWith(validationMessageTemplate({ field: key, message: value.errors[0] }));
+                    //gridElement.find("input[name=" + key + "]").focus();
+                }
+            });
+            alert(message);
+        }
+    }
+
+    function CopyInvoice(e) {
+        e.preventDefault();
+
+        //set datasource for print WO
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var invoiceid = dataItem.InvoiceId;
+        var invoiceid = dataItem.InvoiceId;
+
+        $("a.k-grid-Copy").attr("data-clipboard-text", invoiceid);
+        alert(invoiceid);
+    }
+</script>

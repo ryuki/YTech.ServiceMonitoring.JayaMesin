@@ -17,6 +17,15 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.Repository
            ICriteria criteria = Session.CreateCriteria(typeof(JmInventoryMSupplier));
            criteria.Add(Expression.Not(Expression.Eq("DataStatus", "Deleted")));
            return criteria.List<JmInventoryMSupplier>();
-       } 
+       }
+
+
+       public JmInventoryMSupplier GetLastCreatedSupplier()
+       {
+           ICriteria criteria = Session.CreateCriteria(typeof(JmInventoryMSupplier));
+           criteria.AddOrder(new Order("CreatedDate", false));
+           criteria.SetMaxResults(1);
+           return criteria.UniqueResult<JmInventoryMSupplier>();
+       }
     }
 }

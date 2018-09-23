@@ -14,6 +14,8 @@ namespace YTech.ServiceTracker.JayaMesin.Domain
         #region Properties
     
         [DomainSignature]
+        public virtual JmInventoryMExpedition ExpeditionId { get; set; }
+        public virtual JmInventoryMSupplier SupplierId { get; set; }
         public virtual JmInventoryTTran TransRefId { get; set; }
         
         public virtual string TransNo { get; set; }
@@ -37,7 +39,8 @@ namespace YTech.ServiceTracker.JayaMesin.Domain
         public virtual decimal? TransPpn { get; set; }
         public virtual decimal? TransCost { get; set; }
         public virtual decimal? TransGrandTotal { get; set; }
-        public virtual JmInventoryMSupplier SupplierId { get; set; }
+        public virtual decimal? TransOngkir { get; set; }
+        public virtual string TransApprovedComment { get; set; }
 
         #endregion
         

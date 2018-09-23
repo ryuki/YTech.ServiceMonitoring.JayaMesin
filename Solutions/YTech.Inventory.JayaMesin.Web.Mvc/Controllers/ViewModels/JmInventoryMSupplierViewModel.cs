@@ -31,6 +31,9 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels
         [DisplayName("No Telp")]
         public virtual string SupplierPhone { get; set; }
 
+        [DisplayName("Termin")]
+        public virtual decimal? SupplierDebtTermin { get; set; }
+
         [DisplayName("Status")]
         [UIHint("SupplierStatus")]
         public virtual string SupplierStatus { get; set; }
@@ -45,6 +48,10 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels
         [DisplayName("Gambar NPWP")]
         [UIHint("FileUpload")]
         public virtual string SupplierNpwpImgUrl { get; set; }
+
+        //[DisplayName("SupplierDebtLimit")]
+        //public virtual decimal? SupplierDebtLimit { get; set; }
+
 
         #endregion
     }

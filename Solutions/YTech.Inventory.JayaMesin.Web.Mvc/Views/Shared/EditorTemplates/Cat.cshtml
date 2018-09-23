@@ -1,0 +1,17 @@
+﻿@model YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmInventoryMCatViewModel
+
+@(Html.Kendo().DropDownListFor(m => m)
+        .OptionLabel("-Pilih Kategori-")
+        .DataValueField("Id")
+        .DataTextField("CatName")
+        //.BindTo((System.Collections.IEnumerable)ViewData["customers"])
+         .HtmlAttributes(new { @style="width:200px;" })
+         .AutoBind(false)
+         .DataSource(source => {
+              source.Read(read =>
+              {
+                  read.Action("PopulateJmInventoryMCats", "JmInventoryMCat");                  
+              });              
+          })
+)
+@Html.Button("", "<span class=\"k-icon k-add\"><\\/span>", HtmlButtonType.Button, "OpenNewCat();")

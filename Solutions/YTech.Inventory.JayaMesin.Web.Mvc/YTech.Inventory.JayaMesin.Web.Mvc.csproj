@@ -167,6 +167,11 @@
     <Compile Include="Controllers\AccountController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controllers\JmIntrackTInvoiceControllers.cs" />
+    <Compile Include="Controllers\JmInventoryMBrandControllers.cs" />
+    <Compile Include="Controllers\JmInventoryMCatControllers.cs" />
+    <Compile Include="Controllers\JmInventoryMExpeditionControllers.cs" />
+    <Compile Include="Controllers\JmInventoryTProductPriceControllers.cs" />
     <Compile Include="Controllers\JmInventoryTTranControllers.Sales.cs" />
     <Compile Include="Controllers\JmInventoryTTransDetControllers.Receipt.cs" />
     <Compile Include="Controllers\JmInventoryTTranControllers.Receipt.cs" />
@@ -177,6 +182,12 @@
     <Compile Include="Controllers\JmInventoryTStockControllers.cs" />
     <Compile Include="Controllers\JmInventoryTTranControllers.cs" />
     <Compile Include="Controllers\JmInventoryTTransDetControllers.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
+    <Compile Include="Controllers\ViewModels\JmIntrackTInvoiceViewModel.cs" />
+    <Compile Include="Controllers\ViewModels\JmInventoryMBrandViewModel.cs" />
+    <Compile Include="Controllers\ViewModels\JmInventoryMCatViewModel.cs" />
+    <Compile Include="Controllers\ViewModels\JmInventoryMExpeditionViewModel.cs" />
+    <Compile Include="Controllers\ViewModels\JmInventoryTProductPriceViewModel.cs" />
     <Compile Include="Controllers\ViewModels\POListViewModel.cs" />
     <Compile Include="Controllers\RouteRegistrar.cs" />
     <Compile Include="Controllers\ViewModels\AccountViewModel.cs" />
@@ -214,6 +225,7 @@
     <Content Include="Content\img\rtg_print.gif" />
     <Content Include="Content\img\track.jpg" />
     <Content Include="Content\img\window16.gif" />
+    <Content Include="Content\js\clipboard.min.js" />
     <Content Include="Content\js\jquery-1.6.1.min.js" />
     <Content Include="Content\js\modernizr-1.7.min.js" />
     <Content Include="Content\kendo\2013.1.514\Black\editor.png" />
@@ -366,14 +378,12 @@
     <Content Include="Content\js\jquery-1.6.1.js" />
     <Content Include="Content\js\modernizr-1.7.js" />
     <Content Include="ReportViewer.aspx" />
-    <None Include="Properties\PublishProfiles\jayamesin - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\jayamesin - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\jayamesin2 - FTP %282%29.pubxml" />
-    <None Include="Properties\PublishProfiles\jayamesin2 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\jayamesin2 - Web Deploy %282%29.pubxml" />
-    <None Include="Properties\PublishProfiles\jayamesin2 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\PMJayamesin - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\PMJayamesin - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.9.1-vsdoc.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate-1.8.1.min.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\kendo.modernizr.custom.js" />
     <Content Include="Scripts\kendo\2013.1.514\cultures\kendo.culture.af-ZA.min.js" />
     <Content Include="Scripts\kendo\2013.1.514\cultures\kendo.culture.af.min.js" />
@@ -832,6 +842,9 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\JmInventoryMProduct\ProductPrice.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -854,7 +867,7 @@
     <Content Include="Views\Shared\EditorTemplates\Bool.cshtml" />
     <Content Include="Views\Shared\_NoMenuLayout.cshtml" />
     <Content Include="Views\Reports\Index.cshtml" />
-    <Content Include="Views\Shared\ColourLegend.cshtml" />
+    <Content Include="Views\Shared\InvoiceColourLegend.cshtml" />
     <Content Include="Views\Shared\_LogOn.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Account\EditorTemplates\_User.cshtml" />
@@ -893,6 +906,28 @@
     <Content Include="Views\JmInventoryTStock\ViewSNContent.cshtml" />
     <Content Include="Views\JmInventoryTRedeem\NewRedeem.cshtml" />
     <Content Include="Views\JmInventoryTTran\NewSales.cshtml" />
+    <Content Include="Views\JmInventoryMBrand\Index.cshtml" />
+    <Content Include="Views\JmInventoryMCat\Index.cshtml" />
+    <Content Include="Views\JmInventoryMCat\EditorTemplates\FileUpload.cshtml" />
+    <Content Include="Views\JmInventoryMBrand\EditorTemplates\FileUpload.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Cat.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Brand.cshtml" />
+    <Content Include="Views\JmInventoryTProductPrice\Index.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\PriceStatus.cshtml" />
+    <Content Include="Views\JmInventoryTProductPrice\EditorTemplates\FileUpload.cshtml" />
+    <Content Include="Views\JmInventoryMProduct\EditorTemplates\FileUploadPrice.cshtml" />
+    <Content Include="Views\JmInventoryMExpedition\Index.cshtml" />
+    <Content Include="Views\JmInventoryMExpedition\EditorTemplates\FileUpload.cshtml" />
+    <Content Include="Views\JmInventoryTTran\EditorTemplates\Products.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Expedition.cshtml" />
+    <Content Include="Views\JmInventoryMProduct\EditorTemplates\Supplier.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\Index.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\EditorTemplates\EditJmIntrackTInvoice.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\EditorTemplates\InvoiceStatus.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\EditorTemplates\DocStatus.cshtml" />
+    <Content Include="Views\Shared\ColourLegend.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\Dashboard.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\EditorTemplates\TextArea.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -922,6 +957,8 @@
   <ItemGroup>
     <Folder Include="Controllers\Queries\" />
     <Folder Include="Controllers\ViewModels\Reports\" />
+    <Folder Include="Upload\Brand\" />
+    <Folder Include="Upload\Cat\" />
     <Folder Include="Upload\JmInventoryMProduct\" />
     <Folder Include="Upload\JmInventoryMProgram\" />
     <Folder Include="Upload\JmInventoryMSupplier\" />
@@ -929,6 +966,9 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Reports\RptProductPriceBySupplier.rdlc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -951,7 +991,7 @@
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50455</DevelopmentServerPort>
-          <DevelopmentServerVPath>/SN</DevelopmentServerVPath>
+          <DevelopmentServerVPath>/PM</DevelopmentServerVPath>
           <IISUrl>http://localhost:51949/</IISUrl>
           <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
           <IISAppRootUrl>http://localhost:51949/</IISAppRootUrl>

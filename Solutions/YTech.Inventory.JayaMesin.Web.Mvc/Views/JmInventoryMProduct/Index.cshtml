@@ -10,13 +10,37 @@
     {
         columns.Bound(p => p.ProductId).Width("auto");
         columns.Bound(p => p.ProductName).Width("auto");
-        columns.Bound(p => p.ProductType).Width("auto");
-        columns.Bound(p => p.ProductMerk).Width("auto");
-        columns.Bound(p => p.ProductStatus).Width("auto");
+        columns.Bound(p => p.CatName).Width("auto").ClientTemplate("#:CatName#").Title("Kategori");
+        columns.Bound(p => p.BrandName).Width("auto").ClientTemplate("#:BrandName#").Title("Merek");
+        columns.Bound(p => p.ProductLastPrice).Width("auto").Format("{0:N0}");
+        columns.Bound(p => p.ProductPriceSales).Width("auto").Format("{0:N0}");
+        columns.Bound(p => p.ProductLastPriceDate).Width("auto").Format("{0:dd-MMM-yyyy}");
+        columns.Bound(p => p.ProductEstStock).Width("auto").Format("{0:N0}");
+        columns.Bound(p => p.ProductEstStockDate).Width("auto").Format("{0:dd-MMM-yyyy}");
+        columns.Bound(p => p.ProductMinStock).Width("auto").Format("{0:N0}");
         columns.Bound(p => p.ProductDesc).Width("auto");
-        columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
+        columns.Bound(p => p.ProductStatus).Width("auto");
+        columns.Command(command =>
+        {
+            command.Custom("ProductPrice").Click("OpenProductPrice").HtmlAttributes(new { style = "min-width:20px;", name="productprice" }).Text("Harga");
+            command.Edit().Text(" ");
+            command.Destroy().Text(" ");
+        }).Width("auto");
     })
-        .ToolBar(toolbar => { toolbar.Create().Text("Tambah Produk Baru"); })
+        //.ToolBar(toolbar => { toolbar.Create().Text("Tambah Produk Baru"); })
+         .ToolBar(toolbar =>
+         {
+             toolbar.Template(@<text>
+<div class="k-toolbar k-grid-toolbar k-grid-top">
+    <a class="k-button k-button-icontext k-grid-add" href="#Grid-mode=insert"><span class="k-icon k-add"></span>Tambah Produk Baru</a>
+
+    <label class="search-label" for="search">Pencarian :</label>
+    @(Html.TextBox("search", "", new { @class = "k-textbox" }))
+    @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "searchProduct(false);", new { @class = "k-button" }))
+    @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchProduct(true);", new { @class = "k-button" }))
+</div>
+</text>);
+         })
     .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
     .Pageable()
     .Sortable()
@@ -27,10 +51,10 @@
     .Groupable()
     .Resizable(resize => resize.Columns(true))
     .Reorderable(reorder => reorder.Columns(true))
-    .HtmlAttributes(new { style = "height:500px;" })
+    .HtmlAttributes(new { style = "height:550px;" })
     .DataSource(dataSource => dataSource
         .Ajax()
-        .PageSize(20)
+        .PageSize(50)
         .Batch(false)
         .ServerOperation(false)
         .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
@@ -42,6 +66,77 @@
     )
     .Events(e => e.DataBound("onDataBound").Edit("onEdit"))
     )
+
+@(Html.Kendo().Window()
+    .Name("ProductPriceWindow")
+    .Title("Harga Produk")
+     .Content(@<text>
+@Html.Partial("ProductPrice")
+</text>)
+    .Draggable()
+    .Resizable()
+    .Width(600)
+    .Height(450)
+    .Modal(true)
+    .Visible(false)
+    .Events(events => events
+            .Close("onProductPriceClose")
+        )
+)
+
+@(Html.Kendo().Window()
+    .Name("NewBrandWindow")
+    .Title("Daftar Merek")
+    .Content("Loading Daftar Merek ...")
+    .LoadContentFrom("Index", "JmInventoryMBrand", new
+    {
+        isModal = true
+    })
+    .Events(ev => ev.Close("onBrandClose"))
+    .Iframe(true)
+    .Draggable()
+    .Resizable()
+    .Width(600)
+    .Height(550)
+    .Modal(true)
+    .Visible(false)
+)
+
+@(Html.Kendo().Window()
+    .Name("NewCatWindow")
+    .Title("Daftar Kategori")
+    .Content("Loading Daftar Kategori ...")
+    .LoadContentFrom("Index", "JmInventoryMCat", new
+    {
+        isModal = true
+    })
+    .Events(ev => ev.Close("onCatClose"))
+    .Iframe(true)
+    .Draggable()
+    .Resizable()
+    .Width(600)
+    .Height(550)
+    .Modal(true)
+    .Visible(false)
+)
+
+@(Html.Kendo().Window()
+    .Name("NewSupplierWindow")
+    .Title("Daftar Suplier")
+    .Content("Loading Daftar Suplier ...")
+    .LoadContentFrom("Index", "JmInventoryMSupplier", new
+    {
+        isModal = true
+    })
+    .Events(ev => ev.Close("onSupplierClose"))
+    .Iframe(true)
+    .Draggable()
+    .Resizable()
+    .Width(600)
+    .Height(550)
+    .Modal(true)
+    .Visible(false)
+)
 
 <script type="text/kendo-template" id="message">
 <div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
@@ -64,17 +159,34 @@
     }
 
     function onDataBound(e) {
+        @{
+         if (User.IsInRole("ADMINISTRATOR"))        {
+           <text>
         //edit data when double click
         $('#Grid tbody tr').dblclick(function () {
             var grid = $('#Grid').data().kendoGrid;
             grid.editRow(this);
         })
+         </text>
+        }
+        }
     }
     jQuery(document).ready(function () {
         //auto click add new customer when iframe = 1
         if (getURLParameter("isModal") === "True") {
             //$("a.k-grid-add").trigger("click");
             setTimeout('$("a.k-grid-add").trigger("click");', 3000);
+        }
+         @{
+         if (!User.IsInRole("ADMINISTRATOR"))        {
+           <text>
+        $("a[name='productprice']").hide();
+
+        var grid = $("#Grid").data("kendoGrid");
+        grid.hideColumn(4);
+        grid.hideColumn(12);
+         </text>
+        }
         }
     })
 
@@ -125,7 +237,177 @@
 
         ///display image for product npwp
         var imgUrl = "@Url.Content(YTech.ServiceTracker.JayaMesin.Enums.UploadFolder.Product)" + $("#ProductImgUrl").val();
-          //alert(imgUrl);
-          $("#ImgUploaded").attr("src", imgUrl);
-      }
+        //alert(imgUrl);
+        $("#ImgUploaded").attr("src", imgUrl);
+    }
+
+    function OpenProductPrice(e) {
+        
+         @{
+         if (!User.IsInRole("ADMINISTRATOR"))        {
+           <text>
+        alert('Anda tidak mempunyai akses ke harga.');
+        return;
+         </text>
+        }
+        }
+
+        e.preventDefault();
+
+        //set datasource for print WO
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var ProductId = dataItem.ProductId;
+        //alert(ProductId);
+        $("#ProductId").val(ProductId);
+        //alert(ProjectId);
+
+        var grid = $("#ProductPriceGrid").data("kendoGrid");
+        grid.dataSource.read();
+
+        $("#ProductPriceWindow").data("kendoWindow").center();
+        $("#ProductPriceWindow").data("kendoWindow").open();
+    }
+
+    function searchProduct(reset) {
+        //reset search textbox if reset button clicked
+        //alert(reset);
+        if (reset) {
+            //alert("reset");
+            $("#search").val("");
+        }
+
+        grid = $("#Grid").data("kendoGrid");
+        //search by woNO
+        var textSearch = $("#search").val();
+        //alert(textSearch);
+        //search by status
+        var status = $("#status").val();
+        //alert(status);
+
+        if (textSearch || status) {
+            //alert("search");
+            var andFilter = { logic: "and", filters: [] };
+            var orFilter = { logic: "or", filters: [] };
+            //andFilter.filters.push({ field: "TransStatus", operator: "contains", value: status });
+            orFilter.filters.push({ field: "ProductId", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "ProductName", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "CatName", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "BrandName", operator: "contains", value: textSearch });
+            orFilter.filters.push({ field: "ProductDesc", operator: "contains", value: textSearch });
+            ////orFilter.filters.push({ field: "ProductPriceSales", operator: "contains", value: textSearch });
+            ////orFilter.filters.push({ field: "ProductMinStock", operator: "contains", value: textSearch });
+            ////orFilter.filters.push({ field: "ProductEstStock", operator: "contains", value: textSearch });
+            ////orFilter.filters.push({ field: "ProductLastPrice", operator: "contains", value: textSearch });
+            andFilter.filters.push(orFilter);
+            grid.dataSource.query({ filter: andFilter });
+        } else {
+            grid.dataSource.filter({});
+        }
+    }
+
+    function OpenNewBrand() {
+        //set window to center of display
+        $("#NewBrandWindow").data("kendoWindow").center();
+        $("#NewBrandWindow").data("kendoWindow").open();
+    }
+
+    function onBrandClose(e) {
+        //refresh datasource for dropdownlist after insert new customer
+        $('#BrandId').data("kendoDropDownList").dataSource.read();
+        $('#BrandId').data("kendoDropDownList").refresh();
+
+        //get last created customer and set to value
+        var getlastcustomerurl = '@(Url.Action("GetLastCreatedBrand", "JmInventoryMBrand", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))';
+
+        $.ajax({
+            type: 'POST',
+            url: getlastcustomerurl,
+            error: function (response) {
+                alert("error: " + response);
+            }, success: function (response) {
+                //call set customer to set datasource change
+                $('#BrandId').data('kendoDropDownList').value(response);
+            }
+        });
+    }
+
+
+    function OpenNewCat() {
+        //set window to center of display
+        $("#NewCatWindow").data("kendoWindow").center();
+        $("#NewCatWindow").data("kendoWindow").open();
+    }
+
+    function onCatClose(e) {
+        //refresh datasource for dropdownlist after insert new customer
+        $('#CatId').data("kendoDropDownList").dataSource.read();
+        $('#CatId').data("kendoDropDownList").refresh();
+
+        //get last created customer and set to value
+        var getlastcustomerurl = '@(Url.Action("GetLastCreatedCat", "JmInventoryMCat", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))';
+
+        $.ajax({
+            type: 'POST',
+            url: getlastcustomerurl,
+            error: function (response) {
+                alert("error: " + response);
+            }, success: function (response) {
+                //call set customer to set datasource change
+                $('#CatId').data('kendoDropDownList').value(response);
+            }
+        });
+    }
+
+    //function resizeGrid() {
+    //    var gridElement = $("#grid"),
+    //   newHeight = gridElement.innerHeight(),
+    //   otherElements = gridElement.children().not(".k-grid-content"),
+    //   otherElementsHeight = 0;
+
+    //    otherElements.each(function () {
+    //        otherElementsHeight += $(this).outerHeight();
+    //    });
+
+    //    gridElement.children(".k-grid-content").height(newHeight - otherElementsHeight);
+    //}
+
+    //$(window).resize(function () {
+    //    resizeGrid();
+    //});
+
+    function onProductPriceClose() {
+        $('#Grid').data().kendoGrid.dataSource.read();
+    }
+
+
+    function OpenNewSupplier() {
+        //set window to center of display
+        $("#NewSupplierWindow").data("kendoWindow").center();
+        $("#NewSupplierWindow").data("kendoWindow").open();
+    }
+
+    function onSupplierClose(e) {
+        //refresh datasource for dropdownlist after insert new customer
+        $('#SupplierId').data("kendoDropDownList").dataSource.read();
+        $('#SupplierId').data("kendoDropDownList").refresh();
+
+        //get last created customer and set to value
+        var getlastcustomerurl = '@(Url.Action("GetLastCreatedSupplier", "JmInventoryMSupplier", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))';
+
+        $.ajax({
+            type: 'POST',
+            url: getlastcustomerurl,
+            error: function (response) {
+                alert("error: " + response);
+            }, success: function (response) {
+                //call set customer to set datasource change
+                SetSupplier(response);
+            }
+        });
+    }
+
+    function SetSupplier(supplierId) {
+        //alert(custId);
+        $('#SupplierId').data('kendoDropDownList').value(supplierId);
+    }
 </script>

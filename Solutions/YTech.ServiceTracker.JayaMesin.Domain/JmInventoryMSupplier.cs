@@ -29,6 +29,8 @@ namespace YTech.ServiceTracker.JayaMesin.Domain
         public virtual string SupplierNpwp { get; set; }
         public virtual byte[] SupplierNpwpImg { get; set; }
         public virtual string SupplierNpwpImgUrl { get; set; }
+        public virtual decimal? SupplierDebtLimit { get; set; }
+        public virtual decimal? SupplierDebtTermin { get; set; }
 
         #endregion
         

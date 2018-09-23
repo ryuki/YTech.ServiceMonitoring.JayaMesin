@@ -21,8 +21,8 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
 			mapping.Id(x => x.Id, "[TRANS_DET_ID]")
                  .GeneratedBy.Assigned();
 
-            mapping.References<JmInventoryTTran>(x => x.TransId, "[TRANS_ID]").ForeignKey();
             mapping.References<JmInventoryMProduct>(x => x.ProductId, "[PRODUCT_ID]").ForeignKey();
+            mapping.References<JmInventoryTTran>(x => x.TransId, "[TRANS_ID]").ForeignKey();
             
             mapping.Map(x => x.TransDetQty, "[TRANS_DET_QTY]");
             mapping.Map(x => x.TransDetStatus, "[TRANS_DET_STATUS]");
@@ -37,6 +37,7 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
             mapping.Map(x => x.TransDetDisc, "[TRANS_DET_DISC]");
             mapping.Map(x => x.TransDetIsTaxed, "[TRANS_DET_IS_TAXED]");
             mapping.Map(x => x.TransDetTotal, "[TRANS_DET_TOTAL]");
+            mapping.Map(x => x.TransDetOngkir, "[TRANS_DET_ONGKIR]");
 
             #endregion
         }

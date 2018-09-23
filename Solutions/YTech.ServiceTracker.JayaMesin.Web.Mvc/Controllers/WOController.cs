@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Collections.Specialized;
 using System.Net;
 using RestSharp;
+using Newtonsoft.Json;
 
 namespace YTech.ServiceTracker.JayaMesin.Web.Mvc.Controllers
 {
@@ -850,6 +851,9 @@ RestClient("http://107.20.199.106/restapi/sms/1/text/single");
                 request.AddParameter("application/json", smsJson, ParameterType.RequestBody);
                 IRestResponse response = client.Execute(request);
 
+                debug.Append(response.Content);
+
+                //string messageId = JsonConvert
                 success = true;
             }
             catch (Exception ex)

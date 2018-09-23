@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.Title = "Dashboard Monitoring Faktur Penjualan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="demo-section k-content" >
+    @(Html.Kendo().Chart()
+        .Name("chart")
+                .Title(title => title
+                    .Text("Jumlah Faktur Penjualan")
+                    .Position(ChartTitlePosition.Top))
+        .Legend(legend => legend
+            .Visible(false)
+        )
+        .ChartArea(chart => chart
+            .Background("transparent")
+         )
+        .HtmlAttributes(new { style="background: center no-repeat url(" + @Url.Content("~/Content/img/track.jpg")})
+        .Series(series => {
+            series.Pie(new dynamic[] {
+                new {category="Lunas",value=53.8,color="#9de219"},
+                new {category="Belum Lunas",value=16.1,color="#FFA500"}        
+            })
+            .Labels(labels => labels
+                .Template("#= category #: \n #= value#%")
+                .Background("transparent")
+                .Visible(true)
+            )
+            .StartAngle(150);
+        })
+        .Tooltip(tooltip => tooltip
+            .Visible(true)
+            .Format("{0}%")
+        )
+    ) 
+
+    @(Html.Kendo().Chart()
+        .Name("chart2")
+                .Title(title => title
+                    .Text("Kelengkapan SSP Dari yang Sudah Lunas")
+                    .Position(ChartTitlePosition.Top))
+        .Legend(legend => legend
+            .Visible(false)
+        )
+        .ChartArea(chart => chart
+            .Background("transparent")
+         )
+        .HtmlAttributes(new { style="background: center no-repeat url(" + @Url.Content("~/Content/img/track.jpg")})
+        .Series(series => {
+            series.Pie(new dynamic[] {
+                new {category="Lengkap",value=34.8,color="#DDA0DD"},
+                new {category="Belum Lengkap",value=16.1,color="#B0E0E6"}        
+            })
+            .Labels(labels => labels
+                .Template("#= category #: \n #= value#%")
+                .Background("transparent")
+                .Visible(true)
+            )
+            .StartAngle(150);
+        })
+        .Tooltip(tooltip => tooltip
+            .Visible(true)
+            .Format("{0}%")
+        )
+    ) 
+</div>

@@ -56,8 +56,8 @@
 
     <label class="search-label" for="search">Pencarian :</label>
     @(Html.TextBox("search", "", new { @class = "k-textbox" }))
-    @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "rebindWO(false);", new { @class = "k-button" }))
-    @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "rebindWO(true);", new { @class = "k-button" })) | 
+    @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "searchWO(false);", new { @class = "k-button" }))
+    @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchWO(true);", new { @class = "k-button" })) | 
     @Html.Partial("_CountDown")
     @Html.Partial("ColourLegend")
     @Html.Partial("ExpiredWO")

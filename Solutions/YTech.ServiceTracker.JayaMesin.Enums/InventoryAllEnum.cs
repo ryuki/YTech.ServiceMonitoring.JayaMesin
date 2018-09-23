@@ -12,7 +12,7 @@ namespace YTech.ServiceTracker.JayaMesin.Enums
 
     public enum EnumTransStatus
     {
-        Baru, Ditolak, Disetujui, Diproses
+        Baru, Ditolak, Disetujui, Diproses, Direvisi
     }
 
     public enum EnumTransLog
@@ -22,12 +22,13 @@ namespace YTech.ServiceTracker.JayaMesin.Enums
         Delete,
         Read,
         Print,
-        Approve
+        Approve,
+        Open
     }
 
     public enum EnumLogType
     {
-        Trans_PO
+        Trans_PO, Invoice
     }
 
     public enum EnumInventoryReferenceType
@@ -40,6 +41,8 @@ namespace YTech.ServiceTracker.JayaMesin.Enums
         public static string Supplier = "~/Upload/JmInventoryMSupplier/";
         public static string Program = "~/Upload/JmInventoryMProgram/";
         public static string Product = "~/Upload/JmInventoryMProduct/";
+        public static string Cat = "~/Upload/JmInventoryMProduct/";
+        public static string Brand = "~/Upload/JmInventoryMProduct/";
     }
 
     public enum EnumProductStatus
@@ -55,5 +58,25 @@ namespace YTech.ServiceTracker.JayaMesin.Enums
     public enum EnumProgramStatus
     {
         Aktif, Non_Aktif
+    }
+
+    public enum EnumPriceStatus
+    {
+        PriceList, PO
+    }
+
+    public enum EnumInvReports
+    {
+        RptProductPriceBySupplier
+    }
+
+    public enum EnumInvoiceStatus
+    {
+        Baru, Dokumen, Invoicing, Baru_Dilunasi, Lunas_BelumLengkap, Lunas_Lengkap
+    }
+
+    public enum EnumDocStatus
+    {
+        Tidak_Ada, Belum_Lengkap, Kurang_Bayar, Lengkap
     }
 }

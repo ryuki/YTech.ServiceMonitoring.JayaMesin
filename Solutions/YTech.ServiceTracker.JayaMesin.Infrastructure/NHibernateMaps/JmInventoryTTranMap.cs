@@ -21,8 +21,9 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
 			mapping.Id(x => x.Id, "[TRANS_ID]")
                  .GeneratedBy.Assigned();
 
-            mapping.References<JmInventoryTTran>(x => x.TransRefId, "[TRANS_REF_ID]").ForeignKey();
+            mapping.References<JmInventoryMExpedition>(x => x.ExpeditionId, "[EXPEDITION_ID]").ForeignKey();
             mapping.References<JmInventoryMSupplier>(x => x.SupplierId, "[SUPPLIER_ID]").ForeignKey();
+            mapping.References<JmInventoryTTran>(x => x.TransRefId, "[TRANS_REF_ID]").ForeignKey();
             
             mapping.Map(x => x.TransNo, "[TRANS_NO]");
             mapping.Map(x => x.TransDate, "[TRANS_DATE]");
@@ -45,6 +46,8 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
             mapping.Map(x => x.TransPpn, "[TRANS_PPN]");
             mapping.Map(x => x.TransCost, "[TRANS_COST]");
             mapping.Map(x => x.TransGrandTotal, "[TRANS_GRAND_TOTAL]");
+            mapping.Map(x => x.TransOngkir, "[TRANS_ONGKIR]");
+            mapping.Map(x => x.TransApprovedComment, "[TRANS_APPROVED_COMMENT]");
 
             #endregion
         }

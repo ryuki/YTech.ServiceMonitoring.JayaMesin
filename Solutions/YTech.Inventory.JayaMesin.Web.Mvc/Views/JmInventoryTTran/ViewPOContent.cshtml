@@ -101,10 +101,20 @@
 </script>
 
 @(Html.Hidden("HiddenSelectedTransId"))
-
+    <table id="tblApprovedComment">
+        <tr>
+            <td>
+                @Html.LabelFor(model => model.TransApprovedComment)
+            </td>
+            <td>
+                @Html.EditorFor(model => model.TransApprovedComment)
+            </td>
+        </tr>
+    </table>
 <button onclick="ApprovePO('Disetujui')" value="Disetujui" id="btnDisetujui">Setuju</button>
 <button onclick="ApprovePO('Ditolak')" value="Ditolak" id="btnDitolak">Tolak</button>
 <button onclick="ApprovePO('Diproses')" value="Diproses" id="btnDiproses">Proses</button>
+<button onclick="ApprovePO('Direvisi')" value="Direvisi" id="btnDirevisi">Revisi</button>
 
 <script type="text/javascript">
     function GetTransId() {
@@ -114,11 +124,12 @@
     }
 
     function ApprovePO(status) {
-        if (!confirm("Anda yakin menyetujui/menolak/memproses PO ini?")) {
+        if (!confirm("Anda yakin menyetujui/menolak/merevisi/memproses PO ini?")) {
             return;
         }
         var TransId = $("#TransId").val();
-        var getPrintWOUrl = '@(Url.Action("POList_Approve", "JmInventoryTTran", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))' + '&TransId=' + TransId + '&TransStatus=' + status;
+        var TransApprovedComment = $("#TransApprovedComment").val();
+        var getPrintWOUrl = '@(Url.Action("POList_Approve", "JmInventoryTTran", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))' + '&TransId=' + TransId + '&TransStatus=' + status + '&TransApprovedComment=' + TransApprovedComment;
         var statusMsg = status;
 
         $.ajax({
@@ -152,22 +163,37 @@
         if (TransStatus == "Baru") {
             $("#btnDisetujui").show();
             $("#btnDitolak").show();
-            $("#btnDiproses").hide();
+            $("#btnDiproses").hide(); 
+            $("#btnDirevisi").hide();
+            $("#tblApprovedComment").show();
         }
         else if (TransStatus == "Disetujui") {
             $("#btnDisetujui").hide();
             $("#btnDitolak").hide();
             $("#btnDiproses").show();
+            $("#btnDirevisi").hide();
+            $("#tblApprovedComment").hide();
         }
         else if (TransStatus == "Ditolak") {
             $("#btnDisetujui").hide();
             $("#btnDitolak").hide();
             $("#btnDiproses").hide();
+            $("#btnDirevisi").show();
+            $("#tblApprovedComment").hide();
         }
         else if (TransStatus == "Diproses") {
             $("#btnDisetujui").hide();
             $("#btnDitolak").hide();
             $("#btnDiproses").hide();
+            $("#btnDirevisi").hide();
+            $("#tblApprovedComment").hide();
+        }
+        else if (TransStatus == "Direvisi") {
+            $("#btnDisetujui").show();
+            $("#btnDitolak").show();
+            $("#btnDiproses").hide();
+            $("#btnDirevisi").hide();
+            $("#tblApprovedComment").show();
         }
     });
 

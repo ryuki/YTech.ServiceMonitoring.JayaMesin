@@ -14,7 +14,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
     [HandleError]
     public class AccountController : Controller
     {
-        //[Authorize(Roles = "ADMINISTRATOR")]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public ActionResult Index()
         {
             return View();

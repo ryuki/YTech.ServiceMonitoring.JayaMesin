@@ -1,0 +1,68 @@
+﻿                                                                                    <span id="showLegend" class="k-button">Legenda Warna</span>
+
+@(Html.Kendo().Window()
+    .Name("legend")
+    .Title("Legenda Warna")
+     .Content(@<text>
+    <table>
+        <tr>
+            <td style="background-color: #D5D5CA; width: 50px;">&nbsp;</td>
+            <td>Umur Faktur < 30 hari</td>
+        </tr>
+        <tr>
+            <td style="background-color: #FFFF00">&nbsp;</td>
+            <td>Umur Faktur 31 - 45 hari</td>
+        </tr>
+        <tr>
+            <td style="background-color: #FFA500">&nbsp;</td>
+            <td>Umur Faktur 46 - 60 hari</td>
+        </tr>
+        <tr>
+            <td style="background-color: #FF4500">&nbsp;</td>
+            <td>Umur Faktur > 60 hari</td>
+        </tr>
+        <tr>
+            <td style="background-color: #40E0D0">&nbsp;</td>
+            <td>Baru_Dilunasi</td>
+        </tr>
+        <tr>
+            <td style="background-color: #DA70D6">&nbsp;</td>
+            <td>Lunas_BelumLengkap</td>
+        </tr>
+        <tr>
+            <td style="background-color: #7CFC00">&nbsp;</td>
+            <td>Lunas_Lengkap</td>
+        </tr>
+       
+       @* <tr>
+            <td><img src='@(Url.Content("~/Content/img/new_header.png"))' /></td>
+            <td>Update Baru Belum Dibaca</td>
+        </tr>
+        <tr>
+            <td><img src='@(Url.Content("~/Content/img/error3.gif"))' /></td>
+            <td>Prioritas Urgent</td>
+        </tr>*@
+    </table>
+</text>)
+    .Draggable()
+    .Resizable()
+    .Width(300)
+    .Height(175)
+    .Modal(true)
+    .Visible(false)
+    .Events(ev => ev.Close("onClose"))
+)
+
+<script type="text/javascript">
+    function onClose() {
+        //$("#showLegend").show();
+    }
+
+    $(document).ready(function () {
+        $("#showLegend").bind("click", function () {
+            $("#legend").data("kendoWindow").center();
+            $("#legend").data("kendoWindow").open();
+            //$("#showLegend").hide();
+        });
+    });
+</script>

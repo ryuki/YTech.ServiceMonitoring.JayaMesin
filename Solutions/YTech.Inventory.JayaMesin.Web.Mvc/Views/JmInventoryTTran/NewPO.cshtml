@@ -10,59 +10,72 @@
 @model TransPOViewModel
 <h2>Input PO</h2>
 
-@using(Html.BeginForm(FormMethod.Post)){
-@Html.HiddenFor(model => model.TransId)
+@using (Html.BeginForm(FormMethod.Post))
+{
+    @Html.HiddenFor(model => model.TransId)
 
-<table style="width: auto;vertical-align:top;">
-    <tr><td colspan="2">
-        @Html.Button("btnSave", "Simpan", HtmlButtonType.Submit)
-        </td></tr>
-    <tr>
-        <td style="width: 50%;vertical-align:top;">
-            <div class="editor-label">
-                @Html.LabelFor(model => model.TransNo)
-            </div>
-            <div class="editor-field">
-                @Html.EditorFor(model => model.TransNo)
-                @Html.ValidationMessageFor(model => model.TransNo)
-            </div>
-
-            <div class="editor-label">
-                @Html.LabelFor(model => model.SupplierId)
-            </div>
-            <div class="editor-field">
-                @Html.EditorFor(model => model.SupplierId)
-                @Html.ValidationMessageFor(model => model.SupplierId)
-            </div>
-
-            <div class="editor-label">
-                @Html.LabelFor(model => model.TransDate)
-            </div>
-            <div class="editor-field">
-                @Html.EditorFor(s => s.TransDate)               
-                @Html.ValidationMessageFor(model => model.TransDate)
-            </div>
+    <table style="width: auto; vertical-align: top;">
+        <tr>
+            <td colspan="2">
+                @Html.Button("btnSave", "Simpan", HtmlButtonType.Submit)
             </td>
-        <td style="width: 50%;vertical-align:top;">
+        </tr>
+        <tr>
+            <td style="width: 50%; vertical-align: top;">
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.TransNo)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.TransNo)
+                    @Html.ValidationMessageFor(model => model.TransNo)
+                </div>
 
-            <div class="editor-label">
-                @Html.LabelFor(model => model.InvoiceNo)
-            </div>
-            <div class="editor-field">
-                @Html.EditorFor(model => model.InvoiceNo)
-                @Html.ValidationMessageFor(model => model.InvoiceNo)
-            </div>
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.SupplierId)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.SupplierId)
+                    @Html.ValidationMessageFor(model => model.SupplierId)
+                    @Html.Button("", "<span class=\"k-icon k-add\"><\\/span>", HtmlButtonType.Button, "OpenNewSupplier();")
+                </div>
 
-            <div class="editor-label">
-                @Html.LabelFor(model => model.TransDesc)
-            </div>
-            <div class="editor-field">
-                @Html.EditorFor(model => model.TransDesc)
-                @Html.ValidationMessageFor(model => model.TransDesc)
-            </div>
-        </td>
-    </tr>   
-</table>    
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.TransDate)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(s => s.TransDate)
+                    @Html.ValidationMessageFor(model => model.TransDate)
+                </div>
+            </td>
+            <td style="width: 50%; vertical-align: top;">
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceNo)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.InvoiceNo)
+                    @Html.ValidationMessageFor(model => model.InvoiceNo)
+                </div>
+                
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.ExpeditionId)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.ExpeditionId)
+                    @Html.ValidationMessageFor(model => model.ExpeditionId)
+                    @Html.Button("", "<span class=\"k-icon k-add\"><\\/span>", HtmlButtonType.Button, "OpenNewExpedition();")
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.TransDesc)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.TransDesc)
+                    @Html.ValidationMessageFor(model => model.TransDesc)
+                </div>
+            </td>
+        </tr>
+    </table>    
 }
 
 
@@ -75,7 +88,8 @@
         columns.Bound(p => p.TransDetQty).Format("{0:N0}").Width("auto").FooterTemplate(@<text>@item.Sum</text>);
         columns.Bound(p => p.TransDetPrice).Format("{0:N0}").Width("auto");
         //columns.Bound(p => p.TransDetDisc).Format("{0:N0}").Width("auto");
-        columns.Bound(p => p.TransDetTotal).Format("{0:N0}").Width("auto");
+        columns.Bound(p => p.TransDetTotal).Format("{0:N0}").Width("auto").FooterTemplate(@<text>@item.Sum</text>);
+        columns.Bound(p => p.TransDetOngkir).Format("{0:N0}").Width("auto");
         columns.Bound(p => p.TransDetDesc).Width("auto");
 
         columns.Command(command =>
@@ -85,43 +99,100 @@
         })
             .Width("135px");
     })
-    .ToolBar(toolbar => toolbar.Create())
-    .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
-    .Sortable()
-    .Scrollable()
-    .ColumnMenu()
-    .Selectable()
-    .Filterable()
-    .Resizable(resize => resize.Columns(true))
-    .Reorderable(reorder => reorder.Columns(true))
-    .DataSource(dataSource => dataSource
-        .Ajax()
-        .PageSize(10)
-        .Batch(false)
-        .ServerOperation(false)
-        .Events(events => events.RequestEnd("onPODetailRequestEnd"))
-        .Read(read => read.Action("PODetail_Read", "JmInventoryTTransDet").Data("GetTransId"))
-                .Create(create => create.Action("PODetail_Create", "JmInventoryTTransDet").Data("GetTransId"))
-                .Update(update => update.Action("PODetail_Update", "JmInventoryTTransDet").Data("GetTransId"))
-                .Destroy(destroy => destroy.Action("PODetail_Destroy", "JmInventoryTTransDet").Data("GetTransId"))
-                .Model(x =>
-        {
-            x.Id(p => p.TransDetId);
-            x.Field(c => c.TransDetIsTaxed).DefaultValue(false);
-        })
-        .Aggregates(aggregates =>
-            {
-                aggregates.Add(p => p.TransDetQty).Sum();
-            })
-    )
-    .Events(e => e.DataBound("onPODetailDataBound"))
-    )
+                .ToolBar(toolbar => toolbar.Create())
+                .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
+                .Sortable()
+                .Scrollable()
+                .ColumnMenu()
+                .Selectable()
+                .Filterable()
+                .Resizable(resize => resize.Columns(true))
+                .Reorderable(reorder => reorder.Columns(true))
+                .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .PageSize(10)
+                    .Batch(false)
+                    .ServerOperation(false)
+                    .Events(events => events.RequestEnd("onPODetailRequestEnd"))
+                    .Read(read => read.Action("PODetail_Read", "JmInventoryTTransDet").Data("GetTransId"))
+                            .Create(create => create.Action("PODetail_Create", "JmInventoryTTransDet").Data("GetTransId"))
+                            .Update(update => update.Action("PODetail_Update", "JmInventoryTTransDet").Data("GetTransId"))
+                            .Destroy(destroy => destroy.Action("PODetail_Destroy", "JmInventoryTTransDet").Data("GetTransId"))
+                            .Model(x =>
+                            {
+                                x.Id(p => p.TransDetId);
+                                //x.Field(c => c.TransDetIsTaxed).DefaultValue(false);
+                                x.Field(c => c.TransDetQty).DefaultValue(1);
+                                x.Field(c => c.TransDetDisc).DefaultValue(0);
+                                x.Field(c => c.TransDetTotal).DefaultValue(0);
+                            })
+                    .Aggregates(aggregates =>
+                    {
+                        aggregates.Add(p => p.TransDetQty).Sum();
+                    })
+                )
+                .Events(e => e.DataBound("onPODetailDataBound"))
+                )
 
 <script type="text/kendo-template" id="message">
 <div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
             <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>
 </script>
 
+@(Html.Kendo().Window()
+    .Name("NewSupplierWindow")
+    .Title("Daftar Suplier")
+    .Content("Loading Daftar Suplier ...")
+    .LoadContentFrom("Index", "JmInventoryMSupplier", new
+    {
+        isModal = true
+    })
+    .Events(ev => ev.Close("onSupplierClose"))
+    .Iframe(true)
+    .Draggable()
+    .Resizable()
+    .Width(600)
+    .Height(550)
+    .Modal(true)
+    .Visible(false)
+)
+
+@(Html.Kendo().Window()
+    .Name("NewProductWindow")
+    .Title("Daftar Barang")
+    .Content("Loading Daftar Barang ...")
+    .LoadContentFrom("Index", "JmInventoryMProduct", new
+    {
+        isModal = true
+    })
+    .Events(ev => ev.Close("onProductClose"))
+    .Iframe(true)
+    .Draggable()
+    .Resizable()
+    .Width(600)
+    .Height(550)
+    .Modal(true)
+    .Visible(false)
+)
+
+    
+@(Html.Kendo().Window()
+    .Name("NewExpeditionWindow")
+    .Title("Daftar Ekspedisi")
+    .Content("Loading Daftar Ekspedisi ...")
+    .LoadContentFrom("Index", "JmInventoryMExpedition", new
+    {
+        isModal = true
+    })
+    .Events(ev => ev.Close("onExpeditionClose"))
+    .Iframe(true)
+    .Draggable()
+    .Resizable()
+    .Width(600)
+    .Height(550)
+    .Modal(true)
+    .Visible(false)
+)
 
 <script type="text/javascript">
     function GetTransId() {
@@ -150,5 +221,126 @@
             }
         }
     }
-</script>
 
+    function OpenNewSupplier() {
+        //set window to center of display
+        $("#NewSupplierWindow").data("kendoWindow").center();
+        $("#NewSupplierWindow").data("kendoWindow").open();
+    }
+
+    function onSupplierClose(e) {
+        //refresh datasource for dropdownlist after insert new customer
+        $('#SupplierId').data("kendoDropDownList").dataSource.read();
+        $('#SupplierId').data("kendoDropDownList").refresh();
+
+        //get last created customer and set to value
+        var getlastcustomerurl = '@(Url.Action("GetLastCreatedSupplier", "JmInventoryMSupplier", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))';
+
+        $.ajax({
+            type: 'POST',
+            url: getlastcustomerurl,
+            error: function (response) {
+                alert("error: " + response);
+            }, success: function (response) {
+                //call set customer to set datasource change
+                SetSupplier(response);
+            }
+        });
+    }
+
+    function SetSupplier(supplierId) {
+        //alert(custId);
+        $('#SupplierId').data('kendoDropDownList').value(supplierId);
+    }
+
+
+    function OpenNewProduct() {
+        //set window to center of display
+        $("#NewProductWindow").data("kendoWindow").center();
+        $("#NewProductWindow").data("kendoWindow").open();
+    }
+
+    function onProductClose(e) {
+        //refresh datasource for dropdownlist after insert new customer
+        $('#ProductId').data("kendoDropDownList").dataSource.read();
+        $('#ProductId').data("kendoDropDownList").refresh();
+
+        //get last created customer and set to value
+        var getlastcustomerurl = '@(Url.Action("GetLastCreatedProduct", "JmInventoryMProduct", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))';
+
+        $.ajax({
+            type: 'POST',
+            url: getlastcustomerurl,
+            error: function (response) {
+                alert("error: " + response);
+            }, success: function (response) {
+                //call set customer to set datasource change
+                SetProduct(response);
+            }
+        });
+    }
+
+    function SetProduct(supplierId) {
+        //alert(custId);
+        $('#ProductId').data('kendoDropDownList').value(supplierId);
+    }
+
+    function onProductChange(e) {
+        //refresh datasource for dropdownlist after insert new customer
+        var productId = $('#ProductId').val();
+
+        //get last created customer and set to value
+        var getlastcustomerurl = '@(Url.Action("GetProductDetail", "JmInventoryMProduct", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))' + '&productId=' + productId;
+
+        $.ajax({
+            type: 'POST',
+            url: getlastcustomerurl,
+            error: function (response) {
+                alert("error: " + response);
+            }, success: function (response) {
+                //call set customer to set datasource change
+
+                $('#TransDetPrice').val(response.ProductLastPrice);
+                CalculateTotal();
+            }
+        });
+    }
+
+    function CalculateTotal() {
+        var price = $('#TransDetPrice').val();
+        var qty = $('#TransDetQty').val();
+        var disc = $('#TransDetDisc').val();
+        var total = price * qty;
+        if (disc != "undefined") {
+            total = (100 - disc) * total / 100;
+        }
+        $('#TransDetTotal').val(total);
+    }
+
+    function OpenNewExpedition() {
+        //set window to center of display
+        $("#NewExpeditionWindow").data("kendoWindow").center();
+        $("#NewExpeditionWindow").data("kendoWindow").open();
+    }
+
+    function onExpeditionClose(e) {
+        //refresh datasource for dropdownlist after insert new customer
+        $('#ExpeditionId').data("kendoDropDownList").dataSource.read();
+        $('#ExpeditionId').data("kendoDropDownList").refresh();
+
+        //get last created customer and set to value
+        var getlastcustomerurl = '@(Url.Action("GetLastCreatedExpedition", "JmInventoryMExpedition", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))';
+
+        $.ajax({
+            type: 'POST',
+            url: getlastcustomerurl,
+            error: function (response) {
+                alert("error: " + response);
+            }, success: function (response) {
+                //call set customer to set datasource change
+                $('#ExpeditionId').data('kendoDropDownList').value(response);
+            }
+        });
+    }
+    
+</script>

@@ -17,20 +17,22 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
     {
         private readonly IMCustomerTasks _customerTasks;
         private readonly ITWOTasks _woTasks;
-        public ReportsController(IMCustomerTasks customerTasks, ITWOTasks woTasks)
+        private readonly IJmInventoryTProductPriceTasks _JmInventoryTProductPriceTasks;
+        public ReportsController(IMCustomerTasks customerTasks, ITWOTasks woTasks,IJmInventoryTProductPriceTasks _JmInventoryTProductPriceTasks)
         {
             this._customerTasks = customerTasks;
             this._woTasks = woTasks;
+            this._JmInventoryTProductPriceTasks = _JmInventoryTProductPriceTasks;
         }
 
-        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, KASIR, TEKNISI")]
-        public ActionResult Index(EnumReports rpt)
+        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, KASIR, TEKNISI, SALES")]
+        public ActionResult Index(EnumInvReports rpt)
         {
             string title = string.Empty;
             switch (rpt)
             {
-                case EnumReports.RptWODailyRecap:
-                    title = "Laporan Harian Servis Printer";
+                case EnumInvReports.RptProductPriceBySupplier:
+                    title = "Laporan Harga Produk Per Supplier";
                     break;
             }
             ViewBag.Title = title;
@@ -40,19 +42,19 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Index(EnumReports rpt, ReportsViewModel rptVM)
+        public ActionResult Index(EnumInvReports rpt, ReportsViewModel rptVM)
         {
             ReportDataSource[] repCol = new ReportDataSource[1];
             ReportParameterCollection paramCol = null;
             switch (rpt)
             {
-                case EnumReports.RptWODailyRecap:
-                    repCol[0] = GetWOs(rptVM.RptDateFrom, rptVM.RptDateTo);
+                case EnumInvReports.RptProductPriceBySupplier:
+                    repCol[0] = GetProductPrices();
 
-                    //set params 
-                    paramCol = new ReportParameterCollection();
-                    paramCol.Add(new ReportParameter("V_START_DATE", rptVM.RptDateFrom.Value.ToString()));
-                    paramCol.Add(new ReportParameter("V_END_DATE", rptVM.RptDateTo.Value.ToString()));
+                    ////set params 
+                    //paramCol = new ReportParameterCollection();
+                    //paramCol.Add(new ReportParameter("V_START_DATE", rptVM.RptDateFrom.Value.ToString()));
+                    //paramCol.Add(new ReportParameter("V_END_DATE", rptVM.RptDateTo.Value.ToString()));
                     break;
             }
 
@@ -69,38 +71,64 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             return Json(e, JsonRequestBehavior.AllowGet);
         }
 
+        private ReportDataSource GetProductPrices()
+        {
+            var entitys = this._JmInventoryTProductPriceTasks.GetListNotDeleted();
+
+            var vm = from entity in entitys
+                   select new JmInventoryTProductPriceViewModel
+                   {
+                       ProductId = entity.ProductId != null ? entity.ProductId.Id : string.Empty,
+                       ProductIdName = entity.ProductId != null ? entity.ProductId.ProductName : string.Empty,
+                       SupplierId = entity.SupplierId != null ? entity.SupplierId.Id : string.Empty,
+                       SupplierIdName = entity.SupplierId != null ? entity.SupplierId.SupplierName : string.Empty,
+
+                       ProductPrice = entity.ProductPrice,
+                       ProductPriceStatus = entity.ProductPriceStatus,
+                       ProductPriceDesc = entity.ProductPriceDesc,
+                       ProductPriceId = entity.Id,
+                       ProductPriceImgUrl = entity.ProductPriceImgUrl,
+                       ProductPriceDate = entity.ProductPriceDate,
+                       ProductPriceQty = entity.ProductPriceQty
+                   };
+
+            ReportDataSource reportDataSource = new ReportDataSource("DSProductPrice", vm);
+            return reportDataSource;
+        }
+
         private ReportDataSource GetWOs(DateTime? rptDateFrom, DateTime? rptDateTo)
         {
-            var wos = this._woTasks.GetWOByDate(rptDateFrom, rptDateTo);
+            return null;
+            //var wos = this._woTasks.GetWOByDate(rptDateFrom, rptDateTo);
 
-            var vm = from wo in wos
-                     select new WOViewModel
-                     {
-                         WOID = wo.Id,
-                         CustomerName = wo.CustomerId.CustomerName,
-                         CustomerPhone = wo.CustomerId.CustomerPhone,
-                         CustomerAddress = wo.CustomerId.CustomerAddress,
-                         WODate = wo.WODate,
-                         WONo = wo.WONo,
-                         WOItemType = wo.WOItemType,
-                         WOItemSN = wo.WOItemSn,
-                         WOIsGuarantee = wo.WOIsGuarantee,
-                         WOEquipments = wo.WOEquipments,
-                         WOScStore = wo.WOScStore,
-                         WOPriority = wo.WOPriority,
-                         WOBrokenDesc = wo.WOBrokenDesc,
-                         WOLastStatus = wo.WOLastStatus,
-                         WOStartDate = wo.WOStartDate,
-                         WOEstFinishDate = wo.WOEstFinishDate,
-                         WOTotal = wo.WOTotal,
-                         WODp = wo.WODp,
-                         WOTakenDate = wo.WOTakenDate,
-                         WOInvoiceNo = wo.WOInvoiceNo,
-                         WOComplain = wo.WOComplain
-                     };
+            //var vm = from wo in wos
+            //         select new WOViewModel
+            //         {
+            //             WOID = wo.Id,
+            //             CustomerName = wo.CustomerId.CustomerName,
+            //             CustomerPhone = wo.CustomerId.CustomerPhone,
+            //             CustomerAddress = wo.CustomerId.CustomerAddress,
+            //             WODate = wo.WODate,
+            //             WONo = wo.WONo,
+            //             WOItemType = wo.WOItemType,
+            //             WOItemSN = wo.WOItemSn,
+            //             WOIsGuarantee = wo.WOIsGuarantee,
+            //             WOEquipments = wo.WOEquipments,
+            //             WOScStore = wo.WOScStore,
+            //             WOPriority = wo.WOPriority,
+            //             WOBrokenDesc = wo.WOBrokenDesc,
+            //             WOLastStatus = wo.WOLastStatus,
+            //             WOStartDate = wo.WOStartDate,
+            //             WOEstFinishDate = wo.WOEstFinishDate,
+            //             WOTotal = wo.WOTotal,
+            //             WODp = wo.WODp,
+            //             WOTakenDate = wo.WOTakenDate,
+            //             WOInvoiceNo = wo.WOInvoiceNo,
+            //             WOComplain = wo.WOComplain
+            //         };
 
-            ReportDataSource reportDataSource = new ReportDataSource("WOViewModel", vm);
-            return reportDataSource;
+            //ReportDataSource reportDataSource = new ReportDataSource("WOViewModel", vm);
+            //return reportDataSource;
         }
 
     }

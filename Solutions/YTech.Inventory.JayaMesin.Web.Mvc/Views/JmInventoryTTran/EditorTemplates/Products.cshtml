@@ -1,0 +1,18 @@
+﻿@model YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmInventoryMSupplierViewModel
+
+@(Html.Kendo().DropDownListFor(m => m)
+        .OptionLabel("-Pilih Barang-")
+        .DataValueField("Id")
+        .DataTextField("ProductName")
+        //.BindTo((System.Collections.IEnumerable)ViewData["customers"])
+         .HtmlAttributes(new { @style="width:200px;" })
+         .AutoBind(false)
+         .DataSource(source => {
+              source.Read(read =>
+              {
+                  read.Action("PopulateProducts", "JmInventoryMProduct");                  
+              });              
+          })
+          .Events(ev => ev.Change("onProductChange"))
+)
+                @Html.Button("","<span class=\"k-icon k-add\"><\\/span>",HtmlButtonType.Button,"OpenNewProduct();")

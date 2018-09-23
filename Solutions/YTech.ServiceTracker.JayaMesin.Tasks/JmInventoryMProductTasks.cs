@@ -67,5 +67,12 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
             var entitys = this._JmInventoryMProductRepository.GetListNotDeletedAndNotDisc(); ;
             return entitys;
         }
+
+
+        public JmInventoryMProduct GetLastCreatedProduct()
+        {
+            JmInventoryMProduct supp = this._JmInventoryMProductRepository.GetLastCreatedProduct();
+            return supp;
+        }
     }
 }

@@ -39,15 +39,17 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels
         public virtual decimal? TransDetDisc { get; set; }
 
         [DisplayName("Tax")]
-        [UIHint("Bool")]
-        public virtual bool? TransDetIsTaxed { get; set; }
+        public bool TransDetIsTaxed { get; set; }
 
-        [DisplayName("Total")]
+        [DisplayName("Total (excl. Ongkir)")]
         public virtual decimal? TransDetTotal { get; set; }
 
         [HiddenInput]
         [DisplayName(" ")]
         public virtual string TransDetStatus { get; set; }
+
+        [DisplayName("Ongkos Kirim")]
+        public virtual decimal? TransDetOngkir { get; set; }
 
         [DisplayName("Keterangan")]
         [UIHint("TextArea")]

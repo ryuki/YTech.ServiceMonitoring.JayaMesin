@@ -36,11 +36,12 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             return View();
         }
 
-        private void PopulateSupplierStatus()
+        public JsonResult PopulateSupplierStatus()
         {
             var trans_status = from EnumSupplierStatus e in Enum.GetValues(typeof(EnumSupplierStatus))
                                select new { Value = e.ToString(), Text = e.ToString() };
             ViewData["supplier_status"] = trans_status;
+            return Json(trans_status, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult JmInventoryMSuppliers_Read([DataSourceRequest] DataSourceRequest request)
@@ -74,29 +75,37 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             entity.SupplierName = vm.SupplierName;
             entity.SupplierAddress = vm.SupplierAddress;
             entity.SupplierPhone = vm.SupplierPhone;
+            entity.SupplierDebtTermin = vm.SupplierDebtTermin;
             entity.SupplierStatus = vm.SupplierStatus;
             entity.SupplierDesc = vm.SupplierDesc;
             entity.SupplierNpwp = vm.SupplierNpwp;
             entity.SupplierNpwpImgUrl = vm.SupplierNpwpImgUrl;
 
-            entity.SupplierNpwpImg = UploadFiles(UploadFolder.Supplier,vm.SupplierNpwpImgUrl);
+            entity.SupplierNpwpImg = UploadFiles(UploadFolder.Supplier, vm.SupplierNpwpImgUrl);
         }
 
         public byte[] UploadFiles(string UploadFolder, string imageFileName)
         {
-            var physicalPath = Path.Combine(Server.MapPath(UploadFolder), imageFileName);
-            // Load file meta data with FileInfo
-            FileInfo fileInfo = new FileInfo(physicalPath);
-
-            // The byte[] to save the data in
-            byte[] data = new byte[fileInfo.Length];
-
-            // Load a filestream and put its content into the byte[]
-            using (FileStream fs = fileInfo.OpenRead())
+            if (!string.IsNullOrEmpty(imageFileName))
             {
-                fs.Read(data, 0, data.Length);
+                var physicalPath = Path.Combine(Server.MapPath(UploadFolder), imageFileName);
+                // Load file meta data with FileInfo
+                FileInfo fileInfo = new FileInfo(physicalPath);
+
+                // The byte[] to save the data in
+                byte[] data = new byte[fileInfo.Length];
+
+                // Load a filestream and put its content into the byte[]
+                using (FileStream fs = fileInfo.OpenRead())
+                {
+                    fs.Read(data, 0, data.Length);
+                }
+                return data;
             }
-            return data;
+            else
+            {
+                return null;
+            }
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
@@ -152,7 +161,8 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             SupplierDesc = entity.SupplierDesc,
             SupplierId = entity.Id,
             SupplierNpwp = entity.SupplierNpwp,
-            SupplierNpwpImgUrl = entity.SupplierNpwpImgUrl
+            SupplierNpwpImgUrl = entity.SupplierNpwpImgUrl,
+            SupplierDebtTermin = entity.SupplierDebtTermin
         };
 
         }
@@ -186,6 +196,12 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             string fullImageUrl = Url.Content(UploadFolder + newFileName);
 
             return Json(new { ImageUrl = newFileName, FullImageUrl = fullImageUrl }, "text/plain");
+        }
+
+        public ActionResult GetLastCreatedSupplier(string random)
+        {
+            JmInventoryMSupplier supp = _tasks.GetLastCreatedSupplier();
+            return Content(supp.Id);
         }
     }
 

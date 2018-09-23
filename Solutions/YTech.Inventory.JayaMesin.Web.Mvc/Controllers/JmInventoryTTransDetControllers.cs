@@ -83,6 +83,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             entity.TransDetTotal = subtotal;
             entity.TransDetStatus = vm.TransDetStatus;
             entity.TransDetDesc = vm.TransDetDesc;
+            entity.TransDetOngkir = vm.TransDetOngkir;
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
@@ -139,7 +140,9 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             TransDetTotal = entity.TransDetTotal,
             TransDetStatus = entity.TransDetStatus,
             TransDetDesc = entity.TransDetDesc,
-            TransDetId = entity.Id
+            TransDetId = entity.Id,
+            TransDetOngkir = entity.TransDetOngkir,
+            TransDetIsTaxed = entity.TransDetIsTaxed.HasValue ? entity.TransDetIsTaxed.Value : false
         };
 
         }

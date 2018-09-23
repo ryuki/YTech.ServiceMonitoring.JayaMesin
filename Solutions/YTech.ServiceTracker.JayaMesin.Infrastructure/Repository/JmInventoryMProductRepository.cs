@@ -28,5 +28,14 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.Repository
            criteria.Add(Expression.Not(Expression.Eq("ProductStatus", EnumProductStatus.Discontinued.ToString())));
            return criteria.List<JmInventoryMProduct>();
        }
+
+
+       public JmInventoryMProduct GetLastCreatedProduct()
+       {
+           ICriteria criteria = Session.CreateCriteria(typeof(JmInventoryMProduct));
+           criteria.AddOrder(new Order("CreatedDate", false));
+           criteria.SetMaxResults(1);
+           return criteria.UniqueResult<JmInventoryMProduct>();
+       }
     }
 }

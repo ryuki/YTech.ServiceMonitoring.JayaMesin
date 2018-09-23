@@ -1,0 +1,18 @@
+﻿@model string
+@(Html.Kendo().DropDownListFor(m => m)
+        .OptionLabel("-Pilih Supplier-")
+        .DataValueField("SupplierId")
+        .DataTextField("SupplierName")
+        .Value(Model)
+        //.BindTo((System.Collections.IEnumerable)ViewData["customers"])
+         .HtmlAttributes(new { @style = "width:200px;" })
+         .AutoBind(true)
+         .DataSource(source =>
+         {
+             source.Read(read =>
+             {
+                 read.Action("PopulateSuppliers", "JmInventoryMSupplier");
+             });
+         })
+)
+                @Html.Button("","<span class=\"k-icon k-add\"><\\/span>",HtmlButtonType.Button,"OpenNewSupplier();")
