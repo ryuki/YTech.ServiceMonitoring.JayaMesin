@@ -10,9 +10,9 @@ using YTech.ServiceTracker.JayaMesin.Domain.Contracts.Tasks;
 
 namespace YTech.ServiceTracker.JayaMesin.Tasks
 {
-     public class JmIntrackTInvoiceTasks : IJmIntrackTInvoiceTasks
+    public class JmIntrackTInvoiceTasks : IJmIntrackTInvoiceTasks
     {
-      private readonly IJmIntrackTInvoiceRepository _JmIntrackTInvoiceRepository;
+        private readonly IJmIntrackTInvoiceRepository _JmIntrackTInvoiceRepository;
 
         public JmIntrackTInvoiceTasks(IJmIntrackTInvoiceRepository JmIntrackTInvoiceRepository)
         {
@@ -24,7 +24,7 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
             var entitys = this._JmIntrackTInvoiceRepository.GetAll(); ;
             return entitys;
         }
-        
+
         public JmIntrackTInvoice Insert(Domain.JmIntrackTInvoice entity)
         {
             _JmIntrackTInvoiceRepository.DbContext.BeginTransaction();
@@ -51,7 +51,7 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
 
         public JmIntrackTInvoice One(string id)
         {
-            var entitys = this._JmIntrackTInvoiceRepository.Get(id); ;
+            var entitys = this._JmIntrackTInvoiceRepository.Get(id);
             return entitys;
         }
 
@@ -59,6 +59,12 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
         {
             var entitys = this._JmIntrackTInvoiceRepository.GetListNotDeleted(); ;
             return entitys;
-        } 
+        }
+
+
+        public void AutoUpdateInvoiceStatus()
+        {
+            this._JmIntrackTInvoiceRepository.AutoUpdateInvoiceStatus();
+        }
     }
 }

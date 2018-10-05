@@ -6,7 +6,7 @@
         .DataTextField("BrandName")
         //.BindTo((System.Collections.IEnumerable)ViewData["customers"])
          .HtmlAttributes(new { @style="width:200px;" })
-         .AutoBind(false)
+         .AutoBind(true)
          .DataSource(source => {
               source.Read(read =>
               {
@@ -14,7 +14,7 @@
               });              
           })
 )
-@Html.Button("", "<span class=\"k-icon k-add\"><\\/span>", HtmlButtonType.Button, "OpenNewBrand();")
+@Html.Button("", "<span class=\"k-icon k-i-add\"><\\/span>", HtmlButtonType.Button, "OpenNewBrand();")
 
 
                 

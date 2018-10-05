@@ -20,24 +20,32 @@
         columns.Bound(p => p.ProductMinStock).Width("auto").Format("{0:N0}");
         columns.Bound(p => p.ProductDesc).Width("auto");
         columns.Bound(p => p.ProductStatus).Width("auto");
-        columns.Command(command =>
+        if (User.IsInRole("ADMINISTRATOR") || User.IsInRole("MANAGER"))
         {
-            command.Custom("ProductPrice").Click("OpenProductPrice").HtmlAttributes(new { style = "min-width:20px;", name="productprice" }).Text("Harga");
-            command.Edit().Text(" ");
-            command.Destroy().Text(" ");
-        }).Width("auto");
+            columns.Command(command =>
+            {
+                command.Custom("ProductPrice").Click("OpenProductPrice").HtmlAttributes(new { style = "min-width:20px;", name = "productprice" }).Text("Harga");
+                command.Edit().Text(" ");
+                command.Destroy().Text(" ");
+            }).Width("auto");
+        }
     })
         //.ToolBar(toolbar => { toolbar.Create().Text("Tambah Produk Baru"); })
+        .Excel(excel => excel
+            .AllPages(true)
+            .Filterable(true)
+        )
          .ToolBar(toolbar =>
          {
              toolbar.Template(@<text>
-<div class="k-toolbar k-grid-toolbar k-grid-top">
-    <a class="k-button k-button-icontext k-grid-add" href="#Grid-mode=insert"><span class="k-icon k-add"></span>Tambah Produk Baru</a>
+<div class="toolbar">
+    <a class="k-button k-button-icontext k-grid-add" href="#"><span class="k-icon k-i-add"></span>Tambah Produk Baru</a>
 
     <label class="search-label" for="search">Pencarian :</label>
     @(Html.TextBox("search", "", new { @class = "k-textbox" }))
     @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "searchProduct(false);", new { @class = "k-button" }))
     @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchProduct(true);", new { @class = "k-button" }))
+    <button class="k-button k-button-icontext k-grid-excel" type="button"><span class="k-icon k-i-excel"></span>Export to Excel</button>
 </div>
 </text>);
          })
@@ -64,7 +72,7 @@
         .Update(update => update.Action("JmInventoryMProducts_Update", "JmInventoryMProduct"))
         .Destroy(destroy => destroy.Action("JmInventoryMProducts_Destroy", "JmInventoryMProduct"))
     )
-    .Events(e => e.DataBound("onDataBound").Edit("onEdit"))
+    .Events(e => e.DataBound("onDataBound").Edit("onEdit").ExcelExport("onExcelExport"))
     )
 
 @(Html.Kendo().Window()
@@ -160,7 +168,8 @@
 
     function onDataBound(e) {
         @{
-         if (User.IsInRole("ADMINISTRATOR"))        {
+            if (User.IsInRole("ADMINISTRATOR"))
+            {
            <text>
         //edit data when double click
         $('#Grid tbody tr').dblclick(function () {
@@ -168,7 +177,7 @@
             grid.editRow(this);
         })
          </text>
-        }
+            }
         }
     }
     jQuery(document).ready(function () {
@@ -178,7 +187,8 @@
             setTimeout('$("a.k-grid-add").trigger("click");', 3000);
         }
          @{
-         if (!User.IsInRole("ADMINISTRATOR"))        {
+             if (!User.IsInRole("ADMINISTRATOR"))
+             {
            <text>
         $("a[name='productprice']").hide();
 
@@ -186,7 +196,7 @@
         grid.hideColumn(4);
         grid.hideColumn(12);
          </text>
-        }
+             }
         }
     })
 
@@ -242,14 +252,15 @@
     }
 
     function OpenProductPrice(e) {
-        
+
          @{
-         if (!User.IsInRole("ADMINISTRATOR"))        {
+             if (!User.IsInRole("ADMINISTRATOR"))
+             {
            <text>
         alert('Anda tidak mempunyai akses ke harga.');
         return;
          </text>
-        }
+             }
         }
 
         e.preventDefault();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using YTech.ServiceTracker.JayaMesin.Enums;
 
 namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts.Tasks
 {
@@ -13,5 +14,7 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts.Tasks
         JmInventoryTLog Delete(JmInventoryTLog entity);
         JmInventoryTLog One(string id);
         IEnumerable<JmInventoryTLog> GetListNotDeleted();
+
+        bool GetHaveBeenLogType(string refId, string userName, EnumLogType logType, EnumTransLog logStatus);
     }
 }

@@ -7,7 +7,7 @@
         .DataTextField("Text")    
         //.BindTo((System.Collections.IEnumerable)ViewData["product_status"])
          .HtmlAttributes(new { @style="width:150px;" })
-         .AutoBind(false)
+         .AutoBind(true)
          .DataSource(source => {
               source.Read(read =>
               {

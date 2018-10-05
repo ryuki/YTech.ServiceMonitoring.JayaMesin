@@ -85,7 +85,15 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels
 
         public virtual string InvoiceIsUrgent { get; set; }
         public virtual string InvoiceToCopy { get; set; }
+        public virtual bool HaveBeenRead { get; set; }
         
         #endregion
+    }
+
+    public class DashboardInvoiceViewModel
+    {
+        public virtual string InvoiceStatus { get; set; }
+        public virtual decimal? InvoiceTotal { get; set; }
+        public virtual string Color { get; set; }
     }
 }

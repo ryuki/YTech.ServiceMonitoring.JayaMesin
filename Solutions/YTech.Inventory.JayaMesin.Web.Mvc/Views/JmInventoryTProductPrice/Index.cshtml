@@ -10,13 +10,18 @@
     {
         columns.Bound(p => p.ProductId).Width("auto").ClientTemplate("#:ProductIdName#");
         columns.Bound(p => p.SupplierId).Width("auto").ClientTemplate("#:SupplierIdName#");
-        
+
         columns.Bound(p => p.ProductPrice).Width("auto").Format("{0:N2}");
         columns.Bound(p => p.ProductPriceStatus).Width("auto");
         columns.Bound(p => p.ProductPriceDesc).Width("auto");
         columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
     })
     .ToolBar(toolbar => { toolbar.Create().Text("Tambah JmInventoryTProductPrice Baru"); })
+        .ToolBar(tools => tools.Excel())
+        .Excel(excel => excel
+            .AllPages(true)
+            .Filterable(true)
+        )
     .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
     .Pageable()
     .Sortable()
@@ -40,7 +45,7 @@
         .Update(update => update.Action("JmInventoryTProductPrices_Update", "JmInventoryTProductPrice"))
         .Destroy(destroy => destroy.Action("JmInventoryTProductPrices_Destroy", "JmInventoryTProductPrice"))
     )
-    .Events(e => e.DataBound("onDataBound"))
+    .Events(e => e.DataBound("onDataBound").ExcelExport("onExcelExport"))
     )
 
 <script type="text/kendo-template" id="message">

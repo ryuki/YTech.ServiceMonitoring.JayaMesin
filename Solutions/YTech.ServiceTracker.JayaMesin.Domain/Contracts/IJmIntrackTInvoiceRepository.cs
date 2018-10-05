@@ -10,6 +10,7 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts
 {
     public interface IJmIntrackTInvoiceRepository : INHibernateRepositoryWithTypedId<JmIntrackTInvoice, string>
     {
-       IEnumerable<JmIntrackTInvoice> GetListNotDeleted();
+        IEnumerable<JmIntrackTInvoice> GetListNotDeleted();
+        void AutoUpdateInvoiceStatus();
     }
 }

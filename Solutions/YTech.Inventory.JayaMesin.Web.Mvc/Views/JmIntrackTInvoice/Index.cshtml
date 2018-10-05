@@ -8,9 +8,9 @@
     .Name("Grid")
     .Columns(columns =>
     {
-        columns.Template(e => { }).ClientTemplate("<img class='img-urgent' src='" + Url.Content("~/Content/img/error3.gif") + "' style='width:16px;height:16px;' alt='#: data.InvoiceIsUrgent #' />").Width(30).Title(" ");
-        //columns.Bound(p => p.InvoiceNo).Width("auto");
-        columns.Bound(p => p.InvoicePacketNo).Width("auto");
+        columns.Template(e => { }).ClientTemplate("<img class='img-urgent' src='" + Url.Content("~/Content/img/error3.gif") + "' style='width:16px;height:16px;display:none;' alt='#: data.InvoiceIsUrgent #' /> <img class='img-new' src='" + Url.Content("~/Content/img/new_header.png") + "' alt='#: data.HaveBeenRead #' style='display:none;' />").Width(60).Title(" ");
+        columns.Bound(p => p.InvoicePacketNo).Width("100");
+        columns.Bound(p => p.InvoiceNo).Width("auto");
         columns.Bound(p => p.InvoiceDate).Width("auto").Format("{0:dd-MMM-yyyy}");
         columns.Bound(p => p.CustomerId).Width("auto");
         columns.Bound(p => p.InvoiceAmmount).Width("auto").Format("{0:N2}");
@@ -23,21 +23,34 @@
         //columns.Bound(p => p.InvoiceDelivery).Width("auto");
         //columns.Bound(p => p.InvoicePaidOffDate).Width("auto").Format("{0:dd-MMM-yyyy}");
         columns.Bound(p => p.InvoiceStatus).Width("auto");
+        //columns.Bound(p => p.HaveBeenRead).Width("auto");
         columns.Command(command =>
         {
-            command.Edit().Text(" ");
-            command.Destroy().Text(" ");
+            if (User.IsInRole("ADMINISTRATOR") || User.IsInRole("MANAGER"))
+            {
+                command.Edit().Text(" ");
+                command.Destroy().Text(" ");
+            }
+            else if (User.IsInRole("SALES"))
+            {
+                command.Edit().Text("Update Ket");
+            }
+            
             //command.Custom("Copy").Click("CopyInvoice").HtmlAttributes(new { style = "min-width:20px;" });
         }).Width("auto");
         columns.Template(e => { }).ClientTemplate("<button type='image' src='" + Url.Content("~/Content/img/window16.gif") + "' class='k-button k-button-icontext' data-clipboard-demo data-clipboard-action='copy' data-clipboard-text='#: data.InvoiceToCopy #'  width='16' height='16'>Copy</button>").Width(80).Title(" ");
     })
         //.ToolBar(toolbar => { toolbar.Create().Text("Tambah Invoice Baru"); })
+        
+        .Excel(excel => excel
+            .AllPages(true)
+            .Filterable(true)
+        )
         .ToolBar(toolbar =>
         {
             toolbar.Template(@<text>
-<div class="k-toolbar k-grid-toolbar k-grid-top">
-    <a class="k-button k-button-icontext k-grid-add" href="#"><span class="k-icon k-add"></span>Tambah Faktur Baru</a>
-
+<div class="toolbar">
+    <a class="k-button k-button-icontext k-grid-add" href="#"><span class="k-icon k-i-add"></span>Tambah Faktur Baru</a>
     <label class="status-label" for="status">Filter status Invoice :</label>
     @(Html.Kendo().DropDownList()
                             .Name("status")
@@ -56,10 +69,12 @@
     @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchInvoice(true);", new { @class = "k-button" })) | 
     @*@Html.Partial("_CountDown")*@
     @Html.Partial("InvoiceColourLegend")
+    <button class="k-button k-button-icontext k-grid-excel" type="button"><span class="k-icon k-i-excel"></span>Export to Excel</button>
 </div>
 </text>);
         })
-    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditJmIntrackTInvoice").Window(win => win.Width(750).Modal(true)))
+    .AllowCopy(true)
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName(User.IsInRole("ADMINISTRATOR") || User.IsInRole("MANAGER") ? "EditJmIntrackTInvoice" : "EditDescJmIntrackTInvoice").Window(win => win.Width(750).Modal(true)))
     .Pageable()
     .Sortable()
     .Scrollable()
@@ -72,7 +87,7 @@
     .HtmlAttributes(new { style = "height:500px;" })
     .DataSource(dataSource => dataSource
         .Ajax()
-        .PageSize(20)
+        .PageSize(50)
         .Batch(false)
         .ServerOperation(false)
         .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
@@ -85,8 +100,10 @@
         .Read(read => read.Action("JmIntrackTInvoices_Read", "JmIntrackTInvoice"))
         .Update(update => update.Action("JmIntrackTInvoices_Update", "JmIntrackTInvoice"))
         .Destroy(destroy => destroy.Action("JmIntrackTInvoices_Destroy", "JmIntrackTInvoice"))
+        .Sort(s => s.Add(p => p.InvoiceIsUrgent).Descending())
+        .Sort(s => s.Add(p => p.HaveBeenRead).Descending())
     )
-    .Events(e => e.DataBound("onDataBound"))
+    .Events(e => e.DataBound("onDataBound").ExcelExport("onExcelExport").Edit("onEdit").Cancel("onCancel"))
     )
 
 <script type="text/kendo-template" id="message">
@@ -165,7 +182,8 @@
             grid.editRow(this);
         })
         //hide image urgent if priority is normal
-        $("img.img-urgent[alt=Normal]").hide();
+        $("img.img-new[alt=false]").show();
+        $("img.img-urgent[alt=Urgent]").show();
 
         //set bg color based on status
         SetBgColor('#Grid');
@@ -311,4 +329,30 @@
         $("a.k-grid-Copy").attr("data-clipboard-text", invoiceid);
         alert(invoiceid);
     }
+
+    function onEdit(e) {
+        //alert("onedit");
+        // get wo id
+        var InvoiceId = e.container.find("input[name=InvoiceId]").val();
+        //alert(InvoiceId);
+
+        //log when open Invoice
+        var getLogInvoiceUrl = '@(Url.Action("LogInvoice_Open", "JmIntrackTInvoice", new { random = DateTime.Now.ToFileTimeUtc().ToString() }))' + '&InvoiceId=' + InvoiceId;
+        $.ajax({
+            type: 'POST',
+            url: getLogInvoiceUrl,
+            error: function (response) {
+                alert("error: " + response);
+            }, success: function (response) {
+                if (!response.Success)
+                    alert("Error : " + response.Message);
+            }
+        });
+    }
+
+    function onCancel(e) {
+        //call refresh grid and reset timer
+        $('#Grid').data().kendoGrid.dataSource.read();
+    }
+    
 </script>

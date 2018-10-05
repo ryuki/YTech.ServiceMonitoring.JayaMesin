@@ -7,6 +7,7 @@ using YTech.ServiceTracker.JayaMesin.Domain.Contracts.Tasks;
 using SharpArch.Domain;
 using YTech.ServiceTracker.JayaMesin.Infrastructure.Repository;
 using YTech.ServiceTracker.JayaMesin.Domain;
+using YTech.ServiceTracker.JayaMesin.Enums;
 
 namespace YTech.ServiceTracker.JayaMesin.Tasks
 {
@@ -59,6 +60,12 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
         {
             var entitys = this._JmInventoryTLogRepository.GetListNotDeleted(); ;
             return entitys;
-        } 
+        }
+
+
+        public bool GetHaveBeenLogType(string refId, string userName, Enums.EnumLogType logType, EnumTransLog logStatus)
+        {
+            return this._JmInventoryTLogRepository.GetHaveBeenLogType(refId, userName, logType,logStatus);            
+        }
     }
 }

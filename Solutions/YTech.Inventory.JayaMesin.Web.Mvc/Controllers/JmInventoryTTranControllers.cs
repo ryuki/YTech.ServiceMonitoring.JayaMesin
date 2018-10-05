@@ -42,7 +42,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             this._JmInventoryMProductTasks = _JmInventoryMProductTasks;
         }
 
-        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS, SALES")]
+        [Authorize(Roles = "ADMINISTRATOR, MANAGER, PO APPROVAL")]
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult POList(bool? isModal, EnumTransStatus TransStatus)
         {
@@ -216,7 +216,10 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             InvoiceNo = entity.InvoiceNo,
             TransDesc = entity.TransDesc,
             TransId = entity.Id,
-            TransApprovedComment = entity.TransApprovedComment
+            TransApprovedComment = entity.TransApprovedComment,
+            ExpeditionId = entity.ExpeditionId != null ? entity.ExpeditionId.Id : string.Empty,
+            ExpeditionName = entity.ExpeditionId != null ? entity.ExpeditionId.ExpeditionName : string.Empty
+
         };
 
         }
@@ -457,8 +460,8 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             };
             return Json(e, JsonRequestBehavior.AllowGet);
         }
-        
-        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS, SALES")]
+
+        [Authorize(Roles = "ADMINISTRATOR, MANAGER, PO APPROVAL")]
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult NewPO(string EditTransId)
         {
@@ -499,8 +502,8 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                 vm.TransDesc = trans.TransDesc;
                 vm.TransId = trans.Id;
 
-                //vm.ExpeditionId = trans.ExpeditionId != null ? trans.ExpeditionId.Id : string.Empty;
-                //vm.ExpeditionName = trans.ExpeditionId != null ? trans.ExpeditionId.ExpeditionName : string.Empty;
+                vm.ExpeditionId = trans.ExpeditionId != null ? trans.ExpeditionId.Id : string.Empty;
+                vm.ExpeditionName = trans.ExpeditionId != null ? trans.ExpeditionId.ExpeditionName : string.Empty;
                 //JmInventoryMExpeditionViewModel expeditionVm = new JmInventoryMExpeditionViewModel();
                 //if (trans.ExpeditionId != null)
                 //{

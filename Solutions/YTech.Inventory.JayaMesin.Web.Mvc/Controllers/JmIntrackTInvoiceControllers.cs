@@ -13,7 +13,6 @@ using YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels;
 namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
 {
     [HandleError]
-    [Authorize]
     public partial class JmIntrackTInvoiceController : Controller
     {
         private readonly IJmIntrackTInvoiceTasks _tasks;
@@ -26,7 +25,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             this._JmInventoryTLogTasks = _JmInventoryTLogTasks;
         }
 
-        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS")]
+        [Authorize(Roles = "ADMINISTRATOR, MANAGER, SALES")]
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Index(bool? isModal)
         {
@@ -178,9 +177,8 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
 
                     ///save new invoice log
                     ///
-                    string invoiceid = Guid.NewGuid().ToString();
-                    SaveNewInvoiceLog(invoiceid, entity);
-                    SaveLog(invoiceid, EnumLogType.Invoice, EnumTransLog.Update);
+                    SaveNewInvoiceLog(Guid.NewGuid().ToString(), entity);
+                    SaveLog(vm.InvoiceId, EnumLogType.Invoice, EnumTransLog.Update);
                 }
             }
 
@@ -238,8 +236,10 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             InvoiceId = entity.Id,
             InvoiceHelpdesk = entity.InvoiceHelpdesk,
             InvoiceFundSource = entity.InvoiceFundSource,
-            InvoiceIsUrgent = entity.InvoiceStatus == EnumInvoiceStatus.Lunas_Lengkap.ToString() ? "Normal" : (entity.ModifiedDate.HasValue ? ((DateTime.Now - entity.ModifiedDate.Value).TotalHours >= 48 ? "Urgent" : "Normal") : "Normal"),
-            InvoiceToCopy = string.Format(copyFormat, entity.InvoicePacketNo, entity.InvoiceDate, entity.CustomerId, entity.InvoiceAmmount, entity.InvoicePacketAdmin, entity.SalesmanId, entity.InvoiceHelpdesk, entity.InvoiceStatus)
+            InvoiceIsUrgent = (entity.InvoiceStatus == EnumInvoiceStatus.Lunas_Lengkap.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Baru_Dilunasi.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Lunas_BelumLengkap.ToString()) ? "Normal" : (entity.ModifiedDate.HasValue ? ((DateTime.Now - entity.ModifiedDate.Value).TotalHours >= 48 ? "Urgent" : "Normal") : "Normal"),
+            InvoiceToCopy = string.Format(copyFormat, entity.InvoicePacketNo, entity.InvoiceDate, entity.CustomerId, entity.InvoiceAmmount, entity.InvoicePacketAdmin, entity.SalesmanId, entity.InvoiceHelpdesk, entity.InvoiceStatus),
+            //use stored procedure, looping to get read flag make wo list slow response
+            HaveBeenRead = _JmInventoryTLogTasks.GetHaveBeenLogType(entity.Id, User.Identity.Name, EnumLogType.Invoice, EnumTransLog.Read)
         };
 
         }
@@ -258,7 +258,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
 
 
 
-        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS")]
+        [Authorize(Roles = "ADMINISTRATOR, MANAGER, SALES")]
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Dashboard(bool? isModal)
         {
@@ -267,11 +267,102 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                     return View("Index", "~/Views/Shared/_NoMenuLayout.cshtml");
 
             ///save log
-            SaveLog(string.Empty, EnumLogType.Invoice, EnumTransLog.Open);
+            SaveLog(string.Empty, EnumLogType.Invoice_Dashboard, EnumTransLog.Open);
 
             PopulateInvoiceStatus();
             PopulateDocStatus();
             return View();
+        }
+
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult AutoUpdateInvoiceStatus()
+        {
+            _tasks.AutoUpdateInvoiceStatus();
+            return Content("AutoUpdateInvoiceStatus Done");
+        }
+
+        public ActionResult LogInvoice_Open(string random, string InvoiceId)
+        {
+            string msg = string.Empty;
+            bool success = false;
+            try
+            {
+                //save log
+                SaveLog(InvoiceId, EnumLogType.Invoice, EnumTransLog.Read);
+
+                success = true;
+                msg = "Log InvoiceId success";
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                msg = ex.GetBaseException().Message;
+            }
+            var e = new
+            {
+                Success = success,
+                Message = msg
+            };
+            return Json(e, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult GetDashboardInvoiceByStatus()
+        {
+            IList<JmIntrackTInvoice> invList = _tasks.GetListNotDeleted().ToList();
+            DashboardInvoiceViewModel viewModel = new DashboardInvoiceViewModel();
+
+            decimal blmLunas = 0;
+            decimal sudahLunas = 0;
+            for (var i = 0; i < invList.Count(); i++)
+            {
+                JmIntrackTInvoice inv = invList[i];
+                if (inv.InvoiceStatus == EnumInvoiceStatus.Baru.ToString() || inv.InvoiceStatus == EnumInvoiceStatus.Dokumen.ToString() || inv.InvoiceStatus == EnumInvoiceStatus.Invoicing.ToString())
+                {
+                    blmLunas++;
+                }
+                else
+                {
+                    sudahLunas++;
+                }
+            }
+
+            List<DashboardInvoiceViewModel> model = new List<DashboardInvoiceViewModel>()
+            {
+                new DashboardInvoiceViewModel(){ InvoiceStatus = "Belum Lunas", InvoiceTotal = decimal.Floor(blmLunas / (blmLunas+sudahLunas) * 100), Color = "#FFA500" },
+                new DashboardInvoiceViewModel(){ InvoiceStatus = "Sudah Lunas", InvoiceTotal = decimal.Floor(sudahLunas / (blmLunas+sudahLunas) * 100), Color = "#9de219" }
+            };
+            return Json(model);
+        }
+
+        [HttpPost]
+        public ActionResult GetDashboardInvoiceLunas()
+        {
+            IList<JmIntrackTInvoice> invList = _tasks.GetListNotDeleted().ToList();
+            DashboardInvoiceViewModel viewModel = new DashboardInvoiceViewModel();
+
+            decimal lunasLengkap = 0;
+            decimal lunasBelumLengkap = 0;
+            for (var i = 0; i < invList.Count(); i++)
+            {
+                JmIntrackTInvoice inv = invList[i];
+                if (inv.InvoiceStatus == EnumInvoiceStatus.Lunas_BelumLengkap.ToString() || inv.InvoiceStatus == EnumInvoiceStatus.Baru_Dilunasi.ToString())
+                {
+                    lunasBelumLengkap++;
+                }
+                else
+                {
+                    lunasLengkap++;
+                }
+            }
+
+            List<DashboardInvoiceViewModel> model = new List<DashboardInvoiceViewModel>()
+            {
+                new DashboardInvoiceViewModel(){ InvoiceStatus = "Belum Lengkap", InvoiceTotal = decimal.Floor(lunasBelumLengkap / (lunasLengkap+lunasBelumLengkap) * 100), Color = "#B0E0E6" },
+                new DashboardInvoiceViewModel(){ InvoiceStatus = "Lengkap", InvoiceTotal = decimal.Floor(lunasLengkap / (lunasLengkap+lunasBelumLengkap) * 100), Color = "#DDA0DD" }
+            };
+            return Json(model);
         }
     }
 }

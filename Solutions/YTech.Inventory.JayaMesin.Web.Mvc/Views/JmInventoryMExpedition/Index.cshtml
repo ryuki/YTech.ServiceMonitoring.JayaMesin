@@ -16,6 +16,11 @@
         columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
     })
         .ToolBar(toolbar => { toolbar.Create().Text("Tambah Ekspedisi Baru"); })
+        .ToolBar(tools => tools.Excel())
+        .Excel(excel => excel
+            .AllPages(true)
+            .Filterable(true)
+        )
     .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
     .Pageable()
     .Sortable()
@@ -39,7 +44,7 @@
         .Update(update => update.Action("JmInventoryMExpeditions_Update", "JmInventoryMExpedition"))
         .Destroy(destroy => destroy.Action("JmInventoryMExpeditions_Destroy", "JmInventoryMExpedition"))
     )
-    .Events(e => e.DataBound("onDataBound"))
+    .Events(e => e.DataBound("onDataBound").ExcelExport("onExcelExport"))
     )
 
 <script type="text/kendo-template" id="message">

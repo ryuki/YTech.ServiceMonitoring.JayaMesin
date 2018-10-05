@@ -25,7 +25,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             this._JmInventoryTProductPriceTasks = _JmInventoryTProductPriceTasks;
         }
 
-        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, KASIR, TEKNISI, SALES")]
+        [Authorize(Roles = "ADMINISTRATOR, MANAGER, SALES")]
         public ActionResult Index(EnumInvReports rpt)
         {
             string title = string.Empty;

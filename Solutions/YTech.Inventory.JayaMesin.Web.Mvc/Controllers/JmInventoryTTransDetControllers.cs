@@ -26,7 +26,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             this._JmInventoryTTranTasks = _JmInventoryTTranTasks;
         }
 
-        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS")]
+        [Authorize(Roles = "ADMINISTRATOR, MANAGER, PO APPROVAL")]
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Index(bool? isModal)
         {

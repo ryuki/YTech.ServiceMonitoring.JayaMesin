@@ -58,7 +58,7 @@
     .ToolBar(toolbar =>
     {
         toolbar.Template(@<text>
-<div class="k-toolbar k-grid-toolbar k-grid-top">
+<div class="toolbar">
     @*<a class="k-button k-button-icontext k-grid-add" href="#Grid-mode=insert"><span class="k-icon k-add"></span>Tambah PO Baru</a>*@
 
     <label class="status-label" for="status">Filter status PO :</label>
@@ -80,9 +80,14 @@
     @Html.Partial("_CountDown")
     @Html.Partial("ColourLegend")
     @Html.Partial("ViewPO")
+    <button class="k-button k-button-icontext k-grid-excel" type="button"><span class="k-icon k-i-excel"></span>Export to Excel</button>
 </div>
 </text>);
     })
+    .Excel(excel => excel
+            .AllPages(true)
+            .Filterable(true)
+        )
     .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("PO").Window(win => win.Width(650).Modal(true)))
     .Pageable()
     .Sortable()
@@ -114,7 +119,7 @@
             x.Field(c => c.TransStatus).DefaultValue(YTech.ServiceTracker.JayaMesin.Enums.EnumTransStatus.Baru.ToString());
         }
     ))
-    .Events(e => e.DataBound("onDataBound").Edit("onEdit").Cancel("onCancel"))
+    .Events(e => e.DataBound("onDataBound").Edit("onEdit").Cancel("onCancel").ExcelExport("onExcelExport"))
 )
 @(Html.Hidden("SelectedUid"))
 

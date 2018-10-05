@@ -28,7 +28,7 @@ namespace YTech.ServiceTracker.JayaMesin.Enums
 
     public enum EnumLogType
     {
-        Trans_PO, Invoice
+        Trans_PO, Invoice, Invoice_Dashboard
     }
 
     public enum EnumInventoryReferenceType

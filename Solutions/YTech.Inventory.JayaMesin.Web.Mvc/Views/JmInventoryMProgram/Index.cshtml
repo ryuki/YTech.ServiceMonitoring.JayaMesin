@@ -8,7 +8,7 @@
     .Name("Grid")
     .Columns(columns =>
     {
-        
+
         columns.Bound(p => p.ProgramName).Width("auto");
         columns.Bound(p => p.ProgramExpiredDate).Width("auto").Format("{0:dd-MMM-yyyy}");
         columns.Bound(p => p.ProgramType).Width("auto");
@@ -17,6 +17,11 @@
         columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
     })
         .ToolBar(toolbar => { toolbar.Create().Text("Tambah Program Baru"); })
+        .ToolBar(tools => tools.Excel())
+        .Excel(excel => excel
+            .AllPages(true)
+            .Filterable(true)
+        )
     .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
     .Pageable()
     .Sortable()
@@ -40,7 +45,7 @@
         .Update(update => update.Action("JmInventoryMPrograms_Update", "JmInventoryMProgram"))
         .Destroy(destroy => destroy.Action("JmInventoryMPrograms_Destroy", "JmInventoryMProgram"))
     )
-    .Events(e => e.DataBound("onDataBound").Edit("onEdit"))
+    .Events(e => e.DataBound("onDataBound").Edit("onEdit").ExcelExport("onExcelExport"))
     )
 
 <script type="text/kendo-template" id="message">
@@ -125,7 +130,7 @@
 
         ///display image for supplier npwp
         var imgUrl = "@Url.Content(YTech.ServiceTracker.JayaMesin.Enums.UploadFolder.Program)" + $("#ProgramImgUrl").val();
-         //alert(imgUrl);
-         $("#ImgUploaded").attr("src", imgUrl);
-     }
+        //alert(imgUrl);
+        $("#ImgUploaded").attr("src", imgUrl);
+    }
 </script>

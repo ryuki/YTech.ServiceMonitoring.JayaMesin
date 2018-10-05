@@ -3,8 +3,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="demo-section k-content" >
-    @(Html.Kendo().Chart()
+<div class="demo-section k-content">
+    @(Html.Kendo().Chart<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.DashboardInvoiceViewModel>()
         .Name("chart")
                 .Title(title => title
                     .Text("Jumlah Faktur Penjualan")
@@ -15,26 +15,32 @@
         .ChartArea(chart => chart
             .Background("transparent")
          )
-        .HtmlAttributes(new { style="background: center no-repeat url(" + @Url.Content("~/Content/img/track.jpg")})
-        .Series(series => {
-            series.Pie(new dynamic[] {
-                new {category="Lunas",value=53.8,color="#9de219"},
-                new {category="Belum Lunas",value=16.1,color="#FFA500"}        
-            })
-            .Labels(labels => labels
+        .HtmlAttributes(new { style = "background: center no-repeat " })
+        .DataSource(ds =>
+            {
+                ds.Read(read => read.Action("GetDashboardInvoiceByStatus", "JmIntrackTInvoice"));
+            }
+            )
+             .Series(series =>
+                 {
+                     series
+                    .Pie(model => model.InvoiceTotal, model => model.InvoiceStatus, model => model.Color)
+                    .Padding(30)
+                    .Labels(labels => labels
                 .Template("#= category #: \n #= value#%")
                 .Background("transparent")
                 .Visible(true)
             )
             .StartAngle(150);
-        })
+                 }
+            )
         .Tooltip(tooltip => tooltip
             .Visible(true)
             .Format("{0}%")
         )
-    ) 
+    )
 
-    @(Html.Kendo().Chart()
+    @(Html.Kendo().Chart<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.DashboardInvoiceViewModel>()
         .Name("chart2")
                 .Title(title => title
                     .Text("Kelengkapan SSP Dari yang Sudah Lunas")
@@ -45,22 +51,28 @@
         .ChartArea(chart => chart
             .Background("transparent")
          )
-        .HtmlAttributes(new { style="background: center no-repeat url(" + @Url.Content("~/Content/img/track.jpg")})
-        .Series(series => {
-            series.Pie(new dynamic[] {
-                new {category="Lengkap",value=34.8,color="#DDA0DD"},
-                new {category="Belum Lengkap",value=16.1,color="#B0E0E6"}        
-            })
-            .Labels(labels => labels
+        .HtmlAttributes(new { style = "background: center no-repeat " })
+        .DataSource(ds =>
+            {
+                ds.Read(read => read.Action("GetDashboardInvoiceLunas", "JmIntrackTInvoice"));
+            }
+            )
+            .Series(series =>
+                 {
+                     series
+                    .Pie(model => model.InvoiceTotal, model => model.InvoiceStatus, model => model.Color)
+                    .Padding(30)
+                    .Labels(labels => labels
                 .Template("#= category #: \n #= value#%")
                 .Background("transparent")
                 .Visible(true)
             )
             .StartAngle(150);
-        })
+                 }
+            )
         .Tooltip(tooltip => tooltip
             .Visible(true)
             .Format("{0}%")
         )
-    ) 
+    )
 </div>

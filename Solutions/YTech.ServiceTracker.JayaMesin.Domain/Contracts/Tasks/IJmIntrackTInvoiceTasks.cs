@@ -13,5 +13,7 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts.Tasks
         JmIntrackTInvoice Delete(JmIntrackTInvoice entity);
         JmIntrackTInvoice One(string id);
         IEnumerable<JmIntrackTInvoice> GetListNotDeleted();
+
+        void AutoUpdateInvoiceStatus();
     }
 }

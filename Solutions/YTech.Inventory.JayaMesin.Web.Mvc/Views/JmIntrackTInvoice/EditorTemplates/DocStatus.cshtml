@@ -6,5 +6,7 @@
         .DataValueField("Value")
         .DataTextField("Text")    
         .BindTo((System.Collections.IEnumerable)ViewData["doc_status"])
-         .HtmlAttributes(new { @style="width:150px;" }))
+         .HtmlAttributes(new { @style="width:150px;" })
+         .AutoBind(true)
+         )
 

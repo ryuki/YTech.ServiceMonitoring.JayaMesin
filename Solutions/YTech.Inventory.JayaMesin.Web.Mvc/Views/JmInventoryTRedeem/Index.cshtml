@@ -9,7 +9,7 @@
     .Columns(columns =>
     {
         columns.Bound(p => p.ProgramId).Width("auto").ClientTemplate("#:ProgramIdName#");
-        
+
         columns.Bound(p => p.RedeemType).Width("auto");
         columns.Bound(p => p.RedeemDate).Width("auto").Format("{0:dd-MMM-yyyy}");
         columns.Bound(p => p.RedeemValueTotal).Width("auto").Format("{0:N2}");
@@ -21,6 +21,10 @@
         columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
     })
     .ToolBar(toolbar => { toolbar.Create().Text("Tambah JmInventoryTRedeem Baru"); })
+        .ToolBar(tools => tools.Excel())
+        .Excel(excel => excel
+            .AllPages(true)
+        )
     .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
     .Pageable()
     .Sortable()

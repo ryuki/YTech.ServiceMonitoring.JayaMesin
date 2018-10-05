@@ -32,7 +32,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             this._IJmInventoryMSupplierTasks = _IJmInventoryMSupplierTasks;
         }
 
-        [Authorize(Roles = "ADMINISTRATOR, SUPERVISOR, CS, SALES")]
+        [Authorize(Roles = "ADMINISTRATOR, MANAGER, SALES")]
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Index(bool? isModal)
         {

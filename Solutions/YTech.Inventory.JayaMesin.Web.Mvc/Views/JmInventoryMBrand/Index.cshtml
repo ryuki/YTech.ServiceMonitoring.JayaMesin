@@ -8,12 +8,16 @@
     .Name("Grid")
     .Columns(columns =>
     {
-        columns.Bound(p => p.BrandId).Width("auto");        
+        columns.Bound(p => p.BrandId).Width("auto");
         columns.Bound(p => p.BrandName).Width("auto");
         columns.Bound(p => p.BrandDesc).Width("auto");
         columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
     })
         .ToolBar(toolbar => { toolbar.Create().Text("Tambah Merek Baru"); })
+        .ToolBar(tools => tools.Excel())
+        .Excel(excel => excel
+            .AllPages(true)
+        )
     .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
     .Pageable()
     .Sortable()
@@ -37,7 +41,7 @@
         .Update(update => update.Action("JmInventoryMBrands_Update", "JmInventoryMBrand"))
         .Destroy(destroy => destroy.Action("JmInventoryMBrands_Destroy", "JmInventoryMBrand"))
     )
-    .Events(e => e.DataBound("onDataBound").Edit("onEdit"))
+    .Events(e => e.DataBound("onDataBound").Edit("onEdit").ExcelExport("onExcelExport"))
     )
 
 <script type="text/kendo-template" id="message">

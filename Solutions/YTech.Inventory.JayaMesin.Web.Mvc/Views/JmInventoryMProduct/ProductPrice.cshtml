@@ -19,6 +19,11 @@
         columns.Command(command => { command.Edit().Text(" "); command.Destroy().Text(" "); }).Width("auto");
     })
     .ToolBar(toolbar => { toolbar.Create().Text("Tambah Harga Baru"); })
+        .ToolBar(tools => tools.Excel())
+        .Excel(excel => excel
+            .AllPages(true)
+            .Filterable(true)
+        )
     .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(win => win.Width(450)))
     .Pageable()
     .Sortable()
@@ -42,7 +47,7 @@
         .Update(update => update.Action("JmInventoryTProductPrices_Update", "JmInventoryMProduct").Data("ParentProductInfo"))
         .Destroy(destroy => destroy.Action("JmInventoryTProductPrices_Destroy", "JmInventoryMProduct").Data("ParentProductInfo"))
     )
-    .Events(e => e.DataBound("ProductPriceGrid_onDataBound").Edit("onProductPriceEdit"))
+    .Events(e => e.DataBound("ProductPriceGrid_onDataBound").Edit("onProductPriceEdit").ExcelExport("onExcelExport"))
     )
 
 

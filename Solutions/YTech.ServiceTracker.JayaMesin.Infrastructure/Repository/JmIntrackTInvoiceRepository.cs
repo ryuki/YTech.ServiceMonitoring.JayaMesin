@@ -17,6 +17,17 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.Repository
            ICriteria criteria = Session.CreateCriteria(typeof(JmIntrackTInvoice));
            criteria.Add(Expression.Not(Expression.Eq("DataStatus", "Deleted")));
            return criteria.List<JmIntrackTInvoice>();
-       } 
+       }
+
+
+       public void AutoUpdateInvoiceStatus()
+       {
+           StringBuilder sql = new StringBuilder();
+           sql.AppendLine(@"   update [dbo].[JM_INTRACK_T_INVOICE]
+set [INVOICE_STATUS] = 'Lunas_BelumLengkap'
+where [INVOICE_STATUS] = 'Baru_Dilunasi' ");
+           IQuery q = Session.CreateSQLQuery(sql.ToString());
+           q.ExecuteUpdate();
+       }
     }
 }
