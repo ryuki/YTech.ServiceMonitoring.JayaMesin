@@ -1,0 +1,35 @@
+﻿@(Html.Kendo().Chart<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.DashboardInvoiceViewModel>()
+        .Name("chart2")
+                .Title(title => title
+                    .Text("Kelengkapan SSP Dari yang Sudah Lunas")
+                    .Position(ChartTitlePosition.Top))
+        .Legend(legend => legend
+            .Visible(false)
+        )
+        .ChartArea(chart => chart
+            .Background("transparent")
+         )
+        .HtmlAttributes(new { style = "background: center no-repeat " })
+        .DataSource(ds =>
+            {
+                ds.Read(read => read.Action("GetDashboardInvoiceLunas", "JmIntrackTInvoice").Data("GetReadParam"));
+            }
+            )
+            .Series(series =>
+                 {
+                     series
+                    .Pie(model => model.InvoiceTotal, model => model.InvoiceStatus, model => model.Color)
+                    .Padding(80)
+                    .Labels(labels => labels
+                .Template("#= category #: \n #= kendo.format('{0:N2}',value) #%")
+                .Background("transparent")
+                .Visible(true)
+            )
+            .StartAngle(0);
+                 }
+            )
+        .Tooltip(tooltip => tooltip
+            .Visible(true)
+            .Format("{0:N2}%")
+        )
+    )

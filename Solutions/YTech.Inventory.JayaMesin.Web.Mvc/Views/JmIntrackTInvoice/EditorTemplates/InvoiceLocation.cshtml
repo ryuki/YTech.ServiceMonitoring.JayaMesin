@@ -1,0 +1,13 @@
+﻿@model string
+           
+@(
+ Html.Kendo().DropDownListFor(m => m) 
+        .OptionLabel("-Pilih Lokasi-")
+        .DataValueField("Value")
+        .DataTextField("Text")    
+        .BindTo((System.Collections.IEnumerable)ViewData["invoice_location"])
+         .HtmlAttributes(new { @style="width:150px;" })
+         .AutoBind(true)
+         )
+
+

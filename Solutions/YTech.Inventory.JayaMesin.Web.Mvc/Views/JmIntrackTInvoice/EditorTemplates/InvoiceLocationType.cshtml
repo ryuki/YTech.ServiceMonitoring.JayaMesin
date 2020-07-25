@@ -1,0 +1,13 @@
+﻿@model string
+           
+@(
+ Html.Kendo().DropDownListFor(m => m) 
+        .OptionLabel("-Pilih Tipe-")
+        .DataValueField("Value")
+        .DataTextField("Text")    
+        .BindTo((System.Collections.IEnumerable)ViewData["invoice_location_type"])
+         .HtmlAttributes(new { @style="width:150px;" })
+         .AutoBind(true)
+         )
+
+

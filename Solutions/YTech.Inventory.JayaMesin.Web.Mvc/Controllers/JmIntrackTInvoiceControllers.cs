@@ -38,7 +38,23 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
 
             PopulateInvoiceStatus();
             PopulateDocStatus();
+            PopulateInvoiceLocation();
+            PopulateInvoiceLocationType();
             return View();
+        }
+
+        private void PopulateInvoiceLocationType()
+        {
+            var InvoiceLocation = from EnumInvoiceLocationType e in Enum.GetValues(typeof(EnumInvoiceLocationType))
+                                  select new { Value = e.ToString(), Text = e.ToString() };
+            ViewData["invoice_location_type"] = InvoiceLocation;
+        }
+
+        private void PopulateInvoiceLocation()
+        {
+            var InvoiceLocation = from EnumInvoiceLocation e in Enum.GetValues(typeof(EnumInvoiceLocation))
+                                  select new { Value = e.ToString(), Text = e.ToString() };
+            ViewData["invoice_location"] = InvoiceLocation;
         }
 
         private void PopulateDocStatus()
@@ -152,11 +168,31 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             entity.InvoicePaidOffDate = vm.InvoicePaidOffDate;
             entity.InvoiceStatus = vm.InvoiceStatus;
             entity.InvoiceDesc = vm.InvoiceDesc;
-            entity.InvoiceDocLetter = vm.InvoiceDocLetter;
-            entity.InvoiceDocSspPpn = vm.InvoiceDocSspPpn;
-            entity.InvoiceDocSspPph = vm.InvoiceDocSspPph;
+            entity.InvoiceDocLetter = vm.InvoiceDocLetter.ToString();
+            entity.InvoiceDocSspPpn = vm.InvoiceDocSspPpn.ToString();
+            entity.InvoiceDocSspPph = vm.InvoiceDocSspPph.ToString();
             entity.InvoiceHelpdesk = vm.InvoiceHelpdesk;
             entity.InvoiceFundSource = vm.InvoiceFundSource;
+            entity.LocationId = vm.LocationId;
+            entity.InvoiceDocDo = vm.InvoiceDocDo.ToString();
+            entity.InvoiceDocInvoice = vm.InvoiceDocInvoice.ToString();
+            entity.InvoiceDocSpm = vm.InvoiceDocSpm.ToString();
+            entity.InvoiceDocReceiptCopy = vm.InvoiceDocReceiptCopy.ToString();
+            entity.InvoiceDocSpk = vm.InvoiceDocSpk.ToString();
+            entity.InvoiceDocBast = vm.InvoiceDocBast.ToString();
+            entity.InvoiceDocBaphp = vm.InvoiceDocBaphp.ToString();
+            entity.InvoiceDocBap = vm.InvoiceDocBap.ToString();
+            entity.InvoiceTaxInvoiceNo = vm.InvoiceTaxInvoiceNo;
+            entity.InvoiceBank = vm.InvoiceBank;
+            entity.InvoiceLocationType = vm.InvoiceLocationType;
+            entity.InvoiceDocSspPpnValue = vm.InvoiceDocSspPpnValue;
+            entity.InvoiceDocSspPpnNtpn = vm.InvoiceDocSspPpnNtpn;
+            entity.InvoiceDocSspPpnDate = vm.InvoiceDocSspPpnDate;
+            entity.InvoiceDocSspPpnDesc = vm.InvoiceDocSspPpnDesc;
+            entity.InvoiceDocSspPphValue = vm.InvoiceDocSspPphValue;
+            entity.InvoiceDocSspPphNtpn = vm.InvoiceDocSspPphNtpn;
+            entity.InvoiceDocSspPphDate = vm.InvoiceDocSspPphDate;
+            entity.InvoiceDocSspPphDesc = vm.InvoiceDocSspPphDesc;
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
@@ -207,40 +243,67 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
 
         private IEnumerable<JmIntrackTInvoiceViewModel> GetJmIntrackTInvoices()
         {
-            var entitys = this._tasks.GetListNotDeleted();
+            //var entitys = this._tasks.GetListNotDeleted();
+            var entitys = this._tasks.GetListHaveBeenRead(User.Identity.Name,"");
 
             string copyFormat = "No Paket : {0} \nTgl Faktur : {1:dd-MMM} \nNama Pelanggan : {2} \nNilai Faktur : {3:N0} \nAdmin : {4} \nSalesman : {5} \nHelpdesk : {6} \nStatus : {7}";
 
             return from entity in entitys
-                   orderby entity.InvoiceDate descending, entity.InvoiceNo
                    select new JmIntrackTInvoiceViewModel
-        {
+                   {
+                       LocationId = entity.LocationId,
+                       InvoiceNo = entity.InvoiceNo,
+                       InvoicePacketNo = entity.InvoicePacketNo,
+                       InvoiceDate = entity.InvoiceDate,
+                       CustomerId = entity.CustomerId,
+                       InvoiceAmmount = entity.InvoiceAmmount,
+                       InvoicePaid = entity.InvoicePaid,
+                       InvoicePacketAdmin = entity.InvoicePacketAdmin,
+                       SalesmanId = entity.SalesmanId,
+                       InvoiceAge = entity.InvoiceDate.HasValue ? (DateTime.Today - entity.InvoiceDate.Value).Days : 0,
+                       InvoiceDueDate = entity.InvoiceDueDate,
+                       InvoiceDelivery = entity.InvoiceDelivery,
+                       InvoicePaidOffDate = entity.InvoicePaidOffDate,
+                       InvoiceStatus = entity.InvoiceStatus,
+                       InvoiceDesc = string.Format("<{0:dd-MMM} by {1}> : {2}{2}{3}", DateTime.Today, User.Identity.Name, Environment.NewLine, entity.InvoiceDesc),
+                       InvoiceDocLetter = Convert.ToBoolean(entity.InvoiceDocLetter),
+                       InvoiceDocSspPpn = Convert.ToBoolean(entity.InvoiceDocSspPpn),
+                       InvoiceDocSspPph = Convert.ToBoolean(entity.InvoiceDocSspPph),
+                       InvoiceId = entity.Id,
+                       InvoiceHelpdesk = entity.InvoiceHelpdesk,
+                       InvoiceFundSource = entity.InvoiceFundSource,
+                       InvoiceDocDo = Convert.ToBoolean(entity.InvoiceDocDo),
+                       InvoiceDocInvoice = Convert.ToBoolean(entity.InvoiceDocInvoice),
+                       InvoiceDocSpm = Convert.ToBoolean(entity.InvoiceDocSpm),
+                       InvoiceDocReceiptCopy = Convert.ToBoolean(entity.InvoiceDocReceiptCopy),
+                       InvoiceDocSpk = Convert.ToBoolean(entity.InvoiceDocSpk),
+                       InvoiceDocBast = Convert.ToBoolean(entity.InvoiceDocBast),
+                       InvoiceDocBaphp = Convert.ToBoolean(entity.InvoiceDocBaphp),
+                       InvoiceDocBap = Convert.ToBoolean(entity.InvoiceDocBap),
+                       InvoiceTaxInvoiceNo = entity.InvoiceTaxInvoiceNo,
+                       InvoiceBank = entity.InvoiceBank,
+                       InvoiceDocSspPpnValue = entity.InvoiceDocSspPpnValue,
+                       InvoiceDocSspPpnNtpn = entity.InvoiceDocSspPpnNtpn,
+                       InvoiceDocSspPpnDate = entity.InvoiceDocSspPpnDate,
+                       InvoiceDocSspPpnDesc = entity.InvoiceDocSspPpnDesc,
+                       InvoiceDocSspPphValue = entity.InvoiceDocSspPphValue,
+                       InvoiceDocSspPphNtpn = entity.InvoiceDocSspPphNtpn,
+                       InvoiceDocSspPphDate = entity.InvoiceDocSspPphDate,
+                       InvoiceDocSspPphDesc = entity.InvoiceDocSspPphDesc,
+                       InvoiceLocationType = entity.InvoiceLocationType,
 
-            InvoiceNo = entity.InvoiceNo,
-            InvoicePacketNo = entity.InvoicePacketNo,
-            InvoiceDate = entity.InvoiceDate,
-            CustomerId = entity.CustomerId,
-            InvoiceAmmount = entity.InvoiceAmmount,
-            InvoicePaid = entity.InvoicePaid,
-            InvoicePacketAdmin = entity.InvoicePacketAdmin,
-            SalesmanId = entity.SalesmanId,
-            InvoiceAge = entity.InvoiceDate.HasValue ? (DateTime.Today - entity.InvoiceDate.Value).Days : 0,
-            InvoiceDueDate = entity.InvoiceDueDate,
-            InvoiceDelivery = entity.InvoiceDelivery,
-            InvoicePaidOffDate = entity.InvoicePaidOffDate,
-            InvoiceStatus = entity.InvoiceStatus,
-            InvoiceDesc = string.Format("<{0:dd-MMM} by {1}> : {2}{2}{3}", DateTime.Today, User.Identity.Name, Environment.NewLine, entity.InvoiceDesc),
-            InvoiceDocLetter = entity.InvoiceDocLetter,
-            InvoiceDocSspPpn = entity.InvoiceDocSspPpn,
-            InvoiceDocSspPph = entity.InvoiceDocSspPph,
-            InvoiceId = entity.Id,
-            InvoiceHelpdesk = entity.InvoiceHelpdesk,
-            InvoiceFundSource = entity.InvoiceFundSource,
-            InvoiceIsUrgent = (entity.InvoiceStatus == EnumInvoiceStatus.Lunas_Lengkap.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Baru_Dilunasi.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Lunas_BelumLengkap.ToString()) ? "Normal" : (entity.ModifiedDate.HasValue ? ((DateTime.Now - entity.ModifiedDate.Value).TotalHours >= 48 ? "Urgent" : "Normal") : "Normal"),
-            InvoiceToCopy = string.Format(copyFormat, entity.InvoicePacketNo, entity.InvoiceDate, entity.CustomerId, entity.InvoiceAmmount, entity.InvoicePacketAdmin, entity.SalesmanId, entity.InvoiceHelpdesk, entity.InvoiceStatus),
-            //use stored procedure, looping to get read flag make wo list slow response
-            HaveBeenRead = _JmInventoryTLogTasks.GetHaveBeenLogType(entity.Id, User.Identity.Name, EnumLogType.Invoice, EnumTransLog.Read)
-        };
+                       InvoiceAmmountDPP = entity.InvoiceAmmount.HasValue ? (entity.InvoiceAmmount.Value / (decimal)1.1).ToString("N2") : "0",
+                       InvoiceAmmountPPN = entity.InvoiceAmmount.HasValue ? (entity.InvoiceAmmount.Value / (decimal) 1.1 * (decimal)0.1).ToString("N2") : "0",
+                       InvoiceAmmountPPH = entity.InvoiceAmmount.HasValue ? (entity.InvoiceAmmount.Value / (decimal)1.1 * (decimal)0.015).ToString("N2") : "0",
+                       InvoiceAmmountCashIn = entity.InvoiceAmmount.HasValue ? (entity.InvoiceAmmount.Value - (entity.InvoiceAmmount.Value / (decimal)1.1 * (decimal)0.115)).ToString("N2") : "0",
+
+                       InvoiceIsUrgent = (entity.InvoiceStatus == EnumInvoiceStatus.Lunas_Lengkap.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Baru_Dilunasi.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Lunas_BelumLengkap.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Lunas_NTPN.ToString()) ? "Normal" : (entity.ModifiedDate.HasValue ? ((DateTime.Now - entity.ModifiedDate.Value).TotalHours >= 48 ? "Urgent" : "Normal") : "Normal"),
+                       InvoiceToCopy = string.Format(copyFormat, entity.InvoicePacketNo, entity.InvoiceDate, entity.CustomerId, entity.InvoiceAmmount, entity.InvoicePacketAdmin, entity.SalesmanId, entity.InvoiceHelpdesk, entity.InvoiceStatus),
+                       InvoiceStatusOrder = (entity.InvoiceStatus == EnumInvoiceStatus.Lunas_Lengkap.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Baru_Dilunasi.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Lunas_BelumLengkap.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Lunas_NTPN.ToString()) ? 1 : 0,
+                       //use stored procedure, looping to get read flag make wo list slow response
+                       HaveBeenRead = (entity.InvoiceStatus == EnumInvoiceStatus.Lunas_Lengkap.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Baru_Dilunasi.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Lunas_BelumLengkap.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Lunas_NTPN.ToString()) ? 1 : (entity.HaveBeenRead == true ? 1 : 0)
+                       //(entity.InvoiceStatus == EnumInvoiceStatus.Lunas_Lengkap.ToString() || entity.InvoiceStatus == EnumInvoiceStatus.Lunas_BelumLengkap.ToString()) ? 1 : (_JmInventoryTLogTasks.GetHaveBeenLogType(entity.Id, User.Identity.Name, EnumLogType.Invoice, EnumTransLog.Read) == true ? 1 : 0)
+                   };
 
         }
 
@@ -271,6 +334,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
 
             PopulateInvoiceStatus();
             PopulateDocStatus();
+            PopulateInvoiceLocation();
             return View();
         }
 
@@ -308,10 +372,15 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetDashboardInvoiceByStatus()
+        public ActionResult GetDashboardInvoiceByStatus(string LocationId)
         {
             IList<JmIntrackTInvoice> invList = _tasks.GetListNotDeleted().ToList();
             DashboardInvoiceViewModel viewModel = new DashboardInvoiceViewModel();
+
+            var getInvoiceFilter = from inv in invList
+                                   where ("%" + inv.LocationId).StartsWith(LocationId == "All" ? "%" : "%" + LocationId)
+                                   select inv;
+            invList = getInvoiceFilter.ToList();
 
             decimal blmLunas = 0;
             decimal sudahLunas = 0;
@@ -330,28 +399,33 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
 
             List<DashboardInvoiceViewModel> model = new List<DashboardInvoiceViewModel>()
             {
-                new DashboardInvoiceViewModel(){ InvoiceStatus = "Belum Lunas", InvoiceTotal = decimal.Floor(blmLunas / (blmLunas+sudahLunas) * 100), Color = "#FFA500" },
-                new DashboardInvoiceViewModel(){ InvoiceStatus = "Sudah Lunas", InvoiceTotal = decimal.Floor(sudahLunas / (blmLunas+sudahLunas) * 100), Color = "#9de219" }
+                new DashboardInvoiceViewModel(){ InvoiceStatus = "Belum Lunas", InvoiceTotal = (blmLunas / (blmLunas+sudahLunas) * 100), Color = "#FFA500" },
+                new DashboardInvoiceViewModel(){ InvoiceStatus = "Sudah Lunas", InvoiceTotal = (sudahLunas / (blmLunas+sudahLunas) * 100), Color = "#9de219" }
             };
             return Json(model);
         }
 
         [HttpPost]
-        public ActionResult GetDashboardInvoiceLunas()
+        public ActionResult GetDashboardInvoiceLunas(string LocationId)
         {
             IList<JmIntrackTInvoice> invList = _tasks.GetListNotDeleted().ToList();
             DashboardInvoiceViewModel viewModel = new DashboardInvoiceViewModel();
+
+            var getInvoiceFilter = from inv in invList
+                                   where ("%" + inv.LocationId).StartsWith(LocationId == "All" ? "%" : "%" + LocationId)
+                                   select inv;
+            invList = getInvoiceFilter.ToList();
 
             decimal lunasLengkap = 0;
             decimal lunasBelumLengkap = 0;
             for (var i = 0; i < invList.Count(); i++)
             {
                 JmIntrackTInvoice inv = invList[i];
-                if (inv.InvoiceStatus == EnumInvoiceStatus.Lunas_BelumLengkap.ToString() || inv.InvoiceStatus == EnumInvoiceStatus.Baru_Dilunasi.ToString())
+                if (inv.InvoiceStatus == EnumInvoiceStatus.Lunas_BelumLengkap.ToString() || inv.InvoiceStatus == EnumInvoiceStatus.Baru_Dilunasi.ToString() || inv.InvoiceStatus == EnumInvoiceStatus.Lunas_NTPN.ToString())
                 {
                     lunasBelumLengkap++;
                 }
-                else
+                else if (inv.InvoiceStatus == EnumInvoiceStatus.Lunas_Lengkap.ToString())
                 {
                     lunasLengkap++;
                 }
@@ -359,10 +433,46 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
 
             List<DashboardInvoiceViewModel> model = new List<DashboardInvoiceViewModel>()
             {
-                new DashboardInvoiceViewModel(){ InvoiceStatus = "Belum Lengkap", InvoiceTotal = decimal.Floor(lunasBelumLengkap / (lunasLengkap+lunasBelumLengkap) * 100), Color = "#B0E0E6" },
-                new DashboardInvoiceViewModel(){ InvoiceStatus = "Lengkap", InvoiceTotal = decimal.Floor(lunasLengkap / (lunasLengkap+lunasBelumLengkap) * 100), Color = "#DDA0DD" }
+                new DashboardInvoiceViewModel(){ InvoiceStatus = "Belum Lengkap", InvoiceTotal = (lunasBelumLengkap / (lunasLengkap+lunasBelumLengkap) * 100), Color = "#B0E0E6" },
+                new DashboardInvoiceViewModel(){ InvoiceStatus = "Lengkap", InvoiceTotal = (lunasLengkap / (lunasLengkap+lunasBelumLengkap) * 100), Color = "#DDA0DD" }
             };
             return Json(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult GetDashboardInvoiceBySalesman(string LocationId)
+        {
+            var getCountInvoiceBySales = GetInvoiceBySalesman(LocationId);
+            return Json(getCountInvoiceBySales);
+        }
+
+        private IEnumerable<DashboardInvoiceViewModel> GetInvoiceBySalesman(string LocationId)
+        {
+            IList<JmIntrackTInvoice> invList = _tasks.GetListNotDeleted().ToList();
+            DashboardInvoiceViewModel viewModel = new DashboardInvoiceViewModel();
+
+            var getCountInvoiceBySales = from inv in invList
+                                         where ("%" + inv.LocationId).StartsWith(LocationId == "All" ? "%" : "%" + LocationId)
+                                         group inv by new
+                                         {
+                                             SalesmanId = inv.SalesmanId.Trim().ToUpper(),
+                                             InvoiceStatus = (inv.InvoiceStatus == EnumInvoiceStatus.Lunas_BelumLengkap.ToString() || inv.InvoiceStatus == EnumInvoiceStatus.Baru_Dilunasi.ToString() || inv.InvoiceStatus == EnumInvoiceStatus.Lunas_Lengkap.ToString() || inv.InvoiceStatus == EnumInvoiceStatus.Lunas_NTPN.ToString()) ? "Lunas" : "Belum Lunas"
+                                         } into sales
+                                         orderby sales.Key.SalesmanId, sales.Key.InvoiceStatus
+                                         select new DashboardInvoiceViewModel()
+                                         {
+                                             Salesman = sales.Key.SalesmanId,
+                                             InvoiceStatus = sales.Key.InvoiceStatus,
+                                             InvoiceTotal = sales.Count(),
+                                             InvoiceAmmountTotal = sales.Sum(s => s.InvoiceAmmount)
+                                         };
+            return getCountInvoiceBySales;
+        }
+
+        public ActionResult GetGridInvoiceBySalesman([DataSourceRequest] DataSourceRequest request, string LocationId)
+        {
+            return Json(GetInvoiceBySalesman(LocationId).ToDataSourceResult(request));
         }
     }
 }

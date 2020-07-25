@@ -37,6 +37,7 @@ namespace YTech.ServiceTracker.JayaMesin.Domain
         public virtual decimal? ProductPriceSales { get; set; }
         public virtual System.DateTime? ProductLastPriceDate { get; set; }
 
+        public virtual bool HaveBeenRead { get; set; }
         #endregion
         
         #region Implementation of IHasAssignedId<string>

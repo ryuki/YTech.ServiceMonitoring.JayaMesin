@@ -31,7 +31,7 @@ namespace YTech.ServiceTracker.JayaMesin.Infrastructure.NHibernateMaps
             mapping.Map(x => x.CreatedDate, "[CREATED_DATE]");
             mapping.Map(x => x.ModifiedBy, "[MODIFIED_BY]");
             mapping.Map(x => x.ModifiedDate, "[MODIFIED_DATE]");
-            mapping.Map(x => x.RowVersion, "[ROW_VERSION]");
+            mapping.Map(x => x.RowVersion, "[ROW_VERSION]").ReadOnly();
 
             #endregion
         }

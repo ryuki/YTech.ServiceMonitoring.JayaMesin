@@ -110,6 +110,7 @@
     <Compile Include="NHibernateMaps\Conventions\PrimaryKeyConvention.cs" />
     <Compile Include="NHibernateMaps\Conventions\TableNameConvention.cs" />
     <Compile Include="NHibernateMaps\AutoPersistenceModelGenerator.cs" />
+    <Compile Include="NHibernateMaps\JmIntrackTInvoiceHaveReadMap.cs" />
     <Compile Include="NHibernateMaps\JmIntrackTInvoiceLogMap.cs" />
     <Compile Include="NHibernateMaps\JmIntrackTInvoiceMap.cs" />
     <Compile Include="NHibernateMaps\JmInventoryMBrandMap.cs" />

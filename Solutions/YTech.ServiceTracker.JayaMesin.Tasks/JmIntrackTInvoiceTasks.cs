@@ -66,5 +66,12 @@ namespace YTech.ServiceTracker.JayaMesin.Tasks
         {
             this._JmIntrackTInvoiceRepository.AutoUpdateInvoiceStatus();
         }
+
+
+        public IEnumerable<JmIntrackTInvoiceHaveRead> GetListHaveBeenRead(string UserName, string TextSearch)
+        {
+            var entitys = this._JmIntrackTInvoiceRepository.GetListHaveBeenRead(UserName, TextSearch); ;
+            return entitys;
+        }
     }
 }

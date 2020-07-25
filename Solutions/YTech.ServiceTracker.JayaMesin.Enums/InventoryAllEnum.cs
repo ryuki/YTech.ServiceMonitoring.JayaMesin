@@ -28,7 +28,7 @@ namespace YTech.ServiceTracker.JayaMesin.Enums
 
     public enum EnumLogType
     {
-        Trans_PO, Invoice, Invoice_Dashboard
+        Trans_PO, Invoice, Invoice_Dashboard, Product
     }
 
     public enum EnumInventoryReferenceType
@@ -72,11 +72,21 @@ namespace YTech.ServiceTracker.JayaMesin.Enums
 
     public enum EnumInvoiceStatus
     {
-        Baru, Dokumen, Invoicing, Baru_Dilunasi, Lunas_BelumLengkap, Lunas_Lengkap
+        Baru, Dokumen, Invoicing, Baru_Dilunasi, Lunas_NTPN, Lunas_BelumLengkap, Lunas_Lengkap
     }
 
     public enum EnumDocStatus
     {
         Tidak_Ada, Belum_Lengkap, Kurang_Bayar, Lengkap
+    }
+
+    public enum EnumInvoiceLocation
+    {
+        RIAU, KEPRI
+    }
+
+    public enum EnumInvoiceLocationType
+    {
+        Propinsi, Kabupaten, Kota
     }
 }

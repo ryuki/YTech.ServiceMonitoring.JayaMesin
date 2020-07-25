@@ -15,5 +15,7 @@ namespace YTech.ServiceTracker.JayaMesin.Domain.Contracts.Tasks
         IEnumerable<JmIntrackTInvoice> GetListNotDeleted();
 
         void AutoUpdateInvoiceStatus();
+
+        IEnumerable<JmIntrackTInvoiceHaveRead> GetListHaveBeenRead(string UserName, string TextSearch);
     }
 }

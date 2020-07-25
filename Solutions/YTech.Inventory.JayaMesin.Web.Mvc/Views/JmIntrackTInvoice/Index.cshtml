@@ -4,111 +4,166 @@
 }
 
 @(Html.Kendo()
-.Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmIntrackTInvoiceViewModel>()
-    .Name("Grid")
-    .Columns(columns =>
-    {
-        columns.Template(e => { }).ClientTemplate("<img class='img-urgent' src='" + Url.Content("~/Content/img/error3.gif") + "' style='width:16px;height:16px;display:none;' alt='#: data.InvoiceIsUrgent #' /> <img class='img-new' src='" + Url.Content("~/Content/img/new_header.png") + "' alt='#: data.HaveBeenRead #' style='display:none;' />").Width(60).Title(" ");
-        columns.Bound(p => p.InvoicePacketNo).Width("100");
-        columns.Bound(p => p.InvoiceNo).Width("auto");
-        columns.Bound(p => p.InvoiceDate).Width("auto").Format("{0:dd-MMM-yyyy}");
-        columns.Bound(p => p.CustomerId).Width("auto");
-        columns.Bound(p => p.InvoiceAmmount).Width("auto").Format("{0:N2}");
-        columns.Bound(p => p.InvoicePaid).Width("auto").Format("{0:N2}");
-        columns.Bound(p => p.InvoicePacketAdmin).Width("auto");
-        columns.Bound(p => p.SalesmanId).Width("auto");
-        columns.Bound(p => p.InvoiceHelpdesk).Width("auto");
-        columns.Bound(p => p.InvoiceAge).Width("auto").Format("{0:N2}");
-        //columns.Bound(p => p.InvoiceDueDate).Width("auto").Format("{0:dd-MMM-yyyy}");
-        //columns.Bound(p => p.InvoiceDelivery).Width("auto");
-        //columns.Bound(p => p.InvoicePaidOffDate).Width("auto").Format("{0:dd-MMM-yyyy}");
-        columns.Bound(p => p.InvoiceStatus).Width("auto");
-        //columns.Bound(p => p.HaveBeenRead).Width("auto");
-        columns.Command(command =>
+    .Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmIntrackTInvoiceViewModel>()
+        .Name("Grid")
+        .Columns(columns =>
         {
-            if (User.IsInRole("ADMINISTRATOR") || User.IsInRole("MANAGER"))
+            columns.Template(e => { }).ClientTemplate("<img class='img-urgent' src='" + Url.Content("~/Content/img/error3.gif") + "' style='width:16px;height:16px;display:none;' alt='#: data.InvoiceIsUrgent #' /> <img class='img-read' src='" + Url.Content("~/Content/img/new_header.png") + "' alt='#: data.HaveBeenRead #' style='display:none;' />").Width(60).Title(" ");
+            columns.Command(command =>
             {
-                command.Edit().Text(" ");
-                command.Destroy().Text(" ");
-            }
-            else if (User.IsInRole("SALES"))
+                if (User.IsInRole("ADMINISTRATOR") || User.IsInRole("MANAGER"))
+                {
+                    command.Edit().Text(" ");
+                }
+                else if (User.IsInRole("SALES"))
+                {
+                    command.Edit().Text("Update Ket");
+                }
+
+                //command.Custom("Copy").Click("CopyInvoice").HtmlAttributes(new { style = "min-width:20px;" });
+            }).Width("auto");
+            columns.Command(command =>
             {
-                command.Edit().Text("Update Ket");
-            }
-            
-            //command.Custom("Copy").Click("CopyInvoice").HtmlAttributes(new { style = "min-width:20px;" });
-        }).Width("auto");
-        columns.Template(e => { }).ClientTemplate("<button type='image' src='" + Url.Content("~/Content/img/window16.gif") + "' class='k-button k-button-icontext' data-clipboard-demo data-clipboard-action='copy' data-clipboard-text='#: data.InvoiceToCopy #'  width='16' height='16'>Copy</button>").Width(80).Title(" ");
-    })
-        //.ToolBar(toolbar => { toolbar.Create().Text("Tambah Invoice Baru"); })
-        
-        .Excel(excel => excel
-            .AllPages(true)
-            .Filterable(true)
-        )
-        .ToolBar(toolbar =>
-        {
+                if (User.IsInRole("ADMINISTRATOR") || User.IsInRole("MANAGER"))
+                {
+                    command.Destroy().Text(" ");
+                }
+                //command.Custom("Copy").Click("CopyInvoice").HtmlAttributes(new { style = "min-width:20px;" });
+            }).Width("auto");
+            columns.Template(e => { }).ClientTemplate("<button type='image' src='" + Url.Content("~/Content/img/window16.gif") + "' class='k-button k-button-icontext' data-clipboard-demo data-clipboard-action='copy' data-clipboard-text='#: data.InvoiceToCopy #'  width='16' height='16'>Copy</button>").Width(80).Title(" ");
+            columns.Bound(p => p.LocationId).Width("auto");
+            columns.Bound(p => p.InvoicePacketNo).Width("auto");
+            columns.Bound(p => p.InvoiceNo).Width("auto");
+            columns.Bound(p => p.InvoiceDate).Width("auto").Format("{0:dd-MMM-yyyy}");
+            columns.Bound(p => p.CustomerId).Width("auto");
+            columns.Bound(p => p.InvoiceAmmount).Width("auto").Format("{0:N2}");
+            columns.Bound(p => p.InvoicePaid).Width("auto").Format("{0:N2}");
+            columns.Bound(p => p.InvoicePacketAdmin).Width("auto");
+            columns.Bound(p => p.SalesmanId).Width("auto");
+            columns.Bound(p => p.InvoiceHelpdesk).Width("auto");
+            columns.Bound(p => p.InvoiceAge).Width("auto").Format("{0:N2}");
+            columns.Bound(p => p.InvoiceDueDate).Width("auto").Format("{0:dd-MMM-yyyy}");
+            //columns.Bound(p => p.InvoiceDelivery).Width("auto");
+            //columns.Bound(p => p.InvoicePaidOffDate).Width("auto").Format("{0:dd-MMM-yyyy}");
+            columns.Bound(p => p.InvoiceStatus).Width("auto");
+            columns.Bound(p => p.InvoicePaidOffDate).Width("1").Format("{0:dd-MMM-yyyy}").Hidden();
+
+            columns.Bound(p => p.InvoiceLocationType).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceTaxInvoiceNo).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceBank).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceHelpdesk).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceFundSource).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocLetter).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocSspPpn).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocSspPph).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocDo).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocInvoice).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocSpm).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocReceiptCopy).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocSpk).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocBast).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocBaphp).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocBap).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocSspPpnValue).Width("1").Format("{0:N2}").Hidden();
+            columns.Bound(p => p.InvoiceDocSspPpnNtpn).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocSspPpnDate).Width("1").Format("{0:dd-MMM-yyyy}").Hidden();
+            columns.Bound(p => p.InvoiceDocSspPpnDesc).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocSspPphValue).Width("1").Format("{0:N2}").Hidden();
+            columns.Bound(p => p.InvoiceDocSspPphNtpn).Width("1").Hidden();
+            columns.Bound(p => p.InvoiceDocSspPphDate).Width("1").Format("{0:dd-MMM-yyyy}").Hidden();
+            columns.Bound(p => p.InvoiceDocSspPphDesc).Width("1").Hidden();
+
+            //columns.Bound(p => p.InvoiceIsUrgent).Width("auto");
+            //columns.Bound(p => p.HaveBeenRead).Width("auto");
+            //columns.Bound(p => p.InvoiceStatusOrder).Width("auto");
+        })
+            //.ToolBar(toolbar => { toolbar.Create().Text("Tambah Invoice Baru"); })
+
+            .Excel(excel => excel
+                .AllPages(true)
+                .Filterable(true)
+            )
+            .ToolBar(toolbar =>
+            {
             toolbar.Template(@<text>
-<div class="toolbar">
-    <a class="k-button k-button-icontext k-grid-add" href="#"><span class="k-icon k-i-add"></span>Tambah Faktur Baru</a>
-    <label class="status-label" for="status">Filter status Invoice :</label>
-    @(Html.Kendo().DropDownList()
-                            .Name("status")
-                            .OptionLabel("All")
-                            .DataTextField("Text")
-                            .DataValueField("Value")
-                            .AutoBind(false)
-                            .Events(e => e.Change("searchInvoice"))
-                            .HtmlAttributes(new { style = "min-width:150px;" })
-                            .BindTo((System.Collections.IEnumerable)ViewData["invoice_status"])
+                    <div class="toolbar">
+                        <a class="k-button k-button-icontext k-grid-add" href="#"><span class="k-icon k-i-add"></span>Tambah Faktur Baru</a>
+                        <label class="status-label" for="status">Status Invoice :</label>
+                        @(Html.Kendo().DropDownList()
+                                                        .Name("status")
+                                                        .OptionLabel("All")
+                                                        .DataTextField("Text")
+                                                        .DataValueField("Value")
+                                                        .AutoBind(false)
+                                                        .Events(e => e.Change("searchInvoice"))
+                                                        .HtmlAttributes(new { style = "min-width:150px;" })
+                                                        .BindTo((System.Collections.IEnumerable)ViewData["invoice_status"])
+                        )
+                        <label class="status-label" for="locationid">Lokasi :</label>
+                        @(Html.Kendo().DropDownList()
+                                                        .Name("locationid")
+                                                        .OptionLabel("All")
+                                                        .DataTextField("Text")
+                                                        .DataValueField("Value")
+                                                        .AutoBind(false)
+                                                        .Events(e => e.Change("searchInvoice"))
+                                                        .HtmlAttributes(new { style = "min-width:150px;" })
+                                                        .BindTo((System.Collections.IEnumerable)ViewData["invoice_location"])
                         )
 
-    <label class="search-label" for="search">Pencarian :</label>
-    @(Html.TextBox("search", "", new { @class = "k-textbox" }))
-    @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "searchInvoice(false);", new { @class = "k-button" }))
-    @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchInvoice(true);", new { @class = "k-button" })) | 
-    @*@Html.Partial("_CountDown")*@
-    @Html.Partial("InvoiceColourLegend")
-    <button class="k-button k-button-icontext k-grid-excel" type="button"><span class="k-icon k-i-excel"></span>Export to Excel</button>
-</div>
-</text>);
-        })
-    .AllowCopy(true)
-    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName(User.IsInRole("ADMINISTRATOR") || User.IsInRole("MANAGER") ? "EditJmIntrackTInvoice" : "EditDescJmIntrackTInvoice").Window(win => win.Width(750).Modal(true)))
-    .Pageable()
-    .Sortable()
-    .Scrollable()
-    .ColumnMenu()
-    .Selectable()
-    .Filterable()
-    .Groupable()
-    .Resizable(resize => resize.Columns(true))
-    .Reorderable(reorder => reorder.Columns(true))
-    .HtmlAttributes(new { style = "height:500px;" })
-    .DataSource(dataSource => dataSource
-        .Ajax()
-        .PageSize(50)
-        .Batch(false)
-        .ServerOperation(false)
-        .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
-        .Model(model =>
-        {
-            model.Id(p => p.InvoiceId);
-            model.Field(p => p.InvoiceDesc).DefaultValue(string.Format("<{0:dd-MMM} by {1}> : ", DateTime.Today, User.Identity.Name));
-        })
-        .Create(create => create.Action("JmIntrackTInvoices_Create", "JmIntrackTInvoice"))
-        .Read(read => read.Action("JmIntrackTInvoices_Read", "JmIntrackTInvoice"))
-        .Update(update => update.Action("JmIntrackTInvoices_Update", "JmIntrackTInvoice"))
-        .Destroy(destroy => destroy.Action("JmIntrackTInvoices_Destroy", "JmIntrackTInvoice"))
-        .Sort(s => s.Add(p => p.InvoiceIsUrgent).Descending())
-        .Sort(s => s.Add(p => p.HaveBeenRead).Descending())
-    )
-    .Events(e => e.DataBound("onDataBound").ExcelExport("onExcelExport").Edit("onEdit").Cancel("onCancel"))
-    )
+                        <label class="search-label" for="search">Pencarian :</label>
+                        @(Html.TextBox("search", "", new { @class = "k-textbox" }))
+                        @(Html.Button("searchButton", "Cari", HtmlButtonType.Button, "searchInvoice(false);", new { @class = "k-button" }))
+                        @(Html.Button("resetButton", "Reset", HtmlButtonType.Button, "searchInvoice(true);", new { @class = "k-button" })) |
+                        @*@Html.Partial("_CountDown")*@
+                        @Html.Partial("InvoiceColourLegend")
+                        <button class="k-button k-button-icontext k-grid-excel" type="button"><span class="k-icon k-i-excel"></span>Export to Excel</button>
+                    </div>
+                </text>);
+                    })
+                .AllowCopy(true)
+                .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName(User.IsInRole("ADMINISTRATOR") || User.IsInRole("MANAGER") ? "EditJmIntrackTInvoice" : "EditDescJmIntrackTInvoice").Window(win => win.Width(700).Modal(true)))
+                .Pageable()
+                .Sortable(sort => sort.SortMode(GridSortMode.MultipleColumn))
+                .Scrollable()
+                .ColumnMenu()
+                .Selectable()
+                .Filterable()
+                .Groupable()
+                .Resizable(resize => resize.Columns(true))
+                .Reorderable(reorder => reorder.Columns(true))
+                .HtmlAttributes(new { style = "height:500px;" })
+                .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .PageSize(50)
+                    .Batch(false)
+                    .ServerOperation(false)
+                    .Events(events => events.Error("error_handler").RequestEnd("onRequestEnd"))
+                    .Model(model =>
+                    {
+                        model.Id(p => p.InvoiceId);
+                        model.Field(p => p.InvoiceDesc).DefaultValue(string.Format("<{0:dd-MMM} by {1}> : ", DateTime.Today, User.Identity.Name));
+                    })
+                    .Create(create => create.Action("JmIntrackTInvoices_Create", "JmIntrackTInvoice"))
+                    .Read(read => read.Action("JmIntrackTInvoices_Read", "JmIntrackTInvoice"))
+                    .Update(update => update.Action("JmIntrackTInvoices_Update", "JmIntrackTInvoice"))
+                    .Destroy(destroy => destroy.Action("JmIntrackTInvoices_Destroy", "JmIntrackTInvoice"))
+                    .Sort(s =>
+                {
+                    s.Add(p => p.InvoiceIsUrgent).Descending();
+                    s.Add(p => p.InvoiceStatusOrder).Ascending();
+                    s.Add(p => p.HaveBeenRead).Ascending();
+                    s.Add(p => p.InvoiceDate).Ascending();
+
+                })
+                )
+                .Events(e => e.DataBound("onDataBound").ExcelExport("onInvoiceExcelExport").Edit("onEdit").Cancel("onCancel"))
+)
 
 <script type="text/kendo-template" id="message">
-<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
-            <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>
+    <div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" style="margin: 0.5em; display: block; " data-for="#=field#" data-valmsg-for="#=field#" id="#=field#_validationMessage">
+        <span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div>
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -141,30 +196,42 @@
         //alert(textSearch);
         //search by status
         var status = $("#status").val();
-        //alert(status);
+        //search by locationid
+        var locationid = $("#locationid").val();
+        //alert(locationid);
 
-        if (textSearch || status) {
+        if (textSearch || status || locationid) {
             //alert("search");
             var andFilter = { logic: "and", filters: [] };
             var orFilter = { logic: "or", filters: [] };
+
             andFilter.filters.push({ field: "InvoiceStatus", operator: "contains", value: status });
-            //orFilter.filters.push({ field: "InvoiceNo", operator: "contains", value: textSearch });
+            andFilter.filters.push({ field: "LocationId", operator: "contains", value: locationid });
+
+            orFilter.filters.push({ field: "InvoiceNo", operator: "contains", value: textSearch });
             orFilter.filters.push({ field: "CustomerId", operator: "contains", value: textSearch });
             orFilter.filters.push({ field: "InvoicePacketNo", operator: "contains", value: textSearch });
             orFilter.filters.push({ field: "InvoicePacketAdmin", operator: "contains", value: textSearch });
             orFilter.filters.push({ field: "InvoiceHelpdesk", operator: "contains", value: textSearch });
             orFilter.filters.push({ field: "SalesmanId", operator: "contains", value: textSearch });
+
             andFilter.filters.push(orFilter);
             grid.dataSource.query({ filter: andFilter });
         } else {
             grid.dataSource.filter({});
         }
+
+        //sort by default
+        grid.dataSource.sort([{ field: "InvoiceIsUrgent", dir: "desc" },
+        { field: "InvoiceStatusOrder", dir: "asc" },
+        { field: "HaveBeenRead", dir: "asc" },
+        { field: "InvoiceDate", dir: "asc" }]);
     }
 
     function onRequestEnd(e) {
         //RequestEnd handler code
         //bug : error when update after insert new data, no id catched
-        //bug fix : refresh after insert new data, 
+        //bug fix : refresh after insert new data,
         if (e.type === "create" || e.type === "update") {
             //alert("onRequestEnd");
             //check for errors in the response
@@ -182,7 +249,7 @@
             grid.editRow(this);
         })
         //hide image urgent if priority is normal
-        $("img.img-new[alt=false]").show();
+        $("img.img-read[alt=0]").show();
         $("img.img-urgent[alt=Urgent]").show();
 
         //set bg color based on status
@@ -215,6 +282,10 @@
             }
             else if (lastStatus == "Baru_Dilunasi") {
                 color = "#40E0D0";
+                showSms = false;
+            }
+            else if (lastStatus == "Lunas_NTPN") {
+                color = "#82CAFA ";
                 showSms = false;
             }
             else if (lastStatus == "Lunas_BelumLengkap") {
@@ -273,6 +344,12 @@
             console.error('Trigger:', e.trigger);
             showTooltip(e.trigger, fallbackMessage(e.action));
         });
+
+        var salesmanId = getURLParameter("SalesmanId");
+        if (salesmanId != "null") {
+            $("#search").val(salesmanId);
+            searchInvoice(false);
+        }
     })
 
     function getURLParameter(name) {
@@ -327,7 +404,7 @@
         var invoiceid = dataItem.InvoiceId;
 
         $("a.k-grid-Copy").attr("data-clipboard-text", invoiceid);
-        alert(invoiceid);
+        //alert(invoiceid);
     }
 
     function onEdit(e) {
@@ -354,5 +431,31 @@
         //call refresh grid and reset timer
         $('#Grid').data().kendoGrid.dataSource.read();
     }
-    
+
+    var exportFlag = false;
+    function onInvoiceExcelExport(e) {
+        var columns = e.sender.columns;
+        if (!exportFlag) {
+            for (var i = 17; i < columns.length; i++) {
+                if (columns[i].hidden)
+                    e.sender.showColumn(i);
+            }
+            e.preventDefault();
+            exportFlag = true;
+            setTimeout(function () {
+                var columnss = e.workbook.sheets[0].columns;
+                columnss.forEach(function (column) {
+                    delete column.width;
+                    column.autoWidth = true;
+                });
+                e.sender.saveAsExcel();
+            });
+        } else {
+            for (var i = 17; i < columns.length; i++) {
+                if (!columns[i].hidden)
+                    e.sender.hideColumn(i);
+            }
+            exportFlag = false;
+        }
+    }
 </script>

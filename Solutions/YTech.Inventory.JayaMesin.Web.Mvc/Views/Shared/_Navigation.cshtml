@@ -60,6 +60,7 @@
             .Items(childPanels =>
             {
                 childPanels.Add().Text("Dashboard").Action("Dashboard", "JmIntrackTInvoice").HtmlAttributes(new { style = "font-weight:normal;" });
+                //childPanels.Add().Text("Dashboard Kepri").Action("Dashboard", "JmIntrackTInvoice", new { LocationId = EnumInvoiceLocation.KEPRI }).HtmlAttributes(new { style = "font-weight:normal;" });
                 childPanels.Add().Text("Daftar Faktur").Action("Index", "JmIntrackTInvoice").HtmlAttributes(new { style = "font-weight:normal;" });
             });
 

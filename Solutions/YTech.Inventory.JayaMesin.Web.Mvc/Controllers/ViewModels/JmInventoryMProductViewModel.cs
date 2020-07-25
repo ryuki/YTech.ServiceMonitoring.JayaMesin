@@ -73,6 +73,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels
         [UIHint("FileUpload")]
         public virtual string ProductImgUrl { get; set; }
 
+        public virtual int HaveBeenRead { get; set; }
         #endregion
     }
 }

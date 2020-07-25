@@ -36,6 +36,9 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <TargetFrameworkProfile />
+    <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+    <Use64BitIISExpress />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -378,11 +381,7 @@
     <Content Include="Content\js\jquery-1.6.1.js" />
     <Content Include="Content\js\modernizr-1.7.js" />
     <Content Include="ReportViewer.aspx" />
-    <None Include="Properties\PublishProfiles\jayamesin - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\jayamesin - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\jayamesin2 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\jayamesin2 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\jayamesin2 - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\jayamesin2 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.9.1-vsdoc.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
@@ -948,11 +947,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>12212</DevelopmentServerPort>
           <DevelopmentServerVPath>/WO</DevelopmentServerVPath>
-          <IISUrl>http://localhost:65424/</IISUrl>
+          <IISUrl>http://localhost:9000/WO</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>http://localhost:81/WO</CustomServerUrl>

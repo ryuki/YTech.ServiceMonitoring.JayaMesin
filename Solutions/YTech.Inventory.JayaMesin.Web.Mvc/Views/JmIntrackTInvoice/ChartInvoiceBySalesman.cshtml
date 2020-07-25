@@ -1,0 +1,136 @@
+﻿@(Html.Kendo().Chart<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.DashboardInvoiceViewModel>()
+        .Name("chart3")
+                .Title(title => title
+                    .Text("Total Invoice Per Salesman")
+                    .Position(ChartTitlePosition.Top))
+        .Legend(legend => legend
+            .Visible(true)
+        )
+        .ChartArea(chart => chart
+            .Background("transparent")
+         )
+        .HtmlAttributes(new { style = "background: center no-repeat " })
+        .DataSource(ds =>
+            {
+                ds.Read(read => read.Action("GetDashboardInvoiceBySalesman", "JmIntrackTInvoice").Data("GetReadParam"))
+                .Group(g => g.Add(model => model.InvoiceStatus))
+                .Sort(g => g.Add(model => model.InvoiceStatus));
+            }
+            )
+            .Series(series =>
+                 {
+                     series
+                    .Column(model => model.InvoiceTotal).Stack(true)
+                    .Name("#= group.value #")
+                    .CategoryField("Salesman");
+                 })
+        .Tooltip(tooltip => tooltip
+            .Visible(true)
+            .Format("{0}")
+        )
+        .ValueAxis(axis => axis.Numeric()
+            .Labels(labels => labels
+                .Format("{0}")
+                .Skip(2)
+                .Step(2)
+            )
+            .Title("Jumlah Invoice #")
+        )
+        .CategoryAxis(axis => axis
+            .Labels(labels => labels.Format("MMM").Rotation(45))
+            .Title("Salesman")
+        )
+    )
+
+@(Html.Kendo().Chart<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.DashboardInvoiceViewModel>()
+        .Name("chart4")
+                .Title(title => title
+                    .Text("Total Nilai Invoice Per Salesman")
+                    .Position(ChartTitlePosition.Top))
+        .Legend(legend => legend
+            .Visible(true)
+        )
+        .ChartArea(chart => chart
+            .Background("transparent")
+         )
+        .HtmlAttributes(new { style = "background: center no-repeat " })
+        .DataSource(ds =>
+            {
+                ds.Read(read => read.Action("GetDashboardInvoiceBySalesman", "JmIntrackTInvoice").Data("GetReadParam"))
+                .Group(g => g.Add(model => model.InvoiceStatus))
+                .Sort(g => g.Add(model => model.InvoiceStatus));
+            }
+            )
+            .Series(series =>
+                 {
+                     series
+                    .Column(model => model.InvoiceAmmountTotal).Stack(true)
+                    .Name("#= group.value #")
+                    .CategoryField("Salesman");
+                 })
+        .Tooltip(tooltip => tooltip
+            .Visible(true)
+            .Format("{0:N0}")
+        )
+        .ValueAxis(axis => axis.Numeric()
+            .Labels(labels => labels
+                .Format("{0:N0}")
+                .Skip(2)
+                .Step(2)
+            )
+            .Title("Jumlah Nilai Invoice (Rp)")
+        )
+        .CategoryAxis(axis => axis
+            .Labels(labels => labels.Format("MMM").Rotation(45))
+            .Title("Salesman")
+        )
+    )
+
+@(Html.Kendo()
+.Grid<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.DashboardInvoiceViewModel>()
+    .Name("Grid")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Salesman).Width("auto").FooterTemplate("Total")
+            .ClientTemplate("<a href='../JmIntrackTInvoice/Index?SalesmanId=#= Salesman#'>#=Salesman#</a>");
+        columns.Bound(p => p.InvoiceStatus).Width("auto").Title("Status Invoice");
+        columns.Bound(p => p.InvoiceTotal).Width("auto").Format("{0:N0}").Title("Jumlah Invoice")
+            .ClientFooterTemplate("#=kendo.toString(sum, '\\#\\#,\\#')#")
+            .ClientGroupFooterTemplate("#=kendo.toString(sum, '\\#\\#,\\#')#");
+        columns.Bound(p => p.InvoiceAmmountTotal).Width("auto").Format("{0:N0}").Title("Total Nilai Invoice (Rp)")
+            .HtmlAttributes(new { @style = "text-align:right" })
+            .FooterHtmlAttributes(new { @style = "text-align:right" })
+            .ClientFooterTemplate("#=kendo.toString(sum, '\\#\\#,\\#')#")
+            .ClientGroupFooterTemplate("#=kendo.toString(sum, '\\#\\#,\\#')#");
+
+    })
+        .ToolBar(tools => tools.Excel())
+        .Excel(excel => excel
+            .AllPages(true)
+            .Filterable(true)
+        )
+        //.Pageable()
+            .Sortable()
+        //.Scrollable()
+        //.ColumnMenu()
+        //.Selectable()
+            .Filterable()
+            .Groupable()
+    .Resizable(resize => resize.Columns(true))
+        .Reorderable(reorder => reorder.Columns(true))
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .Group(g => g.Add(p => p.InvoiceStatus))
+        .PageSize(20)
+        .Batch(false)
+        .ServerOperation(false)
+        .Read(read => read.Action("GetGridInvoiceBySalesman", "JmIntrackTInvoice").Data("GetReadParam"))
+        .Aggregates(ag =>
+        {
+            ag.Add(p => p.InvoiceStatus).Count();
+            ag.Add(p => p.InvoiceTotal).Sum();
+            ag.Add(p => p.InvoiceAmmountTotal).Sum();
+        }
+        )
+    )
+    )

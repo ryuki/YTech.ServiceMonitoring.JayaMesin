@@ -1,9 +1,29 @@
 ﻿@model YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.JmIntrackTInvoiceViewModel
 @Html.HiddenFor(model => model.InvoiceId)
 
+@(Html.Kendo().TabStrip()
+          .Name("tabstrip")
+          .HtmlAttributes(new { @style = "width:650px;height:360px;" })
+          .Collapsible(false)
+        //.Animation(animation => 
+        //    animation.Open(effect => 
+        //        effect.Fade(FadeDirection.In)))
+          .Items(tabstrip =>
+          {
+              tabstrip.Add().Text("Faktur")
+                  .Selected(true)
+                  .Content(@<text>
 <table style="width: 630px; vertical-align: top;">
     <tr>
         <td style="width: 50%; vertical-align: top;">
+             <div class="editor-label">
+                @Html.LabelFor(model => model.LocationId)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.LocationId, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.LocationId)
+            </div>
+
             <div class="editor-label">
                 @Html.LabelFor(model => model.InvoiceNo)
             </div>
@@ -87,6 +107,39 @@
                 @Html.TextBoxFor(model => model.InvoiceAmmount, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.InvoiceAmmount)
             </div>
+
+            
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InvoiceAmmountDPP)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.InvoiceAmmountDPP, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.InvoiceAmmountDPP)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InvoiceAmmountPPH)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.InvoiceAmmountPPH, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.InvoiceAmmountPPH)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InvoiceAmmountPPN)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.InvoiceAmmountPPN, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.InvoiceAmmountPPN)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InvoiceAmmountCashIn)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.InvoiceAmmountCashIn, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.InvoiceAmmountCashIn)
+            </div>
             
             <div class="editor-label">
                 @Html.LabelFor(model => model.InvoiceFundSource)
@@ -94,6 +147,14 @@
             <div class="editor-field">
                 @Html.TextBoxFor(model => model.InvoiceFundSource, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.InvoiceFundSource)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.InvoiceLocationType)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.InvoiceLocationType, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.InvoiceLocationType)
             </div>
 
             <div class="editor-label">
@@ -120,48 +181,218 @@
                 @Html.ValidationMessageFor(model => model.InvoicePaidOffDate)
             </div>
 
-            <fieldset>
-                <legend>Status Dokumen</legend>
+             </td>
+    </tr>
+</table>
+</text>);
+
+              tabstrip.Add().Text("Dokumen")
+                  .Content(@<text>
+<table style="width: 630px; vertical-align: top;">
+    <tr>
+        <td style="width: 50%; vertical-align: top;">
+
+            
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceTaxInvoiceNo)
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.InvoiceTaxInvoiceNo, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.InvoiceTaxInvoiceNo)
+                </div>
+            
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceBank)
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.InvoiceBank, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.InvoiceBank)
+                </div>
+
                 <div class="editor-label">
                     @Html.LabelFor(model => model.InvoiceDocLetter)
                 </div>
                 <div class="editor-field">
-                    @Html.TextBoxFor(model => model.InvoiceDocLetter, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.EditorFor(model => model.InvoiceDocLetter, new {@readonly="true" })
                     @Html.ValidationMessageFor(model => model.InvoiceDocLetter)
                 </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocDo)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.InvoiceDocDo, new {@readonly="true" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocDo)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocInvoice)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.InvoiceDocInvoice, new {@readonly="true" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocInvoice)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocSpm)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.InvoiceDocSpm, new {@readonly="true" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocSpm)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocReceiptCopy)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.InvoiceDocReceiptCopy, new {@readonly="true" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocReceiptCopy)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocSpk)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.InvoiceDocSpk, new {@readonly="true" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocSpk)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocBast)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.InvoiceDocBast, new {@readonly="true" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocBast)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocBaphp)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.InvoiceDocBaphp, new {@readonly="true" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocBaphp)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocBap)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.InvoiceDocBap, new {@readonly="true" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocBap)
+                </div>
+            
+            </td>
+        <td style="width: 50%; vertical-align: top;">
+             <fieldset>
+                <legend>SSP PPN</legend>
 
                 <div class="editor-label">
                     @Html.LabelFor(model => model.InvoiceDocSspPpn)
                 </div>
                 <div class="editor-field">
-                    @Html.TextBoxFor(model => model.InvoiceDocSspPpn, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.EditorFor(model => model.InvoiceDocSspPpn, new {@disabled="disabled" })
                     @Html.ValidationMessageFor(model => model.InvoiceDocSspPpn)
                 </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocSspPpnValue)
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.InvoiceDocSspPpnValue, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocSspPpnValue)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocSspPpnNtpn)
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.InvoiceDocSspPpnNtpn, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocSspPpnNtpn)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocSspPpnDate)
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.InvoiceDocSspPpnDate, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocSspPpnDate)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocSspPpnDesc)
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.InvoiceDocSspPpnDesc, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocSspPpnDesc)
+                </div>
+
+            </fieldset>
+            
+
+            <fieldset>
+                <legend>SSP PPH</legend>
 
                 <div class="editor-label">
                     @Html.LabelFor(model => model.InvoiceDocSspPph)
                 </div>
                 <div class="editor-field">
-                    @Html.TextBoxFor(model => model.InvoiceDocSspPph, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.EditorFor(model => model.InvoiceDocSspPph, new {@disabled="disabled" })
                     @Html.ValidationMessageFor(model => model.InvoiceDocSspPph)
                 </div>
+                
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocSspPphValue)
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.InvoiceDocSspPphValue, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocSspPphValue)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocSspPphNtpn)
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.InvoiceDocSspPphNtpn, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocSspPphNtpn)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocSspPphDate)
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.InvoiceDocSspPphDate, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocSspPphDate)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.InvoiceDocSspPphDesc)
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.InvoiceDocSspPphDesc, new {@style="border:none;",@readonly="true",@class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.InvoiceDocSspPphDesc)
+                </div>
+
             </fieldset>
 
+            </td>
+        <td>
 
-
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2" style="vertical-align: top;">
-
-            <div class="editor-label">
-                @Html.LabelFor(model => model.InvoiceDesc)
-            </div>
-            <div class="editor-field">
-                @Html.EditorFor(model => model.InvoiceDesc)
-                @Html.ValidationMessageFor(model => model.InvoiceDesc)
-            </div>
 
         </td>
     </tr>
 </table>
+</text>);
+          })
+    )
+
+<div>
+
+    <div>
+        @Html.LabelFor(model => model.InvoiceDesc)
+   <br />
+        @Html.EditorFor(model => model.InvoiceDesc)
+        @Html.ValidationMessageFor(model => model.InvoiceDesc)
+    </div>
+
+</div>

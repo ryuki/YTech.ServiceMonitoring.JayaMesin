@@ -4,75 +4,77 @@
 }
 
 <div class="demo-section k-content">
-    @(Html.Kendo().Chart<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.DashboardInvoiceViewModel>()
-        .Name("chart")
-                .Title(title => title
-                    .Text("Jumlah Faktur Penjualan")
-                    .Position(ChartTitlePosition.Top))
-        .Legend(legend => legend
-            .Visible(false)
-        )
-        .ChartArea(chart => chart
-            .Background("transparent")
+    <table style="width:80%">
+        <tr>
+            <td colspan="2">
+                Lokasi : @(
+ Html.Kendo().DropDownList() 
+        .OptionLabel("All")
+        .DataValueField("Value")
+        .DataTextField("Text")    
+        .BindTo((System.Collections.IEnumerable)ViewData["invoice_location"])
+         .HtmlAttributes(new { @style="width:150px;" })
+         .AutoBind(true)
+         .Name("ddlLocationId")    
+          .Events(e => e.Change("ddlLocationIdchange"))
          )
-        .HtmlAttributes(new { style = "background: center no-repeat " })
-        .DataSource(ds =>
-            {
-                ds.Read(read => read.Action("GetDashboardInvoiceByStatus", "JmIntrackTInvoice"));
-            }
-            )
-             .Series(series =>
-                 {
-                     series
-                    .Pie(model => model.InvoiceTotal, model => model.InvoiceStatus, model => model.Color)
-                    .Padding(30)
-                    .Labels(labels => labels
-                .Template("#= category #: \n #= value#%")
-                .Background("transparent")
-                .Visible(true)
-            )
-            .StartAngle(150);
-                 }
-            )
-        .Tooltip(tooltip => tooltip
-            .Visible(true)
-            .Format("{0}%")
-        )
-    )
+            </td>
+        </tr>
+        <tr>
+            <td >
+                @Html.Partial("ChartInvoiceByStatus")
+            </td>
+            <td>
+                 @Html.Partial("ChartInvoiceLunas")
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                 @Html.Partial("ChartInvoiceBySalesman")
+            </td>
+            <td>
 
-    @(Html.Kendo().Chart<YTech.Inventory.JayaMesin.Web.Mvc.Controllers.ViewModels.DashboardInvoiceViewModel>()
-        .Name("chart2")
-                .Title(title => title
-                    .Text("Kelengkapan SSP Dari yang Sudah Lunas")
-                    .Position(ChartTitlePosition.Top))
-        .Legend(legend => legend
-            .Visible(false)
-        )
-        .ChartArea(chart => chart
-            .Background("transparent")
-         )
-        .HtmlAttributes(new { style = "background: center no-repeat " })
-        .DataSource(ds =>
-            {
-                ds.Read(read => read.Action("GetDashboardInvoiceLunas", "JmIntrackTInvoice"));
-            }
-            )
-            .Series(series =>
-                 {
-                     series
-                    .Pie(model => model.InvoiceTotal, model => model.InvoiceStatus, model => model.Color)
-                    .Padding(30)
-                    .Labels(labels => labels
-                .Template("#= category #: \n #= value#%")
-                .Background("transparent")
-                .Visible(true)
-            )
-            .StartAngle(150);
-                 }
-            )
-        .Tooltip(tooltip => tooltip
-            .Visible(true)
-            .Format("{0}%")
-        )
-    )
+            </td>
+        </tr>
+    </table>
 </div>
+
+<script type="text/javascript">
+
+    function GetReadParam() {
+        var locationId = $('#ddlLocationId').data("kendoDropDownList").value($("#value").val());
+        //alert(locationId);
+        return {
+            LocationId: locationId
+        };
+    }
+
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : sParameterName[1];
+            }
+        }
+    };
+
+    function ddlLocationIdchange() {
+        var value = $("#ddlLocationId").val();
+        //alert(value);
+        $('#Grid').data().kendoGrid.dataSource.read();
+        $('#chart').data("kendoChart").dataSource.read();
+        $('#chart').data("kendoChart").refresh();
+        $('#chart2').data("kendoChart").dataSource.read();
+        $('#chart2').data("kendoChart").refresh();
+        $('#chart3').data("kendoChart").dataSource.read();
+        $('#chart3').data("kendoChart").refresh();
+        $('#chart4').data("kendoChart").dataSource.read();
+        $('#chart4').data("kendoChart").refresh();
+    };
+</script>

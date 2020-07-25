@@ -40,6 +40,26 @@ namespace YTech.ServiceTracker.JayaMesin.Domain
         public virtual byte[] RowVersion { get; set; }
         public virtual string InvoiceHelpdesk { get; set; }
         public virtual string InvoiceFundSource { get; set; }
+        public virtual string LocationId { get; set; }
+        public virtual string InvoiceLocationType { get; set; }
+        public virtual string InvoiceBank { get; set; }
+        public virtual string InvoiceTaxInvoiceNo { get; set; }
+        public virtual string InvoiceDocDo { get; set; }
+        public virtual string InvoiceDocInvoice { get; set; }
+        public virtual string InvoiceDocSpm { get; set; }
+        public virtual string InvoiceDocReceiptCopy { get; set; }
+        public virtual string InvoiceDocSpk { get; set; }
+        public virtual string InvoiceDocBast { get; set; }
+        public virtual string InvoiceDocBaphp { get; set; }
+        public virtual string InvoiceDocBap { get; set; }
+        public virtual decimal? InvoiceDocSspPpnValue { get; set; }
+        public virtual string InvoiceDocSspPpnNtpn { get; set; }
+        public virtual System.DateTime? InvoiceDocSspPpnDate { get; set; }
+        public virtual string InvoiceDocSspPpnDesc { get; set; }
+        public virtual decimal? InvoiceDocSspPphValue { get; set; }
+        public virtual string InvoiceDocSspPphNtpn { get; set; }
+        public virtual System.DateTime? InvoiceDocSspPphDate { get; set; }
+        public virtual string InvoiceDocSspPphDesc { get; set; }
 
         #endregion
         

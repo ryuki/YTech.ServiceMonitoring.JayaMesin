@@ -22,17 +22,19 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
         private readonly IJmInventoryMCatTasks _catTasks;
         private readonly IJmInventoryTProductPriceTasks _JmInventoryTProductPriceTasks;
         private readonly IJmInventoryMSupplierTasks _IJmInventoryMSupplierTasks;
+        private readonly IJmInventoryTLogTasks _JmInventoryTLogTasks;
 
-        public JmInventoryMProductController(IJmInventoryMProductTasks tasks, IJmInventoryMBrandTasks brandTasks, IJmInventoryMCatTasks catTasks, IJmInventoryTProductPriceTasks _JmInventoryTProductPriceTasks, IJmInventoryMSupplierTasks _IJmInventoryMSupplierTasks)
+        public JmInventoryMProductController(IJmInventoryMProductTasks tasks, IJmInventoryMBrandTasks brandTasks, IJmInventoryMCatTasks catTasks, IJmInventoryTProductPriceTasks _JmInventoryTProductPriceTasks, IJmInventoryMSupplierTasks _IJmInventoryMSupplierTasks, IJmInventoryTLogTasks _JmInventoryTLogTasks)
         {
             this._tasks = tasks;
             this._brandTasks = brandTasks;
             this._catTasks = catTasks;
             this._JmInventoryTProductPriceTasks = _JmInventoryTProductPriceTasks;
             this._IJmInventoryMSupplierTasks = _IJmInventoryMSupplierTasks;
+            this._JmInventoryTLogTasks = _JmInventoryTLogTasks;
         }
 
-        [Authorize(Roles = "ADMINISTRATOR, MANAGER, SALES")]
+        [Authorize(Roles = "ADMINISTRATOR, MANAGER, SALES, PARTNER")]
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Index(bool? isModal)
         {
@@ -42,6 +44,9 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
 
             PopulateProductStatus();
             PopulatePriceStatus();
+
+            ///save log
+            SaveLog(string.Empty, EnumLogType.Product, EnumTransLog.Open);
 
             return View();
         }
@@ -74,9 +79,27 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                 entity.DataStatus = EnumDataStatus.New.ToString();
 
                 _tasks.Insert(entity);
+
+                SaveLog(vm.ProductId, EnumLogType.Product, EnumTransLog.Save);
             }
 
             return Json(new[] { vm }.ToDataSourceResult(request, ModelState));
+        }
+
+        private void SaveLog(string refid, EnumLogType logType, EnumTransLog transLog)
+        {
+            JmInventoryTLog woLog = new JmInventoryTLog();
+            woLog.SetAssignedIdTo(Guid.NewGuid().ToString());
+            woLog.LogRefId = refid;
+            woLog.LogType = logType.ToString();
+            woLog.LogUser = User.Identity.Name;
+            woLog.LogDate = DateTime.Now;
+            woLog.LogStatus = transLog.ToString();
+
+            woLog.CreatedDate = DateTime.Now;
+            woLog.CreatedBy = User.Identity.Name;
+            woLog.DataStatus = EnumDataStatus.New.ToString();
+            _JmInventoryTLogTasks.Insert(woLog);
         }
 
         private void ConvertToJmInventoryMProduct(JmInventoryMProductViewModel vm, JmInventoryMProduct entity)
@@ -138,6 +161,9 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                     entity.DataStatus = EnumDataStatus.Updated.ToString();
 
                     _tasks.Update(entity);
+
+                    //save log
+                    SaveLog(vm.ProductId, EnumLogType.Product, EnumTransLog.Update);
                 }
             }
 
@@ -156,6 +182,9 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
                     entity.ModifiedBy = User.Identity.Name;
                     entity.DataStatus = EnumDataStatus.Deleted.ToString();
                     _tasks.Update(entity);
+
+                    //save log
+                    SaveLog(vm.ProductId, EnumLogType.Product, EnumTransLog.Delete);
                 }
             }
             return Json(ModelState.ToDataSourceResult());
@@ -183,7 +212,8 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             ProductEstStockDate = entity.ProductEstStockDate,
             ProductMinStock = entity.ProductMinStock,
             ProductPriceSales = entity.ProductPriceSales,
-            ProductLastPriceDate = entity.ProductLastPriceDate
+            ProductLastPriceDate = entity.ProductLastPriceDate,
+            HaveBeenRead = entity.HaveBeenRead == true ? 1 : 0
         };
 
         }
@@ -242,6 +272,31 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult LogProduct_Open(string random, string ProductId)
+        {
+            string msg = string.Empty;
+            bool success = false;
+            try
+            {
+                //save log
+                SaveLog(ProductId, EnumLogType.Product, EnumTransLog.Read);
+
+                success = true;
+                msg = "Log Product success";
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                msg = ex.GetBaseException().Message;
+            }
+            var e = new
+            {
+                Success = success,
+                Message = msg
+            };
+            return Json(e, JsonRequestBehavior.AllowGet);
+        }
+
         #region product price
 
         public ActionResult JmInventoryTProductPrices_Read([DataSourceRequest] DataSourceRequest request, string ParentProductId)
@@ -293,7 +348,7 @@ namespace YTech.Inventory.JayaMesin.Web.Mvc.Controllers
             }
         }
 
-        private void UpdatePrice(JmInventoryMProduct product, decimal purchasePrice, decimal priceOngkir,DateTime? productPriceDate)
+        private void UpdatePrice(JmInventoryMProduct product, decimal purchasePrice, decimal priceOngkir, DateTime? productPriceDate)
         {
             if (product != null)
             {

@@ -28,6 +28,9 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <TargetFrameworkProfile />
+    <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+    <Use64BitIISExpress />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -220,6 +223,8 @@
     <Content Include="Content\img\error3.gif" />
     <Content Include="Content\img\header_text.png" />
     <Content Include="Content\img\logo-ayooklik.png" />
+    <Content Include="Content\img\logo-ayooklik_new.png" />
+    <Content Include="Content\img\logo-jayamesin_new.png" />
     <Content Include="Content\img\logo.png" />
     <Content Include="Content\img\logo_new.jpg" />
     <Content Include="Content\img\new_header.png" />
@@ -3413,6 +3418,13 @@
     <Content Include="Views\Shared\_head.cshtml" />
     <Content Include="Views\JmInventoryTTran\EditorTemplates\Expedition.cshtml" />
     <Content Include="Views\JmIntrackTInvoice\EditorTemplates\EditDescJmIntrackTInvoice.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\ChartInvoiceByStatus.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\ChartInvoiceLunas.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\ChartInvoiceBySalesman.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\EditorTemplates\InvoiceLocation.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\EditorTemplates\InvoiceLocationType.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\EditorTemplates\Checkbox.cshtml" />
+    <Content Include="Views\JmIntrackTInvoice\EditorTemplates\DateTime.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -3473,13 +3485,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3195</DevelopmentServerPort>
           <DevelopmentServerVPath>/PM</DevelopmentServerVPath>
-          <IISUrl>http://localhost:51949/</IISUrl>
-          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
-          <IISAppRootUrl>http://localhost:51949/</IISAppRootUrl>
+          <IISUrl>http://localhost:8888/PM</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>http://localhost:81/WO</CustomServerUrl>
